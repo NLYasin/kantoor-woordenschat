@@ -88,7 +88,7 @@ html {
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-html { font-size: calc(16px * var(--fs-scale)); }
+html { -webkit-text-size-adjust: 100%; }
 
 body {
   font-family: var(--font);
@@ -97,6 +97,7 @@ body {
   min-height: 100vh;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(80px + env(safe-area-inset-bottom)) env(safe-area-inset-left);
   transition: background 0.2s, color 0.2s;
+  zoom: var(--fs-scale);
 }
 
 /* Liggende stand (telefoon gedraaid) — content in twee kolommen, compactere top-bar */
@@ -1274,6 +1275,7 @@ function setTheme(theme) {
   try { localStorage.setItem('kv_theme', theme); } catch(e) {}
 }
 function applyFontScale(scale) {
+  document.body.style.zoom = scale;
   document.documentElement.style.setProperty('--fs-scale', scale);
   document.querySelectorAll('.fs-btn').forEach(b => {
     b.classList.toggle('active', parseFloat(b.dataset.scale) === scale);
