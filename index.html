@@ -1203,16 +1203,19 @@ function initTTS() {
   if (!window.speechSynthesis) return;
   const loadVoices = () => {
     const voices = window.speechSynthesis.getVoices();
-    // Hollandaca sesi bul — öncelik sırası: nl-NL, nl-BE, nl
     nlVoice = voices.find(v => v.lang === 'nl-NL')
            || voices.find(v => v.lang === 'nl-BE')
            || voices.find(v => v.lang.startsWith('nl'))
+           || voices.find(v => v.name.toLowerCase().includes('dutch'))
+           || voices.find(v => v.name.toLowerCase().includes('netherlands'))
            || null;
+    if (nlVoice) console.log('NL ses:', nlVoice.name, nlVoice.lang);
+    else console.warn('NL ses yok — mevcut:', voices.map(v=>v.lang+':'+v.name).join(' | '));
   };
   loadVoices();
-  if (window.speechSynthesis.onvoiceschanged !== undefined) {
-    window.speechSynthesis.onvoiceschanged = loadVoices;
-  }
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+  setTimeout(loadVoices, 500);
+  setTimeout(loadVoices, 1500);
 }
 
 function speakDutch(e, text) {
@@ -1223,35 +1226,39 @@ function speakDutch(e, text) {
   }
   const btn = e.currentTarget;
 
-  // Zaten konuşuyorsa durdur
   if (isSpeaking) {
     window.speechSynthesis.cancel();
     isSpeaking = false;
     document.querySelectorAll('.btn-speak.speaking').forEach(b => b.classList.remove('speaking'));
-    if (btn.dataset.text === text) return; // aynı butona tekrar basıldıysa sadece durdur
+    if (btn.dataset.text === text) return;
   }
 
   const utter = new SpeechSynthesisUtterance(text);
+
+  // Her zaman nl-NL dilini zorla — ses bulunsun ya da bulunmasın
   utter.lang = 'nl-NL';
-  utter.rate = 0.85;  // biraz yavaş — daha net duyulsun
+  utter.rate = 0.85;
   utter.pitch = 1;
+  utter.volume = 1;
+
+  // Hollandaca ses bulunduysa kullan
   if (nlVoice) utter.voice = nlVoice;
 
   btn.classList.add('speaking');
   btn.dataset.text = text;
   isSpeaking = true;
 
-  utter.onend = () => {
-    isSpeaking = false;
-    btn.classList.remove('speaking');
-  };
-  utter.onerror = () => {
+  utter.onend = () => { isSpeaking = false; btn.classList.remove('speaking'); };
+  utter.onerror = (err) => {
+    console.error('TTS hata:', err.error);
     isSpeaking = false;
     btn.classList.remove('speaking');
   };
 
+  window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utter);
 }
+
 
 // ════════════════════════════════════════
 // GÖRÜNÜM — Tema & Yazı boyutu
