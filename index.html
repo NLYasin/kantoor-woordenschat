@@ -670,6 +670,49 @@ input[type="file"] { display: none; }
 .hm-day-lbl { font-size: 9px; color: var(--text3); font-family: var(--mono); height: 14px; line-height: 14px; }
 .heatmap-outer { display: flex; align-items: flex-start; }
 
+/* ── Aylık takvim ── */
+.cal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.cal-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.cal-nav { display: flex; gap: 6px; }
+.cal-nav-btn {
+  font-family: var(--font); font-size: 14px; padding: 4px 10px;
+  border-radius: 7px; border: 1px solid var(--border2);
+  background: var(--bg3); color: var(--text2); cursor: pointer;
+}
+.cal-nav-btn:active { opacity: 0.7; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-day-label {
+  text-align: center; font-size: 10px; font-family: var(--mono);
+  color: var(--text3); padding: 2px 0 6px;
+}
+.cal-day {
+  aspect-ratio: 1; border-radius: 8px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 12px; font-family: var(--mono);
+  border: 1px solid transparent; position: relative;
+}
+.cal-day.empty { background: transparent; border: none; }
+.cal-day.no-activity { background: var(--bg3); color: var(--text3); }
+.cal-day.worked-1 { background: #1a3060; color: #90b8ff; border-color: #2a4080; }
+.cal-day.worked-2 { background: #1e4090; color: #b0d0ff; border-color: #2a50b0; }
+.cal-day.worked-3 { background: #2952c8; color: #d0e4ff; border-color: #3a62d8; }
+.cal-day.worked-4 { background: var(--accent); color: #fff; border-color: #6090ff; }
+.cal-day.today { box-shadow: 0 0 0 2px var(--orange); font-weight: 700; }
+.cal-day.future { background: transparent; color: var(--text3); opacity: 0.3; }
+[data-theme="light"] .cal-day.worked-1 { background: #dce8ff; color: #1a3090; border-color: #b0c8ff; }
+[data-theme="light"] .cal-day.worked-2 { background: #b0c8ff; color: #0a2060; border-color: #80a8ff; }
+[data-theme="light"] .cal-day.worked-3 { background: #80a8ff; color: #fff; border-color: #4f7cff; }
+[data-theme="light"] .cal-day.worked-4 { background: var(--accent); color: #fff; }
+.cal-day-count { font-size: 9px; opacity: 0.75; margin-top: 1px; }
+.cal-legend {
+  display: flex; gap: 10px; align-items: center; margin-top: 10px;
+  font-size: 10px; color: var(--text3); font-family: var(--mono); flex-wrap: wrap;
+}
+.cal-legend-dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex-shrink: 0; }
+
 /* Kutlama */
 @keyframes celebPop { 0%{transform:scale(0)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
 @keyframes celebFade { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-30px)} }
@@ -1153,8 +1196,95 @@ function renderProgress() {
     </div>
 
     <div class="progress-section">
-      <div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);font-family:var(--mono);margin-bottom:10px;">📅 Son 10 Hafta</div>
+      ${renderCalendarView()}
+    </div>
+
+    <div class="progress-section">
+      <div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);font-family:var(--mono);margin-bottom:10px;">📊 Son 10 Hafta</div>
       ${renderHeatmap()}
+    </div>
+  `;
+}
+
+// ── Aylık takvim ──
+let calViewYear = new Date().getFullYear();
+let calViewMonth = new Date().getMonth(); // 0-11
+
+function calPrev() {
+  calViewMonth--;
+  if (calViewMonth < 0) { calViewMonth = 11; calViewYear--; }
+  renderProgress();
+}
+function calNext() {
+  const now = new Date();
+  if (calViewYear > now.getFullYear() || (calViewYear === now.getFullYear() && calViewMonth >= now.getMonth())) return;
+  calViewMonth++;
+  if (calViewMonth > 11) { calViewMonth = 0; calViewYear++; }
+  renderProgress();
+}
+
+function renderCalendarView() {
+  const now = new Date();
+  const todayKey = todayStr();
+  const monthNames = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  const dayLabels = ['Pt','Sa','Ça','Pe','Cu','Ct','Pa'];
+
+  const firstDay = new Date(calViewYear, calViewMonth, 1);
+  const lastDay = new Date(calViewYear, calViewMonth + 1, 0);
+  const daysInMonth = lastDay.getDate();
+
+  // Haftanın başı Pazartesi (1) — 0=Pazar → 6, 1=Pt → 0
+  let startOffset = firstDay.getDay() - 1;
+  if (startOffset < 0) startOffset = 6;
+
+  const isCurrentMonth = calViewYear === now.getFullYear() && calViewMonth === now.getMonth();
+  const isFutureMonth = calViewYear > now.getFullYear() || (calViewYear === now.getFullYear() && calViewMonth > now.getMonth());
+
+  let cells = '';
+  // Boş hücreler
+  for (let i = 0; i < startOffset; i++) cells += `<div class="cal-day empty"></div>`;
+  // Gün hücreleri
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateObj = new Date(calViewYear, calViewMonth, d);
+    const key = dateObj.toISOString().slice(0,10);
+    const count = activityLog[key] || 0;
+    const isTodayCell = key === todayKey;
+    const isFuture = dateObj > now && !isTodayCell;
+
+    let cls = 'cal-day';
+    if (isFuture) cls += ' future';
+    else if (count === 0) cls += ' no-activity';
+    else if (count >= 10) cls += ' worked-4';
+    else if (count >= 5) cls += ' worked-3';
+    else if (count >= 2) cls += ' worked-2';
+    else cls += ' worked-1';
+    if (isTodayCell) cls += ' today';
+
+    const countHtml = count > 0 && !isFuture ? `<div class="cal-day-count">${count}</div>` : '';
+    cells += `<div class="${cls}" title="${key}: ${count} aktivite"><div>${d}</div>${countHtml}</div>`;
+  }
+
+  const canNext = !(calViewYear === now.getFullYear() && calViewMonth >= now.getMonth());
+
+  return `
+    <div class="cal-header">
+      <div class="cal-title">📅 ${monthNames[calViewMonth]} ${calViewYear}</div>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calPrev()">‹</button>
+        <button class="cal-nav-btn" onclick="calNext()" ${!canNext ? 'disabled style="opacity:0.3"' : ''}>›</button>
+      </div>
+    </div>
+    <div class="cal-grid">
+      ${dayLabels.map(l => `<div class="cal-day-label">${l}</div>`).join('')}
+      ${cells}
+    </div>
+    <div class="cal-legend">
+      <span class="cal-legend-dot" style="background:var(--bg3);border:1px solid var(--border)"></span>Boş
+      <span class="cal-legend-dot" style="background:#1a3060"></span>1
+      <span class="cal-legend-dot" style="background:#1e4090"></span>2-4
+      <span class="cal-legend-dot" style="background:#2952c8"></span>5-9
+      <span class="cal-legend-dot" style="background:var(--accent)"></span>10+
+      <span style="border:2px solid var(--orange);border-radius:3px;width:12px;height:12px;display:inline-block"></span>Bugün
     </div>
   `;
 }
