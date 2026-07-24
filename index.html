@@ -584,13 +584,17 @@ input[type="file"] { display: none; }
 }
 .tc-grid::-webkit-scrollbar { display: none; }
 .tc-day {
-  flex-shrink: 0; min-width: 64px; background: var(--bg3);
+  flex-shrink: 0; min-width: 58px; background: var(--bg3);
   border: 1px solid var(--border); border-radius: 10px;
-  padding: 10px 8px; text-align: center;
+  padding: 8px 6px; text-align: center;
 }
 .tc-day.has-due { border-color: var(--accent); background: var(--blue-bg); }
-.tc-day-label { font-size: 10px; color: var(--text3); font-family: var(--mono); text-transform: uppercase; }
-.tc-day-count { font-size: 18px; font-weight: 600; color: var(--text); margin-top: 4px; font-family: var(--mono); }
+.tc-day.today-card { border-color: var(--orange); background: var(--orange-bg); }
+.tc-day-label { font-size: 9px; color: var(--text3); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.05em; }
+.tc-day.today-card .tc-day-label { color: var(--orange); }
+.tc-day-count { font-size: 20px; font-weight: 700; color: var(--text); margin-top: 1px; font-family: var(--mono); line-height: 1.1; }
+.tc-day-count.zero { color: var(--text3); font-weight: 400; }
+.tc-day-cnt2 { font-size: 10px; color: var(--text3); margin-top: 1px; font-family: var(--mono); }
 .btn-speak {
   font-family: var(--font); font-size: 12px; padding: 5px 10px;
   border-radius: 7px; border: 1px solid var(--border2);
@@ -685,14 +689,14 @@ input[type="file"] { display: none; }
 .cal-nav-btn:active { opacity: 0.7; }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
 .cal-day-label {
-  text-align: center; font-size: 10px; font-family: var(--mono);
-  color: var(--text3); padding: 2px 0 4px;
+  text-align: center; font-size: 9px; font-family: var(--mono);
+  color: var(--text3); padding: 1px 0 3px;
 }
 .cal-day {
-  aspect-ratio: 1; border-radius: 6px;
+  height: 36px; border-radius: 6px;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   font-size: 11px; font-family: var(--mono);
-  border: 1px solid transparent; position: relative;
+  border: 1px solid transparent;
 }
 .cal-day.empty { background: transparent; border: none; }
 .cal-day.no-activity { background: var(--bg3); color: var(--text3); }
@@ -706,7 +710,7 @@ input[type="file"] { display: none; }
 [data-theme="light"] .cal-day.worked-2 { background: #b0c8ff; color: #0a2060; border-color: #80a8ff; }
 [data-theme="light"] .cal-day.worked-3 { background: #80a8ff; color: #fff; border-color: #4f7cff; }
 [data-theme="light"] .cal-day.worked-4 { background: var(--accent); color: #fff; }
-.cal-day-count { font-size: 9px; opacity: 0.75; margin-top: 1px; }
+.cal-day-count { display: none; }
 .cal-legend {
   display: flex; gap: 10px; align-items: center; margin-top: 10px;
   font-size: 10px; color: var(--text3); font-family: var(--mono); flex-wrap: wrap;
@@ -1800,12 +1804,13 @@ function renderTekrarCalendar() {
     else { beyondCount++; }
   });
 
-  // Gerçek tarih etiketleri
+  // Gerçek tarih etiketleri — "BUGÜN", "YARIN", "PZT 27" formatında
+  const gunler = ['PAZ','PTS','SAL','ÇAR','PER','CUM','CMT'];
   const dayLabels = Array.from({length:7}, (_,i) => {
     const d = new Date(); d.setDate(d.getDate() + i);
-    if (i === 0) return 'Bugün';
-    if (i === 1) return 'Yarın';
-    return d.toLocaleDateString('tr-TR', {day:'numeric', month:'short'});
+    if (i === 0) return 'BUGÜN\n' + d.getDate();
+    if (i === 1) return 'YARIN\n' + d.getDate();
+    return gunler[d.getDay()] + '\n' + d.getDate();
   });
 
   let html = `<div class="tekrar-calendar"><div class="tc-title">📅 Tekrar Takvimi</div><div class="tc-grid">`;
@@ -1813,7 +1818,14 @@ function renderTekrarCalendar() {
     html += `<div class="tc-day has-due"><div class="tc-day-label">Geciken</div><div class="tc-day-count">${overdueCount}</div></div>`;
   }
   buckets.forEach((b, idx) => {
-    html += `<div class="tc-day ${b.count > 0 ? 'has-due' : ''}"><div class="tc-day-label">${dayLabels[idx]}</div><div class="tc-day-count ${b.count===0?'zero':''}">${b.count}</div></div>`;
+    const parts = dayLabels[idx].split('\n');
+    const topLine = parts[0];
+    const numLine = parts[1] || '';
+    html += `<div class="tc-day ${b.count > 0 ? 'has-due' : ''} ${idx===0?'today-card':''}">
+      <div class="tc-day-label">${topLine}</div>
+      <div class="tc-day-count ${b.count===0?'zero':''}">${numLine || b.count}</div>
+      ${numLine ? `<div class="tc-day-cnt2">${b.count}</div>` : ''}
+    </div>`;
   });
   html += `<div class="tc-day ${beyondCount>0?'has-due':''}"><div class="tc-day-label">7+ gün</div><div class="tc-day-count ${beyondCount===0?'zero':''}">${beyondCount}</div></div>`;
   html += `</div></div>`;
