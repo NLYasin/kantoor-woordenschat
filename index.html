@@ -674,6 +674,23 @@ input[type="file"] { display: none; }
 .hm-day-lbl { font-size: 9px; color: var(--text3); font-family: var(--mono); height: 14px; line-height: 14px; }
 .heatmap-outer { display: flex; align-items: flex-start; }
 
+/* ── Süre istatistikleri ── */
+.time-stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+.time-stat-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px;
+}
+.time-stat-val { font-size: 22px; font-weight: 700; color: var(--text); font-family: var(--mono); }
+.time-stat-lbl { font-size: 11px; color: var(--text3); margin-top: 3px; }
+.time-bar-row { display: flex; gap: 6px; align-items: flex-end; height: 80px; }
+.time-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; }
+.time-bar-val { font-size: 8px; color: var(--text3); font-family: var(--mono); text-align: center; min-height: 12px; }
+.time-bar-bg { flex: 1; width: 100%; background: var(--bg3); border-radius: 4px; display: flex; align-items: flex-end; overflow: hidden; }
+.time-bar-fill { width: 100%; background: var(--accent); border-radius: 4px; transition: height 0.3s; min-height: 3px; }
+.time-bar-fill.today { background: var(--orange); }
+.time-bar-lbl { font-size: 9px; color: var(--text3); font-family: var(--mono); }
+.time-bar-lbl.today { color: var(--orange); font-weight: 600; }
+
 /* ── Aylık takvim ── */
 .cal-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -1058,16 +1075,70 @@ async function deleteCardRemote(cardId) {
 
 // Activity log: {date_str: count} — localStorage'da saklanır
 // Her "Öğrendim" veya "Tekrar ettim" = +1 aktivite
-let activityLog = {};
+let activityLog = {}; // {date: count}
+let timeLog = {};     // {date: seconds}
 let dailyGoal = 5;
+let sessionStart = null; // aktif oturum başlangıcı
 
 function loadProgressData() {
   try { activityLog = JSON.parse(localStorage.getItem('kv_activity') || '{}'); } catch(e) { activityLog = {}; }
+  try { timeLog = JSON.parse(localStorage.getItem('kv_timelog') || '{}'); } catch(e) { timeLog = {}; }
   try { dailyGoal = parseInt(localStorage.getItem('kv_daily_goal')) || 5; } catch(e) {}
 }
 
 function saveActivityLog() {
   try { localStorage.setItem('kv_activity', JSON.stringify(activityLog)); } catch(e) {}
+}
+function saveTimeLog() {
+  try { localStorage.setItem('kv_timelog', JSON.stringify(timeLog)); } catch(e) {}
+}
+
+function startSession() {
+  if (!sessionStart) sessionStart = Date.now();
+}
+function stopSession() {
+  if (!sessionStart) return;
+  const elapsed = Math.round((Date.now() - sessionStart) / 1000);
+  sessionStart = null;
+  if (elapsed < 2) return; // 2 saniyeden kısa sayma
+  const today = todayStr();
+  timeLog[today] = (timeLog[today] || 0) + elapsed;
+  saveTimeLog();
+  if (currentScreen === 'progress') renderProgress();
+}
+
+function initSessionTracking() {
+  // Sayfa görünürlüğü değişince
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopSession();
+    else startSession();
+  });
+  // Sayfa kapanınca
+  window.addEventListener('beforeunload', stopSession);
+  window.addEventListener('pagehide', stopSession);
+  // Başlat
+  if (!document.hidden) startSession();
+}
+
+function getTodaySeconds() {
+  // Aktif oturumu da dahil et
+  const saved = timeLog[todayStr()] || 0;
+  const active = sessionStart ? Math.round((Date.now() - sessionStart) / 1000) : 0;
+  return saved + active;
+}
+
+function formatDuration(seconds) {
+  if (seconds < 60) return seconds + ' sn';
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (m < 60) return m + ' dk' + (s > 0 ? ' ' + s + ' sn' : '');
+  const h = Math.floor(m / 60);
+  const rm = m % 60;
+  return h + ' sa ' + rm + ' dk';
+}
+
+function getTotalSeconds() {
+  return Object.values(timeLog).reduce((a, b) => a + b, 0);
 }
 
 function todayStr() {
@@ -1205,12 +1276,60 @@ function renderProgress() {
     </div>
 
     <div class="progress-section">
+      ${renderTimeStats()}
+    </div>
+
+    <div class="progress-section">
       ${renderCalendarView()}
     </div>
 
     <div class="progress-section">
       <div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);font-family:var(--mono);margin-bottom:10px;">📊 Son 10 Hafta</div>
       ${renderHeatmap()}
+    </div>
+  `;
+}
+
+function renderTimeStats() {
+  const todaySec = getTodaySeconds();
+  const totalSec = getTotalSeconds() + (sessionStart ? Math.round((Date.now()-sessionStart)/1000) : 0);
+
+  // Son 7 günün süresi
+  const last7 = Array.from({length:7}, (_,i) => {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    return timeLog[d.toISOString().slice(0,10)] || 0;
+  }).reverse();
+  const maxSec = Math.max(...last7, 1);
+
+  return `
+    <div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);font-family:var(--mono);margin-bottom:10px;">⏱️ Çalışma Süresi</div>
+    <div class="time-stats-row">
+      <div class="time-stat-card">
+        <div class="time-stat-val">${formatDuration(todaySec)}</div>
+        <div class="time-stat-lbl">Bugün</div>
+      </div>
+      <div class="time-stat-card">
+        <div class="time-stat-val">${formatDuration(totalSec)}</div>
+        <div class="time-stat-lbl">Toplam</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:6px;">Son 7 gün</div>
+      <div class="time-bar-row">
+        ${last7.map((sec, i) => {
+          const d = new Date(); d.setDate(d.getDate()-6+i);
+          const pct = Math.max(4, Math.round((sec/maxSec)*100));
+          const isToday = i === 6;
+          const dayLbl = ['Pt','Sa','Ça','Pe','Cu','Ct','Pa'][d.getDay() === 0 ? 6 : d.getDay()-1];
+          return `<div class="time-bar-col">
+            <div class="time-bar-val">${sec>0?formatDuration(sec):''}</div>
+            <div class="time-bar-bg">
+              <div class="time-bar-fill ${isToday?'today':''}" style="height:${pct}%"></div>
+            </div>
+            <div class="time-bar-lbl ${isToday?'today':''}">${dayLbl}</div>
+          </div>`;
+        }).join('')}
+      </div>
     </div>
   `;
 }
@@ -1434,6 +1553,7 @@ function setFontScale(scale) {
 
 async function initApp() {
   initTTS();
+  initSessionTracking();
   loadAppearancePrefs();
   loadProgressData();
   loadLocalDeleted();
@@ -1467,10 +1587,9 @@ async function initApp() {
 
   setInterval(() => {
     updateStats();
-    // Cards ekranında DOM'u yeniden çizme — açık kartlar kapanıyor.
-    // Sadece tekrar ekranı aktifse güncelle (kart yok, kapanacak bir şey yok).
     if (currentScreen === 'tekrar') renderTekrar();
-  }, 60000);
+    if (currentScreen === 'progress') renderProgress(); // canlı süre güncellemesi
+  }, 30000);
 }
 
 function setSyncStatus(state, text) {
