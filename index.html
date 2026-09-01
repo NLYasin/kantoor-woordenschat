@@ -1713,38 +1713,20 @@ function gazeteTapWord(el, word) {
 
 async function analyzeWord(word) {
   const today = todayStr();
-  const prompt = `Sen Hollandaca-Türkçe dil öğretmeni ve Hollanda hukuku uzmanısın.
-"${word}" Hollandaca kelimesini analiz et ve SADECE JSON döndür (markdown veya açıklama yok):
-{
-  "dutch": "${word}",
-  "turkish": "Türkçe çeviri / alternatif çeviriler",
-  "type": "woord veya zin veya uitdrukking",
-  "note": "Kullanım notu, etimoloji, bağlam — Türkçe yazılacak, 1-2 cümle",
-  "examples": [
-    {"nl": "Hollandaca örnek cümle", "tr": "Türkçe çevirisi"},
-    {"nl": "İkinci örnek", "tr": "Türkçe çevirisi"},
-    {"nl": "Üçüncü örnek", "tr": "Türkçe çevirisi"}
-  ],
-  "legal": "Eğer hukuki/sosyal hizmet terimi ise Türk hukukundaki karşılığı, değilse null",
-  "is_legal": false
-}`;
+  const ANALYZE_URL = EDGE_TTS_URL.replace('/tts', '/analyze');
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch(ANALYZE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    body: JSON.stringify({ word })
   });
 
-  if (!res.ok) throw new Error('API ' + res.status);
-  const data = await res.json();
-  const text = data.content?.[0]?.text || '';
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error('JSON bulunamadı');
-  const card = JSON.parse(jsonMatch[0]);
+  if (!res.ok) {
+    const errText = await res.text().catch(() => '');
+    throw new Error('Analiz hatası (' + res.status + '): ' + errText.slice(0, 150));
+  }
+
+  const card = await res.json();
   card.date = 'GAZETE ' + today.slice(8,10) + '/' + today.slice(5,7);
   return card;
 }
