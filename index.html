@@ -16,7 +16,9 @@
 <!-- App-icoon (beginscherm) -->
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%230f1117'/%3E%3Ccircle cx='90' cy='70' r='12' fill='%234f7cff'/%3E%3Ctext x='90' y='125' font-family='monospace' font-size='28' font-weight='600' fill='%23e8eaf0' text-anchor='middle'%3ENL%2FTR%3C/text%3E%3C/svg%3E">
 
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="manifest" href="manifest.json">
 
 <!-- ── Supabase bağlantı ayarları ── -->
 <script>
@@ -35,55 +37,55 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 :root {
-  --bg: #0f1117;
-  --bg2: #181c27;
-  --bg3: #1e2333;
-  --border: #2a2f42;
-  --border2: #353c56;
-  --text: #e8eaf0;
-  --text2: #9aa0b8;
-  --text3: #5c6480;
-  --accent: #4f7cff;
-  --accent2: #2a4fd4;
-  --green: #2ecc71;
-  --green-bg: #0d2218;
-  --green-border: #1a4a30;
-  --orange: #f5a623;
-  --orange-bg: #221a09;
-  --orange-border: #4a3510;
-  --purple: #a78bfa;
-  --purple-bg: #1a1530;
-  --purple-border: #352a5a;
-  --blue-bg: #0d1a30;
-  --blue-border: #1a3060;
-  --font: 'IBM Plex Sans', sans-serif;
-  --mono: 'IBM Plex Mono', monospace;
-  --radius: 10px;
+  --bg: #0B1A13;
+  --bg2: #111E17;
+  --bg3: #1A2B20;
+  --border: #1E3028;
+  --border2: #2A4038;
+  --text: #E8EAF6;
+  --text2: #8B90B0;
+  --text3: #556070;
+  --accent: #4F8EF7;
+  --accent2: #7C5CFC;
+  --green: #34C98B;
+  --green-bg: #0D2218;
+  --green-border: #1A4A30;
+  --orange: #F0B429;
+  --orange-bg: #221A09;
+  --orange-border: #4A3510;
+  --purple: #A78BFA;
+  --purple-bg: #1A1530;
+  --purple-border: #352A5A;
+  --blue-bg: #0D1F35;
+  --blue-border: #1A3560;
+  --font: 'Segoe UI', system-ui, sans-serif;
+  --mono: 'Consolas', 'SF Mono', monospace;
+  --radius: 12px;
   --fs-scale: 1;
 }
 
 :root[data-theme="light"] {
-  --bg: #f7f8fb;
-  --bg2: #ffffff;
-  --bg3: #eef0f5;
-  --border: #dde1ea;
-  --border2: #c7cce0;
-  --text: #14161f;
-  --text2: #4b5168;
-  --text3: #8a8fa3;
-  --accent: #3b66e0;
-  --accent2: #2a4fd4;
-  --green: #1f9d52;
-  --green-bg: #e6f7ed;
-  --green-border: #b6e6c9;
-  --orange: #c9790a;
-  --orange-bg: #fdf1de;
-  --orange-border: #f0d49e;
-  --purple: #7c5fd9;
-  --purple-bg: #efeafc;
-  --purple-border: #d6c9f5;
-  --blue-bg: #e8f0fe;
-  --blue-border: #c4d8fb;
+  --bg: #F0FDF4;
+  --bg2: #FFFFFF;
+  --bg3: #E8F5EE;
+  --border: #C8E6D4;
+  --border2: #A8D4BC;
+  --text: #1A1D27;
+  --text2: #4B5168;
+  --text3: #8A8FA3;
+  --accent: #3B6FE0;
+  --accent2: #6B4FD8;
+  --green: #1F9D6F;
+  --green-bg: #E6F7ED;
+  --green-border: #B6E6C9;
+  --orange: #C98A0A;
+  --orange-bg: #FDF1DE;
+  --orange-border: #F0D49E;
+  --purple: #7C5FD9;
+  --purple-bg: #EFEAFC;
+  --purple-border: #D6C9F5;
+  --blue-bg: #E8F0FE;
+  --blue-border: #C4D8FB;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -126,12 +128,13 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
 
 .top-bar h1 {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--text);
   display: flex;
   align-items: center;
@@ -140,11 +143,11 @@ body {
 }
 
 .top-bar h1 span.dot {
-  width: 8px; height: 8px;
+  width: 9px; height: 9px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--green);
   display: inline-block;
-  box-shadow: 0 0 8px var(--accent);
+  box-shadow: 0 0 10px var(--green);
 }
 
 .top-bar p { font-size: 12px; color: var(--text3); }
@@ -264,12 +267,13 @@ body {
 .card {
   background: var(--bg2);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 14px;
   margin-bottom: 10px;
   overflow: hidden;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-.card.expanded { border-color: var(--border2); }
+.card:hover { border-color: var(--border2); box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+.card.expanded { border-color: var(--accent); box-shadow: 0 2px 16px rgba(79,142,247,0.15); }
 
 .card-head {
   padding: 14px 14px 10px;
@@ -290,10 +294,10 @@ body {
   margin-top: 2px;
   font-family: var(--mono);
 }
-.badge-woord { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
-.badge-zin { background: var(--blue-bg); color: #60a5fa; border: 1px solid var(--blue-border); }
-.badge-juridisch { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
-.badge-uitdrukking { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+.badge-woord { background: rgba(52,201,139,0.15); color: #34C98B; border: 1px solid rgba(52,201,139,0.3); }
+.badge-zin { background: rgba(79,142,247,0.15); color: #4F8EF7; border: 1px solid rgba(79,142,247,0.3); }
+.badge-juridisch { background: rgba(240,180,41,0.15); color: #F0B429; border: 1px solid rgba(240,180,41,0.3); }
+.badge-uitdrukking { background: rgba(167,139,250,0.15); color: #A78BFA; border: 1px solid rgba(167,139,250,0.3); }
 
 .card-dutch {
   font-size: 15px;
@@ -497,18 +501,20 @@ body {
 /* bottom nav */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0;
-  background: var(--bg2); border-top: 1px solid var(--border);
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
   display: flex; z-index: 200;
   padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -2px 16px rgba(0,0,0,0.3);
 }
 .nav-btn {
-  flex: 1; padding: 12px 8px 10px; background: transparent; border: none;
+  flex: 1; padding: 10px 8px 8px; background: transparent; border: none;
   color: var(--text3); font-family: var(--font); font-size: 11px;
   cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px;
   transition: color 0.15s;
 }
-.nav-btn.active { color: var(--accent); }
-.nav-btn .nav-icon { font-size: 20px; line-height: 1; }
+.nav-btn.active { color: var(--green); }
+.nav-btn .nav-icon { font-size: 22px; line-height: 1; }
 .nav-badge {
   background: #f87171; color: #fff; font-size: 10px; font-family: var(--mono);
   font-weight: 600; border-radius: 10px; padding: 1px 5px;
@@ -673,6 +679,19 @@ input[type="file"] { display: none; }
 .hm-day-labels { display: flex; flex-direction: column; gap: 3px; margin-right: 4px; flex-shrink: 0; }
 .hm-day-lbl { font-size: 9px; color: var(--text3); font-family: var(--mono); height: 14px; line-height: 14px; }
 .heatmap-outer { display: flex; align-items: flex-start; }
+
+/* ── Gazete modu ── */
+.gz-word {
+  cursor: pointer; border-radius: 3px;
+  transition: background 0.1s;
+  display: inline;
+}
+.gz-word:hover { background: rgba(79,142,247,0.2); }
+.gz-word.selected { background: rgba(79,142,247,0.35); color: var(--accent); }
+#gazete-reader {
+  font-size: 15px; line-height: 1.9; color: var(--text);
+  font-family: var(--font); letter-spacing: 0.01em;
+}
 
 /* ── Süre istatistikleri ── */
 .time-stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
@@ -921,6 +940,51 @@ input[type="file"] { display: none; }
   <div id="progress-content"></div>
 </div><!-- end screen-progress -->
 
+<!-- ── SCHERM 6: Gazete ── -->
+<div class="screen" id="screen-gazete">
+  <div class="tekrar-header">
+    <h2>📰 Gazete Modu</h2>
+    <span class="tc" id="gazete-status-text"></span>
+  </div>
+
+  <div id="gazete-input-area" style="padding:14px 16px;">
+    <div style="font-size:13px;color:var(--text2);margin-bottom:10px;">
+      Volkskrant veya başka bir Hollandaca metni yapıştır. Kelimeye dokununca Claude analiz eder, kartına dönüştürürsün.
+    </div>
+    <textarea id="gazete-text-input"
+      placeholder="Hollandaca metni buraya yapıştır..."
+      style="width:100%;min-height:140px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px;color:var(--text);font-family:var(--font);font-size:14px;resize:vertical;line-height:1.6;"></textarea>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="btn-settings primary" style="flex:1" onclick="gazeteParse()">📖 Metni Yükle</button>
+      <button class="btn-settings" onclick="gazeteClear()">✕ Temizle</button>
+    </div>
+  </div>
+
+  <div id="gazete-reader" style="display:none;padding:0 16px 100px;"></div>
+
+  <!-- Kelime analiz paneli -->
+  <div id="gazete-panel" style="display:none;position:fixed;bottom:65px;left:0;right:0;background:var(--bg2);border-top:2px solid var(--accent);border-radius:16px 16px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,0.4);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <span id="gp-word" style="font-size:20px;font-weight:700;color:var(--text);"></span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn-speak" id="gp-speak-btn" onclick="gazeteSpeakWord()" title="Dinle">🔊</button>
+        <button onclick="gazeteClosePanel()" style="background:transparent;border:none;color:var(--text3);font-size:20px;cursor:pointer;">✕</button>
+      </div>
+    </div>
+    <div id="gp-loading" style="color:var(--text3);font-size:13px;">⏳ Claude analiz ediyor...</div>
+    <div id="gp-content" style="display:none;">
+      <div id="gp-turkish" style="font-size:15px;color:var(--text2);margin-bottom:10px;"></div>
+      <div id="gp-note" style="font-size:13px;color:var(--text3);background:var(--bg3);border-radius:8px;padding:10px;margin-bottom:10px;line-height:1.6;"></div>
+      <div id="gp-examples" style="margin-bottom:12px;"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-settings primary" style="flex:1" onclick="gazeteAddCard()">➕ Karta Ekle</button>
+        <button class="btn-settings" onclick="gazeteClosePanel()">Kapat</button>
+      </div>
+      <div id="gp-added-status" style="display:none;font-size:12px;color:var(--green);margin-top:8px;text-align:center;">✅ Kart eklendi!</div>
+    </div>
+  </div>
+</div><!-- end screen-gazete -->
+
 <!-- ── Kutlama animasyonu ── -->
 <div id="celebration" style="display:none; position:fixed; inset:0; z-index:9999; pointer-events:none; align-items:center; justify-content:center; flex-direction:column; gap:12px;">
   <div id="celebration-emoji" style="font-size:72px;"></div>
@@ -941,6 +1005,10 @@ input[type="file"] { display: none; }
   <button class="nav-btn" id="nav-progress" onclick="showScreen('progress')">
     <span class="nav-icon">📊</span>
     <span>İlerleme</span>
+  </button>
+  <button class="nav-btn" id="nav-gazete" onclick="showScreen('gazete')">
+    <span class="nav-icon">📰</span>
+    <span>Gazete</span>
   </button>
   <button class="nav-btn" id="nav-settings" onclick="showScreen('settings')">
     <span class="nav-icon">⚙️</span>
@@ -1454,8 +1522,14 @@ function renderHeatmap() {
 }
 
 
+// ════════════════════════════════════════
+// SES — Edge TTS (birincil) + Web Speech (yedek)
+// ════════════════════════════════════════
+const EDGE_TTS_URL = 'https://goed-bezig-tts.nlyasineroglu.workers.dev/tts';
+const EDGE_TTS_VOICE = 'nl-NL-ColetteNeural';
 let nlVoice = null;
 let isSpeaking = false;
+let currentAudio = null;
 
 function initTTS() {
   if (!window.speechSynthesis) return;
@@ -1464,57 +1538,73 @@ function initTTS() {
     nlVoice = voices.find(v => v.lang === 'nl-NL')
            || voices.find(v => v.lang === 'nl-BE')
            || voices.find(v => v.lang.startsWith('nl'))
-           || voices.find(v => v.name.toLowerCase().includes('dutch'))
-           || voices.find(v => v.name.toLowerCase().includes('netherlands'))
            || null;
-    if (nlVoice) console.log('NL ses:', nlVoice.name, nlVoice.lang);
-    else console.warn('NL ses yok — mevcut:', voices.map(v=>v.lang+':'+v.name).join(' | '));
   };
   loadVoices();
   window.speechSynthesis.onvoiceschanged = loadVoices;
   setTimeout(loadVoices, 500);
-  setTimeout(loadVoices, 1500);
+}
+
+function fetchEdgeTTSBlobUrl(text) {
+  return fetch(EDGE_TTS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, voice: EDGE_TTS_VOICE, rate: '-10%' })
+  }).then(res => {
+    if (!res.ok) throw new Error('edge tts ' + res.status);
+    return res.arrayBuffer();
+  }).then(buf => URL.createObjectURL(new Blob([buf], { type: 'audio/mpeg' })));
+}
+
+function playBlobUrl(url) {
+  return new Promise((resolve, reject) => {
+    const a = new Audio(url);
+    currentAudio = a;
+    a.onended = () => { URL.revokeObjectURL(url); resolve(); };
+    a.onerror = () => { URL.revokeObjectURL(url); reject(new Error('audio error')); };
+    a.play().catch(reject);
+  });
+}
+
+function speakWebSpeech(text) {
+  return new Promise((resolve, reject) => {
+    if (!window.speechSynthesis) { reject(new Error('no speech')); return; }
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'nl-NL';
+    utter.rate = 0.85;
+    if (nlVoice) utter.voice = nlVoice;
+    utter.onend = resolve;
+    utter.onerror = () => reject(new Error('webspeech error'));
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter);
+  });
 }
 
 function speakDutch(e, text) {
   e.stopPropagation();
-  if (!window.speechSynthesis) {
-    alert('Bu tarayıcı ses sentezini desteklemiyor.');
-    return;
-  }
   const btn = e.currentTarget;
 
+  // Zaten çalıyorsa durdur
   if (isSpeaking) {
+    if (currentAudio) { currentAudio.pause(); currentAudio = null; }
     window.speechSynthesis.cancel();
     isSpeaking = false;
     document.querySelectorAll('.btn-speak.speaking').forEach(b => b.classList.remove('speaking'));
     if (btn.dataset.text === text) return;
   }
 
-  const utter = new SpeechSynthesisUtterance(text);
-
-  // Her zaman nl-NL dilini zorla — ses bulunsun ya da bulunmasın
-  utter.lang = 'nl-NL';
-  utter.rate = 0.85;
-  utter.pitch = 1;
-  utter.volume = 1;
-
-  // Hollandaca ses bulunduysa kullan
-  if (nlVoice) utter.voice = nlVoice;
-
   btn.classList.add('speaking');
   btn.dataset.text = text;
   isSpeaking = true;
 
-  utter.onend = () => { isSpeaking = false; btn.classList.remove('speaking'); };
-  utter.onerror = (err) => {
-    console.error('TTS hata:', err.error);
-    isSpeaking = false;
-    btn.classList.remove('speaking');
-  };
+  const done = () => { isSpeaking = false; btn.classList.remove('speaking'); currentAudio = null; };
 
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utter);
+  // Edge TTS → Web Speech yedek
+  fetchEdgeTTSBlobUrl(text)
+    .then(url => playBlobUrl(url))
+    .catch(() => speakWebSpeech(text))
+    .then(done)
+    .catch(done);
 }
 
 
@@ -1549,6 +1639,159 @@ function applyFontScale(scale) {
 function setFontScale(scale) {
   applyFontScale(scale);
   try { localStorage.setItem('kv_fontscale', scale); } catch(e) {}
+}
+
+// ════════════════════════════════════════
+// GAZETE MODU
+// ════════════════════════════════════════
+let gazetePendingCard = null; // analiz edilmiş kart verisi
+
+function gazeteParse() {
+  const input = document.getElementById('gazete-text-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  const reader = document.getElementById('gazete-reader');
+  const inputArea = document.getElementById('gazete-input-area');
+
+  // Metni kelimelere böl, her kelimeye tıklanabilir span ver
+  const words = text.split(/(\s+|[.,!?;:"()«»—–\-\n])/);
+  reader.innerHTML = words.map(w => {
+    const clean = w.replace(/[.,!?;:"()«»—–\-\n]/g, '').trim();
+    if (!clean || clean.length < 2) return w.replace(/\n/g, '<br>');
+    return `<span class="gz-word" onclick="gazeteTapWord(this,'${clean.replace(/'/g,"\\'")}')">` + w + '</span>';
+  }).join('');
+
+  reader.style.display = 'block';
+  inputArea.style.display = 'none';
+}
+
+function gazeteClear() {
+  document.getElementById('gazete-text-input').value = '';
+  document.getElementById('gazete-reader').innerHTML = '';
+  document.getElementById('gazete-reader').style.display = 'none';
+  document.getElementById('gazete-input-area').style.display = 'block';
+  gazeteClosePanel();
+}
+
+function gazeteTapWord(el, word) {
+  // Önceki seçimi temizle
+  document.querySelectorAll('.gz-word.selected').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+
+  const panel = document.getElementById('gazete-panel');
+  const loading = document.getElementById('gp-loading');
+  const content = document.getElementById('gp-content');
+  const addedStatus = document.getElementById('gp-added-status');
+
+  document.getElementById('gp-word').textContent = word;
+  document.getElementById('gp-speak-btn').dataset.word = word;
+  loading.style.display = 'block';
+  content.style.display = 'none';
+  addedStatus.style.display = 'none';
+  panel.style.display = 'block';
+  gazetePendingCard = null;
+
+  // Claude Haiku ile analiz
+  analyzeWord(word).then(card => {
+    gazetePendingCard = card;
+    document.getElementById('gp-turkish').textContent = card.turkish;
+    document.getElementById('gp-note').textContent = card.note || '';
+    const exDiv = document.getElementById('gp-examples');
+    exDiv.innerHTML = (card.examples || []).map(ex =>
+      `<div style="border-left:2px solid var(--border2);padding-left:10px;margin-bottom:6px;">
+        <div style="font-size:13px;color:var(--text);">${ex.nl}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">${ex.tr}</div>
+      </div>`
+    ).join('');
+    loading.style.display = 'none';
+    content.style.display = 'block';
+  }).catch(err => {
+    loading.textContent = '❌ Hata: ' + err.message;
+  });
+}
+
+async function analyzeWord(word) {
+  const today = todayStr();
+  const prompt = `Sen Hollandaca-Türkçe dil öğretmeni ve Hollanda hukuku uzmanısın.
+"${word}" Hollandaca kelimesini analiz et ve SADECE JSON döndür (markdown veya açıklama yok):
+{
+  "dutch": "${word}",
+  "turkish": "Türkçe çeviri / alternatif çeviriler",
+  "type": "woord veya zin veya uitdrukking",
+  "note": "Kullanım notu, etimoloji, bağlam — Türkçe yazılacak, 1-2 cümle",
+  "examples": [
+    {"nl": "Hollandaca örnek cümle", "tr": "Türkçe çevirisi"},
+    {"nl": "İkinci örnek", "tr": "Türkçe çevirisi"},
+    {"nl": "Üçüncü örnek", "tr": "Türkçe çevirisi"}
+  ],
+  "legal": "Eğer hukuki/sosyal hizmet terimi ise Türk hukukundaki karşılığı, değilse null",
+  "is_legal": false
+}`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  if (!res.ok) throw new Error('API ' + res.status);
+  const data = await res.json();
+  const text = data.content?.[0]?.text || '';
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('JSON bulunamadı');
+  const card = JSON.parse(jsonMatch[0]);
+  card.date = 'GAZETE ' + today.slice(8,10) + '/' + today.slice(5,7);
+  return card;
+}
+
+function gazeteClosePanel() {
+  document.getElementById('gazete-panel').style.display = 'none';
+  document.querySelectorAll('.gz-word.selected').forEach(e => e.classList.remove('selected'));
+}
+
+function gazeteSpeakWord() {
+  const word = document.getElementById('gp-speak-btn').dataset.word;
+  if (!word) return;
+  const fakeEvent = { stopPropagation: ()=>{}, currentTarget: document.getElementById('gp-speak-btn') };
+  speakDutch(fakeEvent, word);
+}
+
+async function gazeteAddCard() {
+  if (!gazetePendingCard) return;
+  const btn = document.querySelector('#gp-content .btn-settings.primary');
+  const statusEl = document.getElementById('gp-added-status');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Ekleniyor...'; }
+
+  try {
+    await insertCardsRemote([{
+      date: gazetePendingCard.date,
+      type: gazetePendingCard.type || 'woord',
+      dutch: gazetePendingCard.dutch,
+      turkish: gazetePendingCard.turkish,
+      note: gazetePendingCard.note || null,
+      examples: gazetePendingCard.examples || [],
+      legal: gazetePendingCard.legal || null,
+      is_legal: gazetePendingCard.is_legal || false
+    }]);
+    CARDS = await loadCardsFromDB();
+    cacheCards();
+    buildDateFilters();
+    updateStats();
+    statusEl.style.display = 'block';
+    statusEl.textContent = '✅ "' + gazetePendingCard.dutch + '" kartına eklendi!';
+    if (btn) { btn.textContent = '✓ Eklendi'; }
+    gazetePendingCard = null;
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = '➕ Karta Ekle'; }
+    statusEl.style.display = 'block';
+    statusEl.style.color = '#f87171';
+    statusEl.textContent = '❌ Hata: ' + e.message;
+  }
 }
 
 async function initApp() {
@@ -1851,6 +2094,7 @@ function showScreen(name) {
   if (name === 'tekrar') renderTekrar();
   if (name === 'trash') renderTrash();
   if (name === 'progress') renderProgress();
+  if (name === 'gazete') {} // kendi state'ini yönetiyor
   updateStats();
 }
 
