@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -14,10 +14,10 @@
 <meta name="format-detection" content="telephone=no">
 
 <!-- App-icoon (beginscherm) -->
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%230f1117'/%3E%3Ccircle cx='90' cy='70' r='12' fill='%234f7cff'/%3E%3Ctext x='90' y='125' font-family='monospace' font-size='28' font-weight='600' fill='%23e8eaf0' text-anchor='middle'%3ENL%2FTR%3C/text%3E%3C/svg%3E">
-
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
 
 <!-- ── Supabase bağlantı ayarları ── -->
@@ -46,7 +46,9 @@ html {
   --text2: #8B90B0;
   --text3: #556070;
   --accent: #4F8EF7;
-  --accent2: #7C5CFC;
+  --red: #F87171;
+  --red-bg: #2A1414;
+  --red-border: #5A2424;
   --green: #34C98B;
   --green-bg: #0D2218;
   --green-border: #1A4A30;
@@ -59,22 +61,26 @@ html {
   --blue-bg: #0D1F35;
   --blue-border: #1A3560;
   --font: 'Segoe UI', system-ui, sans-serif;
-  --mono: 'Consolas', 'SF Mono', monospace;
+  /* Etiket ve sayılarda mono yerine ana font; gerçek kod alanları --code kullanır */
+  --mono: 'Segoe UI', system-ui, sans-serif;
+  --code: 'Consolas', 'SF Mono', monospace;
   --radius: 12px;
   --fs-scale: 1;
 }
 
 :root[data-theme="light"] {
-  --bg: #F0FDF4;
+  --bg: #F3F8F5;
   --bg2: #FFFFFF;
-  --bg3: #E8F5EE;
-  --border: #C8E6D4;
-  --border2: #A8D4BC;
+  --bg3: #EAF2EC;
+  --border: #D6E4DA;
+  --border2: #BCD1C3;
   --text: #1A1D27;
   --text2: #4B5168;
-  --text3: #8A8FA3;
-  --accent: #3B6FE0;
-  --accent2: #6B4FD8;
+  --text3: #6B7185;
+  --accent: #2F63D6;
+  --red: #D23F3F;
+  --red-bg: #FDECEC;
+  --red-border: #F3C0C0;
   --green: #1F9D6F;
   --green-bg: #E6F7ED;
   --green-border: #B6E6C9;
@@ -142,14 +148,6 @@ body {
   margin-bottom: 3px;
 }
 
-.top-bar h1 span.dot {
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  background: var(--green);
-  display: inline-block;
-  box-shadow: 0 0 10px var(--green);
-}
-
 .top-bar p { font-size: 12px; color: var(--text3); }
 
 .search-row {
@@ -168,13 +166,13 @@ body {
   font-family: var(--font);
   font-size: 14px;
   color: var(--text);
-  outline: none;
+  min-height: 40px;
 }
 #search::placeholder { color: var(--text3); }
-#search:focus { border-color: var(--border2); }
+#search:focus { border-color: var(--accent); }
 
 .search-wrap { position: relative; flex: 1; }
-.search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 15px; pointer-events: none; }
+.search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 16px; pointer-events: none; display: flex; }
 
 .stats-row {
   display: grid;
@@ -189,8 +187,8 @@ body {
   padding: 10px 8px;
   text-align: center;
 }
-.stat-num { font-size: 22px; font-weight: 600; color: var(--text); font-family: var(--mono); }
-.stat-lbl { font-size: 10px; color: var(--text3); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.05em; }
+.stat-num { font-size: 22px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.stat-lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
 
 .filters {
   padding: 0 16px 12px;
@@ -204,6 +202,7 @@ body {
 .fbtn {
   font-family: var(--font);
   font-size: 12px;
+  min-height: 36px;
   padding: 6px 14px;
   border-radius: 20px;
   border: 1px solid var(--border);
@@ -239,13 +238,6 @@ body {
   transition: background 0.15s;
 }
 .date-label:hover { background: var(--bg3); }
-.date-label .dl-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  flex-shrink: 0;
-  box-shadow: 0 0 6px var(--accent);
-}
 .date-label .dl-meta {
   font-size: 11px;
   color: var(--text3);
@@ -286,18 +278,18 @@ body {
 
 .badge {
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 600;
   padding: 3px 8px;
   border-radius: 6px;
   white-space: nowrap;
   flex-shrink: 0;
   margin-top: 2px;
-  font-family: var(--mono);
 }
-.badge-woord { background: rgba(52,201,139,0.15); color: #34C98B; border: 1px solid rgba(52,201,139,0.3); }
-.badge-zin { background: rgba(79,142,247,0.15); color: #4F8EF7; border: 1px solid rgba(79,142,247,0.3); }
-.badge-juridisch { background: rgba(240,180,41,0.15); color: #F0B429; border: 1px solid rgba(240,180,41,0.3); }
-.badge-uitdrukking { background: rgba(167,139,250,0.15); color: #A78BFA; border: 1px solid rgba(167,139,250,0.3); }
+/* Kart türü: kategori paleti (tek marka rengi kuralının bilinçli istisnası) */
+.badge-woord { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.badge-zin { background: var(--blue-bg); color: var(--accent); border: 1px solid var(--blue-border); }
+.badge-juridisch { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
+.badge-uitdrukking { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
 
 .card-dutch {
   font-size: 15px;
@@ -322,6 +314,7 @@ body {
 .btn-detail {
   font-family: var(--font);
   font-size: 12px;
+  min-height: 36px;
   padding: 5px 12px;
   border-radius: 7px;
   border: 1px solid var(--border2);
@@ -333,10 +326,13 @@ body {
   gap: 5px;
 }
 .btn-detail:active { opacity: 0.7; }
+.btn-detail.danger { color: var(--red); border-color: var(--red-border); }
+.btn-detail.icon-only, .btn-speak.icon-only { min-width: 40px; justify-content: center; padding: 5px 8px; }
 
 .btn-known {
   font-family: var(--font);
   font-size: 12px;
+  min-height: 36px;
   padding: 5px 12px;
   border-radius: 7px;
   border: 1px solid var(--border);
@@ -366,13 +362,13 @@ body {
 .section:last-child { margin-bottom: 0; }
 
 .sec-title {
-  font-size: 10px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.04em;
   color: var(--text3);
-  font-family: var(--mono);
   margin-bottom: 7px;
+  display: flex; align-items: center; gap: 5px;
 }
 
 .note-box {
@@ -392,7 +388,7 @@ body {
 }
 .ex-nl { font-size: 13px; color: var(--text); line-height: 1.5; }
 .btn-add-example {
-  font-family: var(--font); font-size: 11px; padding: 3px 10px;
+  font-family: var(--font); font-size: 11px; padding: 6px 10px; min-height: 32px;
   border-radius: 6px; border: 1px solid var(--border2);
   background: transparent; color: var(--green); cursor: pointer;
   margin-top: 5px; display: inline-block;
@@ -409,15 +405,15 @@ body {
   padding: 10px 12px;
 }
 .legal-lbl {
-  font-size: 10px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   color: var(--orange);
-  font-family: var(--mono);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   margin-bottom: 5px;
+  display: flex; align-items: center; gap: 5px;
 }
-.legal-txt { font-size: 13px; color: #c9882a; line-height: 1.6; }
+.legal-txt { font-size: 13px; color: var(--text2); line-height: 1.6; }
 
 .empty {
   text-align: center;
@@ -446,13 +442,13 @@ body {
   color: var(--text3);
 }
 .sr-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.sr-due { color: #f87171; } .sr-due .sr-dot { background: #f87171; box-shadow: 0 0 5px #f87171; }
+.sr-due { color: var(--red); } .sr-due .sr-dot { background: var(--red); }
 .sr-soon { color: var(--orange); } .sr-soon .sr-dot { background: var(--orange); }
 .sr-ok { color: var(--green); } .sr-ok .sr-dot { background: var(--green); }
 .sr-new { color: var(--text3); } .sr-new .sr-dot { background: var(--text3); }
 
 .btn-repeat {
-  font-family: var(--font); font-size: 12px; padding: 5px 12px;
+  font-family: var(--font); font-size: 12px; padding: 5px 12px; min-height: 36px;
   border-radius: 7px; border: 1px solid var(--border2);
   background: transparent; color: var(--accent); cursor: pointer;
   display: flex; align-items: center; gap: 5px; transition: all 0.15s;
@@ -468,18 +464,19 @@ body {
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center; gap: 10px;
 }
-.tekrar-header h2 { font-size: 15px; font-weight: 600; color: var(--text); }
-.tekrar-header .tc { font-size: 12px; color: var(--text3); margin-left: auto; font-family: var(--mono); }
+.tekrar-header h2 { font-size: 15px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 7px; }
+.tekrar-header .tc { font-size: 12px; color: var(--text3); margin-left: auto; font-variant-numeric: tabular-nums; }
 .tekrar-back {
-  font-family: var(--font); font-size: 13px; padding: 6px 12px;
+  font-family: var(--font); font-size: 13px; padding: 6px 12px; min-height: 36px;
+  display: inline-flex; align-items: center; gap: 4px;
   border-radius: 7px; border: 1px solid var(--border2);
   background: transparent; color: var(--text2); cursor: pointer;
 }
 
 .tekrar-section { padding: 14px 16px 4px; }
 .tekrar-section-title {
-  font-size: 11px; font-weight: 500; text-transform: uppercase;
-  letter-spacing: 0.08em; color: var(--text3); font-family: var(--mono);
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.04em; color: var(--text3);
   margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
 }
 .tekrar-section-title .ts-dot { width: 6px; height: 6px; border-radius: 50%; }
@@ -499,7 +496,8 @@ body {
   padding: 0 14px 10px;
 }
 .btn-done {
-  font-family: var(--font); font-size: 12px; padding: 5px 14px;
+  font-family: var(--font); font-size: 12px; padding: 5px 14px; min-height: 36px;
+  display: inline-flex; align-items: center; gap: 5px;
   border-radius: 7px; border: 1px solid var(--green-border);
   background: var(--green-bg); color: var(--green); cursor: pointer;
 }
@@ -521,12 +519,14 @@ body {
   cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px;
   transition: color 0.15s;
 }
-.nav-btn.active { color: var(--green); }
+.nav-btn.active { color: var(--accent); }
 .nav-icon-wrap { position: relative; display: inline-flex; }
-.nav-btn .nav-icon { font-size: 22px; line-height: 1; }
+.nav-btn .nav-icon { font-size: 22px; line-height: 1; display: inline-flex; }
+.nav-btn .ic { width: 22px; height: 22px; stroke-width: 1.75; }
+.nav-btn.active .ic { stroke-width: 2.25; }
 .nav-badge {
   position: absolute; top: -4px; right: -8px;
-  background: #f87171; color: #fff; font-size: 9px; font-family: var(--mono);
+  background: var(--red); color: #fff; font-size: 9px;
   font-weight: 600; border-radius: 10px; padding: 1px 4px;
   min-width: 15px; text-align: center; line-height: 1.4;
   border: 1.5px solid var(--bg2);
@@ -538,8 +538,8 @@ body {
   border-bottom: 1px solid var(--border);
 }
 .settings-section-title {
-  font-size: 11px; font-weight: 500; text-transform: uppercase;
-  letter-spacing: 0.08em; color: var(--text3); font-family: var(--mono);
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.04em; color: var(--text3);
   margin-bottom: 10px;
 }
 .settings-row {
@@ -549,14 +549,14 @@ body {
 .settings-row-label { font-size: 14px; color: var(--text); }
 .settings-row-desc { font-size: 12px; color: var(--text3); margin-top: 2px; }
 .btn-settings {
-  font-family: var(--font); font-size: 13px; padding: 8px 16px;
+  font-family: var(--font); font-size: 13px; padding: 8px 16px; min-height: 40px;
   border-radius: 8px; border: 1px solid var(--border2);
   background: var(--bg3); color: var(--text); cursor: pointer;
   display: flex; align-items: center; gap: 6px; white-space: nowrap;
 }
 .btn-settings:active { opacity: 0.7; }
 .btn-settings.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-.btn-settings.danger { background: #2a1414; border-color: #5a2424; color: #f87171; }
+.btn-settings.danger { background: var(--red-bg); border-color: var(--red-border); color: var(--red); }
 .btn-settings.full { width: 100%; justify-content: center; margin-top: 4px; }
 .settings-status {
   font-size: 12px; padding: 10px 12px; border-radius: 8px; margin-top: 10px;
@@ -564,20 +564,21 @@ body {
 }
 .settings-status.show { display: block; }
 .settings-status.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
-.settings-status.err { background: #2a1414; color: #f87171; border: 1px solid #5a2424; }
+.settings-status.err { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
 .settings-status.loading { background: var(--bg3); color: var(--text2); }
 input[type="file"] { display: none; }
 .sync-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-.sync-dot.online { background: var(--green); box-shadow: 0 0 5px var(--green); }
+.sync-dot.online { background: var(--green); }
 .sync-dot.offline { background: var(--text3); }
-.sync-dot.error { background: #f87171; box-shadow: 0 0 5px #f87171; }
+.sync-dot.error { background: var(--red); }
 
 .theme-toggle, .fontsize-toggle {
   display: flex; gap: 6px;
 }
 .fontsize-toggle { padding: 4px 0 10px; flex-wrap: wrap; }
 .theme-btn, .fs-btn {
-  font-family: var(--font); font-size: 12px; padding: 7px 12px;
+  font-family: var(--font); font-size: 12px; padding: 7px 12px; min-height: 38px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
   border-radius: 8px; border: 1px solid var(--border2);
   background: var(--bg3); color: var(--text2); cursor: pointer;
   transition: all 0.15s; white-space: nowrap;
@@ -592,9 +593,9 @@ input[type="file"] { display: none; }
   padding: 14px 16px; border-bottom: 1px solid var(--border);
 }
 .tc-title {
-  font-size: 11px; font-weight: 500; text-transform: uppercase;
-  letter-spacing: 0.08em; color: var(--text3); font-family: var(--mono);
-  margin-bottom: 10px;
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.04em; color: var(--text3);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 5px;
 }
 .tc-grid {
   display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
@@ -607,13 +608,13 @@ input[type="file"] { display: none; }
 }
 .tc-day.has-due { border-color: var(--accent); background: var(--blue-bg); }
 .tc-day.today-card { border-color: var(--orange); background: var(--orange-bg); }
-.tc-day-label { font-size: 9px; color: var(--text3); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.05em; }
+.tc-day-label { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.03em; font-weight: 600; }
 .tc-day.today-card .tc-day-label { color: var(--orange); }
-.tc-day-count { font-size: 20px; font-weight: 700; color: var(--text); margin-top: 1px; font-family: var(--mono); line-height: 1.1; }
+.tc-day-count { font-size: 20px; font-weight: 700; color: var(--text); margin-top: 1px; line-height: 1.1; font-variant-numeric: tabular-nums; }
 .tc-day-count.zero { color: var(--text3); font-weight: 400; }
-.tc-day-cnt2 { font-size: 10px; color: var(--text3); margin-top: 1px; font-family: var(--mono); }
+.tc-day-cnt2 { font-size: 10px; color: var(--text3); margin-top: 1px; }
 .btn-speak {
-  font-family: var(--font); font-size: 12px; padding: 5px 10px;
+  font-family: var(--font); font-size: 12px; padding: 5px 10px; min-height: 36px;
   border-radius: 7px; border: 1px solid var(--border2);
   background: transparent; color: var(--accent); cursor: pointer;
   display: flex; align-items: center; gap: 4px; transition: all 0.15s;
@@ -634,7 +635,7 @@ input[type="file"] { display: none; }
 }
 .streak-flame { font-size: 48px; line-height: 1; flex-shrink: 0; }
 .streak-info { flex: 1; }
-.streak-count { font-size: 36px; font-weight: 700; color: var(--text); font-family: var(--mono); line-height: 1; }
+.streak-count { font-size: 36px; font-weight: 700; color: var(--text); line-height: 1; font-variant-numeric: tabular-nums; }
 .streak-label { font-size: 12px; color: var(--text3); margin-top: 3px; }
 .streak-badge { display: inline-block; margin-top: 6px; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
 .streak-today { font-size: 12px; margin-top: 8px; display: flex; align-items: center; gap: 5px; }
@@ -644,24 +645,23 @@ input[type="file"] { display: none; }
   background: var(--bg2); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
 }
-.goal-numbers { font-size: 42px; font-weight: 700; font-family: var(--mono); color: var(--text); line-height: 1; }
+.goal-numbers { font-size: 42px; font-weight: 700; color: var(--text); line-height: 1; font-variant-numeric: tabular-nums; }
 .goal-numbers span { color: var(--text3); font-weight: 400; font-size: 28px; }
 .goal-label { font-size: 12px; color: var(--text3); margin-top: 4px; margin-bottom: 12px; }
 .goal-bar-bg { background: var(--bg3); border-radius: 99px; height: 12px; overflow: hidden; }
 .goal-bar-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease, background 0.3s; background: var(--accent); min-width: 4px; }
 .goal-bar-fill.done { background: var(--green); }
 .goal-selector { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
-.goal-btn { font-family: var(--mono); font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); cursor: pointer; }
+.goal-btn { font-family: var(--font); font-size: 13px; font-weight: 600; padding: 5px 12px; min-height: 36px; min-width: 40px; border-radius: 20px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); cursor: pointer; }
 .goal-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
 
 /* Hızlı tekrar butonu */
 .quick-repeat-btn {
   display: block; width: 100%; padding: 16px;
-  background: linear-gradient(135deg, var(--accent), #7c3aed);
+  background: var(--accent);
   border: none; border-radius: var(--radius); cursor: pointer;
   color: #fff; font-family: var(--font); font-size: 16px; font-weight: 600;
   text-align: center; margin-bottom: 12px;
-  box-shadow: 0 4px 16px rgba(79,124,255,0.3);
   transition: opacity 0.15s, transform 0.1s;
 }
 .quick-repeat-btn:active { opacity: 0.85; transform: scale(0.98); }
@@ -694,8 +694,9 @@ input[type="file"] { display: none; }
 /* ── Dinleme Modu — Kurulum ekranı ── */
 .listen-setup { padding: 16px; }
 .listen-setup-label {
-  font-size: 10px; color: var(--text3); font-family: var(--mono);
-  text-transform: uppercase; letter-spacing: 0.06em; margin: 18px 0 8px;
+  font-size: 11px; font-weight: 600; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.04em; margin: 18px 0 8px;
+  display: flex; align-items: center; gap: 5px;
 }
 .listen-setup-label:first-child { margin-top: 0; }
 
@@ -711,7 +712,7 @@ input[type="file"] { display: none; }
 
 .listen-lesson-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
 .listen-opt-btn {
-  font-family: var(--font); font-size: 12px; padding: 6px 12px;
+  font-family: var(--font); font-size: 12px; padding: 6px 12px; min-height: 36px;
   border-radius: 20px; border: 1px solid var(--border2); background: var(--bg3);
   color: var(--text2); cursor: pointer;
 }
@@ -741,13 +742,14 @@ input[type="file"] { display: none; }
 /* ── Dinleme Modu — Oynatma ekranı ── */
 .listen-lesson-tag {
   display: flex; align-items: center; justify-content: center; gap: 10px;
-  font-size: 11px; color: var(--text3); font-family: var(--mono);
-  padding: 14px 16px 4px; text-transform: uppercase; letter-spacing: 0.05em;
+  font-size: 11px; font-weight: 600; color: var(--text3);
+  padding: 14px 16px 4px; text-transform: uppercase; letter-spacing: 0.03em;
   position: relative;
 }
 .listen-setup-link {
   position: absolute; left: 16px; background: transparent; border: none;
   color: var(--text3); font-size: 11px; font-family: var(--font); cursor: pointer;
+  min-height: 36px; display: inline-flex; align-items: center; gap: 4px;
 }
 .listen-card-box {
   margin: 8px 16px 20px; padding: 32px 20px; background: var(--bg2);
@@ -772,13 +774,15 @@ input[type="file"] { display: none; }
   border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
 .listen-ctrl-btn.small { width: 48px; height: 48px; font-size: 20px; }
+.listen-ctrl-btn.small .ic { width: 22px; height: 22px; }
 .listen-ctrl-btn.play {
   width: 68px; height: 68px; font-size: 28px;
   background: var(--accent); border-color: var(--accent); color: #fff;
 }
+.listen-ctrl-btn.play .ic { width: 30px; height: 30px; }
 .listen-ctrl-btn:active { opacity: 0.75; }
 
-.listen-playback-meta { text-align: center; font-size: 12px; color: var(--text3); font-family: var(--mono); }
+.listen-playback-meta { text-align: center; font-size: 12px; color: var(--text3); font-variant-numeric: tabular-nums; }
 
 .listen-empty { text-align: center; padding: 60px 20px; color: var(--text3); }
 
@@ -801,7 +805,7 @@ input[type="file"] { display: none; }
   background: var(--bg2); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 12px;
 }
-.time-stat-val { font-size: 22px; font-weight: 700; color: var(--text); font-family: var(--mono); }
+.time-stat-val { font-size: 22px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
 .time-stat-lbl { font-size: 11px; color: var(--text3); margin-top: 3px; }
 .time-bar-row { display: flex; gap: 6px; align-items: flex-end; height: 80px; }
 .time-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; }
@@ -817,10 +821,10 @@ input[type="file"] { display: none; }
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 10px;
 }
-.cal-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.cal-title { font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 6px; }
 .cal-nav { display: flex; gap: 6px; }
 .cal-nav-btn {
-  font-family: var(--font); font-size: 14px; padding: 4px 10px;
+  font-family: var(--font); font-size: 14px; padding: 4px 12px; min-height: 36px; min-width: 40px;
   border-radius: 7px; border: 1px solid var(--border2);
   background: var(--bg3); color: var(--text2); cursor: pointer;
 }
@@ -860,19 +864,72 @@ input[type="file"] { display: none; }
 @keyframes celebFade { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-30px)} }
 #celebration { background: rgba(0,0,0,0.7); pointer-events:none; }
 #celebration.visible { display:flex !important; flex-direction:column; align-items:center; justify-content:center; }
+
+/* ── Erişilebilirlik & ikon seti (DESIGN.md) ── */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+[lang="nl"] { hyphens: auto; overflow-wrap: anywhere; }
+textarea, #new-cards-input { font-family: var(--code) !important; }
+
+.ic { width: 1em; height: 1em; vertical-align: -0.15em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.btn-detail .ic, .btn-known .ic, .btn-repeat .ic, .btn-speak .ic, .btn-done .ic, .btn-settings .ic, .tekrar-back .ic, .theme-btn .ic { width: 16px; height: 16px; }
+.btn-add-example .ic { width: 13px; height: 13px; }
+.tekrar-header h2 .ic { width: 18px; height: 18px; color: var(--text2); }
+.sec-title .ic, .legal-lbl .ic, .tc-title .ic, .listen-setup-label .ic, .tekrar-section-title .ic { width: 13px; height: 13px; }
+.listen-empty .ic { width: 40px; height: 40px; stroke-width: 1.5; }
+.c-red { color: var(--red); } .c-green { color: var(--green); } .c-orange { color: var(--orange); } .c-accent { color: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
 </style>
 </head>
 <body>
+
+<!-- SVG İKON SPRITE (Tabler Icons, MIT) — kullanım: <svg class="ic"><use href="#i-book"/></svg> / JS: ic('book') -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24"><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M21 21l-6 -6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-circle-check" viewBox="0 0 24 24"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M9 12l2 2l4 -4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M4 12v-3a3 3 0 0 1 3 -3h13m-3 -3l3 3l-3 3"/><path d="M20 12v3a3 3 0 0 1 -3 3h-13m3 3l-3 -3l3 -3"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 13a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"/><path d="M15 9a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"/><path d="M9 5a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"/><path d="M4 20h14"/></symbol>
+  <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M4 13m0 2a2 2 0 0 1 2 -2h1a2 2 0 0 1 2 2v3a2 2 0 0 1 -2 2h-1a2 2 0 0 1 -2 -2z"/><path d="M15 13m0 2a2 2 0 0 1 2 -2h1a2 2 0 0 1 2 2v3a2 2 0 0 1 -2 2h-1a2 2 0 0 1 -2 -2z"/><path d="M4 15v-3a8 8 0 0 1 16 0v3"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="M15 8a5 5 0 0 1 0 8"/><path d="M17.7 5a9 9 0 0 1 0 14"/><path d="M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/><path d="M3 6v13"/><path d="M12 6v13"/><path d="M21 6v13"/></symbol>
+  <symbol id="i-stack" viewBox="0 0 24 24"><path d="M12 4l-8 4l8 4l8 -4l-8 -4"/><path d="M4 12l8 4l8 -4"/><path d="M4 16l8 4l8 -4"/></symbol>
+  <symbol id="i-news" viewBox="0 0 24 24"><path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11"/><path d="M8 8h4"/><path d="M8 12h4"/><path d="M8 16h4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 9l5 -5l5 5"/><path d="M12 4v12"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 11l5 5l5 -5"/><path d="M12 4v12"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M12 12m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3v7h6l-8 11v-7h-6l8 -11"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M12 7v5l3 3"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/><path d="M11 15h1"/><path d="M12 15v3"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4v16l13 -8z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M6 5m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v12a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z"/><path d="M14 5m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v12a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="M20 5v14l-12 -7z"/><path d="M4 5v14"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M4 5v14l12 -7z"/><path d="M20 5v14"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"/><path d="M9 15l-4.5 4.5"/><path d="M14.5 4l5.5 5.5"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M8 9h8"/><path d="M8 13h6"/><path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24"><path d="M7 20h10"/><path d="M6 6l6 -1l6 1"/><path d="M12 3v17"/><path d="M9 12l-3 -6l-3 6a3 3 0 0 0 6 0"/><path d="M21 12l-3 -6l-3 6a3 3 0 0 0 6 0"/></symbol>
+</svg>
 
 <!-- ── SCHERM 1: Kaarten ── -->
 <div class="screen active" id="screen-cards">
 
 <div class="top-bar">
-  <h1><span class="dot"></span> Kantoor Woordenschat</h1>
-  <p>Sociaal raadsman — Hollandıca öğrenme kartları</p>
+  <h1>Kantoor Woordenschat</h1>
+  <p>Sociaal raadsman — Hollandaca öğrenme kartları</p>
   <div class="search-row">
     <div class="search-wrap">
-      <span class="search-icon">🔍</span>
+      <span class="search-icon"><svg class="ic"><use href="#i-search"/></svg></span>
       <input type="text" id="search" placeholder="Ara... (NL veya TR)" />
     </div>
   </div>
@@ -882,7 +939,7 @@ input[type="file"] { display: none; }
   <div class="stat"><div class="stat-num" id="s-total">0</div><div class="stat-lbl">Kart</div></div>
   <div class="stat"><div class="stat-num" id="s-known">0</div><div class="stat-lbl">Öğrenildi</div></div>
   <div class="stat"><div class="stat-num" id="s-legal">0</div><div class="stat-lbl">Hukuki</div></div>
-  <div class="stat"><div class="stat-num" id="s-due">0</div><div class="stat-lbl">Tekrar ⚡</div></div>
+  <div class="stat"><div class="stat-num" id="s-due">0</div><div class="stat-lbl">Tekrar</div></div>
 </div>
 
 <div class="filters" id="type-filters">
@@ -891,7 +948,7 @@ input[type="file"] { display: none; }
   <button class="fbtn" data-filter="woord">Kelimeler</button>
   <button class="fbtn" data-filter="juridisch">Hukuki</button>
   <button class="fbtn" data-filter="uitdrukking">Deyimler</button>
-  <button class="fbtn" data-filter="known">✓ Öğrendiklerim</button>
+  <button class="fbtn" data-filter="known"><svg class="ic"><use href="#i-check"/></svg> Öğrendiklerim</button>
 </div>
 <div class="filters" id="date-filters"></div>
 
@@ -902,8 +959,8 @@ input[type="file"] { display: none; }
 <!-- ── SCHERM 2: Tekrar ── -->
 <div class="screen" id="screen-tekrar">
   <div class="tekrar-header">
-    <button class="tekrar-back" onclick="showScreen('cards')">← Kartlar</button>
-    <h2>🔁 Tekrar Listesi</h2>
+    <button class="tekrar-back" onclick="showScreen('cards')"><svg class="ic"><use href="#i-arrow-left"/></svg>Kartlar</button>
+    <h2><svg class="ic"><use href="#i-repeat"/></svg>Tekrar Listesi</h2>
     <span class="tc" id="tekrar-count"></span>
   </div>
   <div id="tekrar-calendar"></div>
@@ -913,8 +970,8 @@ input[type="file"] { display: none; }
 <!-- ── SCHERM 3: Ayarlar ── -->
 <div class="screen" id="screen-settings">
   <div class="tekrar-header">
-    <button class="tekrar-back" onclick="showScreen('cards')">← Kartlar</button>
-    <h2>⚙️ Ayarlar</h2>
+    <button class="tekrar-back" onclick="showScreen('cards')"><svg class="ic"><use href="#i-arrow-left"/></svg>Kartlar</button>
+    <h2><svg class="ic"><use href="#i-settings"/></svg>Ayarlar</h2>
     <span class="tc"></span>
   </div>
 
@@ -926,8 +983,8 @@ input[type="file"] { display: none; }
         <div class="settings-row-desc">Açık veya koyu görünüm seç</div>
       </div>
       <div class="theme-toggle" id="theme-toggle">
-        <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">🌙 Koyu</button>
-        <button class="theme-btn" data-theme="light" onclick="setTheme('light')">☀️ Açık</button>
+        <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')"><svg class="ic"><use href="#i-moon"/></svg>Koyu</button>
+        <button class="theme-btn" data-theme="light" onclick="setTheme('light')"><svg class="ic"><use href="#i-sun"/></svg>Açık</button>
       </div>
     </div>
     <div class="settings-row">
@@ -951,7 +1008,7 @@ input[type="file"] { display: none; }
         <div class="settings-row-label"><span class="sync-dot" id="sync-dot"></span><span id="sync-text">Kontrol ediliyor...</span></div>
         <div class="settings-row-desc">Supabase veritabanı bağlantısı</div>
       </div>
-      <button class="btn-settings" onclick="checkConnection()">🔄 Test et</button>
+      <button class="btn-settings" onclick="checkConnection()"><svg class="ic"><use href="#i-refresh"/></svg>Test et</button>
     </div>
   </div>
 
@@ -963,7 +1020,7 @@ input[type="file"] { display: none; }
         <div class="settings-row-desc">Yeni kelime/cümle setini Claude'a gönder, sana verdiği JSON kodunu aşağıya yapıştır ve yükle.</div>
       </div>
       <textarea id="new-cards-input" placeholder='[{"date":"...", "type":"woord", "dutch":"...", "turkish":"...", "note":"...", "examples":[...], "legal":null, "is_legal":false}]' style="width:100%; min-height:120px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px; color:var(--text); font-family:var(--mono); font-size:12px; resize:vertical;"></textarea>
-      <button class="btn-settings primary full" onclick="addNewCards()">➕ Kartları Ekle</button>
+      <button class="btn-settings primary full" onclick="addNewCards()"><svg class="ic"><use href="#i-plus"/></svg>Kartları Ekle</button>
     </div>
     <div class="settings-status" id="newcards-status"></div>
   </div>
@@ -975,7 +1032,7 @@ input[type="file"] { display: none; }
         <div class="settings-row-label">Mevcut 183 kartı veritabanına yükle</div>
         <div class="settings-row-desc">Sadece bir kere çalıştır. Veritabanı boşsa kartları gönderir.</div>
       </div>
-      <button class="btn-settings primary full" onclick="seedDatabase()">⬆️ Kartları Veritabanına Yükle</button>
+      <button class="btn-settings primary full" onclick="seedDatabase()"><svg class="ic"><use href="#i-upload"/></svg>Kartları Veritabanına Yükle</button>
     </div>
     <div class="settings-status" id="seed-status"></div>
   </div>
@@ -987,14 +1044,14 @@ input[type="file"] { display: none; }
         <div class="settings-row-label">Dışa aktar (export)</div>
         <div class="settings-row-desc">Tüm kartları ve ilerlemeni bir dosyaya kaydet</div>
       </div>
-      <button class="btn-settings full" onclick="exportData()">⬇️ JSON Olarak İndir</button>
+      <button class="btn-settings full" onclick="exportData()"><svg class="ic"><use href="#i-download"/></svg>JSON Olarak İndir</button>
     </div>
     <div class="settings-row" style="flex-direction:column; align-items:stretch; gap:8px; margin-top:10px;">
       <div>
         <div class="settings-row-label">İçe aktar (import)</div>
         <div class="settings-row-desc">Önceden dışa aktarılmış bir dosyayı yükle</div>
       </div>
-      <button class="btn-settings full" onclick="document.getElementById('import-file').click()">⬆️ Dosyadan Yükle</button>
+      <button class="btn-settings full" onclick="document.getElementById('import-file').click()"><svg class="ic"><use href="#i-upload"/></svg>Dosyadan Yükle</button>
       <input type="file" id="import-file" accept=".json" onchange="importData(event)">
     </div>
     <div class="settings-status" id="io-status"></div>
@@ -1007,7 +1064,7 @@ input[type="file"] { display: none; }
         <div class="settings-row-label">Çöp kutusu</div>
         <div class="settings-row-desc"><span id="trash-count">0</span> kart silinmeyi bekliyor</div>
       </div>
-      <button class="btn-settings" onclick="showScreen('trash')">🗑️ Görüntüle</button>
+      <button class="btn-settings" onclick="showScreen('trash')"><svg class="ic"><use href="#i-trash"/></svg>Görüntüle</button>
     </div>
   </div>
 
@@ -1018,7 +1075,7 @@ input[type="file"] { display: none; }
         <div class="settings-row-label">Tüm ilerlemeyi sıfırla</div>
         <div class="settings-row-desc">Öğrenilen kartlar ve tekrar geçmişi silinir. Kartlar silinmez.</div>
       </div>
-      <button class="btn-settings danger full" onclick="resetProgress()">⚠️ İlerlemeyi Sıfırla</button>
+      <button class="btn-settings danger full" onclick="resetProgress()"><svg class="ic"><use href="#i-alert"/></svg>İlerlemeyi Sıfırla</button>
     </div>
   </div>
 </div><!-- end screen-settings -->
@@ -1026,8 +1083,8 @@ input[type="file"] { display: none; }
 <!-- ── SCHERM 4: Çöp kutusu ── -->
 <div class="screen" id="screen-trash">
   <div class="tekrar-header">
-    <button class="tekrar-back" onclick="showScreen('settings')">← Ayarlar</button>
-    <h2>🗑️ Çöp Kutusu</h2>
+    <button class="tekrar-back" onclick="showScreen('settings')"><svg class="ic"><use href="#i-arrow-left"/></svg>Ayarlar</button>
+    <h2><svg class="ic"><use href="#i-trash"/></svg>Çöp Kutusu</h2>
     <span class="tc"></span>
   </div>
   <div id="trash-content"></div>
@@ -1036,7 +1093,7 @@ input[type="file"] { display: none; }
 <!-- ── SCHERM 5: İlerleme ── -->
 <div class="screen" id="screen-progress">
   <div class="tekrar-header">
-    <h2>📊 İlerleme</h2>
+    <h2><svg class="ic"><use href="#i-chart"/></svg>İlerleme</h2>
     <span class="tc" id="progress-date"></span>
   </div>
   <div id="progress-content"></div>
@@ -1045,7 +1102,7 @@ input[type="file"] { display: none; }
 <!-- ── SCHERM 7: Dinleme Modu ── -->
 <div class="screen" id="screen-listen">
   <div class="tekrar-header">
-    <h2>🎧 Dinleme Modu</h2>
+    <h2><svg class="ic"><use href="#i-headphones"/></svg>Dinleme Modu</h2>
     <span class="tc" id="listen-progress-text"></span>
   </div>
   <div id="listen-content"></div>
@@ -1054,7 +1111,7 @@ input[type="file"] { display: none; }
 <!-- ── SCHERM 6: Gazete ── -->
 <div class="screen" id="screen-gazete">
   <div class="tekrar-header">
-    <h2>📰 Gazete Modu</h2>
+    <h2><svg class="ic"><use href="#i-news"/></svg>Gazete Modu</h2>
     <span class="tc" id="gazete-status-text"></span>
   </div>
 
@@ -1066,32 +1123,32 @@ input[type="file"] { display: none; }
       placeholder="Hollandaca metni buraya yapıştır..."
       style="width:100%;min-height:140px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px;color:var(--text);font-family:var(--font);font-size:14px;resize:vertical;line-height:1.6;"></textarea>
     <div style="display:flex;gap:8px;margin-top:10px;">
-      <button class="btn-settings primary" style="flex:1" onclick="gazeteParse()">📖 Metni Yükle</button>
-      <button class="btn-settings" onclick="gazeteClear()">✕ Temizle</button>
+      <button class="btn-settings primary" style="flex:1" onclick="gazeteParse()"><svg class="ic"><use href="#i-book"/></svg>Metni Yükle</button>
+      <button class="btn-settings" onclick="gazeteClear()"><svg class="ic"><use href="#i-x"/></svg>Temizle</button>
     </div>
   </div>
 
-  <div id="gazete-reader" style="display:none;padding:0 16px 100px;"></div>
+  <div id="gazete-reader" lang="nl" style="display:none;padding:0 16px 100px;"></div>
 
   <!-- Kelime analiz paneli -->
   <div id="gazete-panel" style="display:none;position:fixed;bottom:65px;left:0;right:0;background:var(--bg2);border-top:2px solid var(--accent);border-radius:16px 16px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,0.4);">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <span id="gp-word" style="font-size:20px;font-weight:700;color:var(--text);"></span>
+      <span id="gp-word" lang="nl" style="font-size:20px;font-weight:700;color:var(--text);"></span>
       <div style="display:flex;gap:8px;align-items:center;">
-        <button class="btn-speak" id="gp-speak-btn" onclick="gazeteSpeakWord()" title="Dinle">🔊</button>
-        <button onclick="gazeteClosePanel()" style="background:transparent;border:none;color:var(--text3);font-size:20px;cursor:pointer;">✕</button>
+        <button class="btn-speak icon-only" id="gp-speak-btn" onclick="gazeteSpeakWord()" title="Dinle"><svg class="ic"><use href="#i-volume"/></svg></button>
+        <button onclick="gazeteClosePanel()" title="Kapat" style="background:transparent;border:none;color:var(--text3);font-size:20px;cursor:pointer;min-width:40px;min-height:40px;display:inline-flex;align-items:center;justify-content:center;"><svg class="ic"><use href="#i-x"/></svg></button>
       </div>
     </div>
-    <div id="gp-loading" style="color:var(--text3);font-size:13px;">⏳ Analiz ediliyor...</div>
+    <div id="gp-loading" style="color:var(--text3);font-size:13px;">Analiz ediliyor…</div>
     <div id="gp-content" style="display:none;">
       <div id="gp-turkish" style="font-size:15px;color:var(--text2);margin-bottom:10px;"></div>
       <div id="gp-note" style="font-size:13px;color:var(--text3);background:var(--bg3);border-radius:8px;padding:10px;margin-bottom:10px;line-height:1.6;"></div>
       <div id="gp-examples" style="margin-bottom:12px;"></div>
       <div style="display:flex;gap:8px;">
-        <button class="btn-settings primary" style="flex:1" onclick="gazeteAddCard()">➕ Karta Ekle</button>
+        <button class="btn-settings primary" style="flex:1" onclick="gazeteAddCard()"><svg class="ic"><use href="#i-plus"/></svg>Karta Ekle</button>
         <button class="btn-settings" onclick="gazeteClosePanel()">Kapat</button>
       </div>
-      <div id="gp-added-status" style="display:none;font-size:12px;color:var(--green);margin-top:8px;text-align:center;">✅ Kart eklendi!</div>
+      <div id="gp-added-status" style="display:none;font-size:12px;color:var(--green);margin-top:8px;text-align:center;"><svg class="ic"><use href="#i-circle-check"/></svg> Kart eklendi!</div>
     </div>
   </div>
 </div><!-- end screen-gazete -->
@@ -1105,34 +1162,37 @@ input[type="file"] { display: none; }
 <!-- ── Alt navigasyon ── -->
 <div class="bottom-nav">
   <button class="nav-btn active" id="nav-cards" onclick="showScreen('cards')">
-    <span class="nav-icon">🗂️</span>
+    <span class="nav-icon"><svg class="ic"><use href="#i-stack"/></svg></span>
     <span>Kartlar</span>
   </button>
   <button class="nav-btn" id="nav-tekrar" onclick="showScreen('tekrar')">
     <span class="nav-icon-wrap">
-      <span class="nav-icon">🔁</span>
+      <span class="nav-icon"><svg class="ic"><use href="#i-repeat"/></svg></span>
       <span class="nav-badge" id="nav-badge" style="display:none">0</span>
     </span>
     <span>Tekrar</span>
   </button>
   <button class="nav-btn" id="nav-progress" onclick="showScreen('progress')">
-    <span class="nav-icon">📊</span>
+    <span class="nav-icon"><svg class="ic"><use href="#i-chart"/></svg></span>
     <span>İlerleme</span>
   </button>
   <button class="nav-btn" id="nav-gazete" onclick="showScreen('gazete')">
-    <span class="nav-icon">📰</span>
+    <span class="nav-icon"><svg class="ic"><use href="#i-news"/></svg></span>
     <span>Gazete</span>
   </button>
   <button class="nav-btn" id="nav-listen" onclick="showScreen('listen')">
-    <span class="nav-icon">🎧</span>
+    <span class="nav-icon"><svg class="ic"><use href="#i-headphones"/></svg></span>
     <span>Dinle</span>
   </button>
   <button class="nav-btn" id="nav-settings" onclick="showScreen('settings')">
-    <span class="nav-icon">⚙️</span>
+    <span class="nav-icon"><svg class="ic"><use href="#i-settings"/></svg></span>
     <span>Ayarlar</span>
   </button>
 </div>
 <script>
+function ic(name, cls) {
+  return '<svg class="ic' + (cls ? ' ' + cls : '') + '" aria-hidden="true"><use href="#i-' + name + '"></use></svg>';
+}
 // ════════════════════════════════════════
 // SEED DATA (ilk yükleme için, sadece veritabanı boşsa kullanılır)
 // ════════════════════════════════════════
@@ -1434,7 +1494,7 @@ function renderProgress() {
           <div class="streak-count">${streak}</div>
           <div class="streak-label">günlük seri</div>
           <div class="streak-badge">${badge.label}</div>
-          <div class="streak-today">${workedToday ? '✅ Bugün çalıştın!' : '⚠️ Bugün henüz çalışmadın'}</div>
+          <div class="streak-today">${workedToday ? ic('circle-check','c-green') + ' Bugün çalıştın!' : ic('alert','c-orange') + ' Bugün henüz çalışmadın'}</div>
         </div>
       </div>
     </div>
@@ -1442,7 +1502,7 @@ function renderProgress() {
     <div class="progress-section">
       <div class="goal-card">
         <div class="goal-numbers">${todayCount}<span> / ${dailyGoal}</span></div>
-        <div class="goal-label">bugünkü aktivite ${goalDone ? '— 🎯 Hedefe ulaştın!' : ''}</div>
+        <div class="goal-label">bugünkü aktivite ${goalDone ? '— ' + ic('target','c-green') + ' Hedefe ulaştın!' : ''}</div>
         <div class="goal-bar-bg">
           <div class="goal-bar-fill ${goalDone?'done':''}" style="width:${goalPct}%"></div>
         </div>
@@ -1455,7 +1515,7 @@ function renderProgress() {
 
     <div class="progress-section">
       <button class="quick-repeat-btn" onclick="showScreen('tekrar')">
-        ⚡ Hızlı Tekrar
+        ${ic('bolt')} Hızlı Tekrar
         <div class="qr-sub">${dueNow > 0 ? `${dueNow} kart seni bekliyor` : 'Tekrar listesine git'}</div>
       </button>
     </div>
@@ -1469,7 +1529,7 @@ function renderProgress() {
     </div>
 
     <div class="progress-section">
-      <div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);font-family:var(--mono);margin-bottom:10px;">📊 Son 10 Hafta</div>
+      <div class="tc-title">${ic('chart')}Son 10 Hafta</div>
       ${renderHeatmap()}
     </div>
   `;
@@ -1487,7 +1547,7 @@ function renderTimeStats() {
   const maxSec = Math.max(...last7, 1);
 
   return `
-    <div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);font-family:var(--mono);margin-bottom:10px;">⏱️ Çalışma Süresi</div>
+    <div class="tc-title">${ic('clock')}Çalışma Süresi</div>
     <div class="time-stats-row">
       <div class="time-stat-card">
         <div class="time-stat-val">${formatDuration(todaySec)}</div>
@@ -1581,7 +1641,7 @@ function renderCalendarView() {
 
   return `
     <div class="cal-header">
-      <div class="cal-title">📅 ${monthNames[calViewMonth]} ${calViewYear}</div>
+      <div class="cal-title">${ic('calendar')}${monthNames[calViewMonth]} ${calViewYear}</div>
       <div class="cal-nav">
         <button class="cal-nav-btn" onclick="calPrev()">‹</button>
         <button class="cal-nav-btn" onclick="calNext()" ${!canNext ? 'disabled style="opacity:0.3"' : ''}>›</button>
@@ -1729,9 +1789,9 @@ function speakDutch(e, text) {
 // GÖRÜNÜM — Tema & Yazı boyutu
 // ════════════════════════════════════════
 function loadAppearancePrefs() {
-  let theme = 'dark';
+  let theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
   let scale = 1;
-  try { theme = localStorage.getItem('kv_theme') || 'dark'; } catch(e) {}
+  try { theme = localStorage.getItem('kv_theme') || theme; } catch(e) {}
   try { scale = parseFloat(localStorage.getItem('kv_fontscale')) || 1; } catch(e) {}
   applyTheme(theme);
   applyFontScale(scale);
@@ -1824,7 +1884,7 @@ function gazeteTapWord(el, word) {
     loading.style.display = 'none';
     content.style.display = 'block';
   }).catch(err => {
-    loading.textContent = '❌ Hata: ' + err.message;
+    loading.innerHTML = ic('alert','c-red') + ' Hata: ' + err.message;
   });
 }
 
@@ -1864,7 +1924,7 @@ async function gazeteAddCard() {
   if (!gazetePendingCard) return;
   const btn = document.querySelector('#gp-content .btn-settings.primary');
   const statusEl = document.getElementById('gp-added-status');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Ekleniyor...'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Ekleniyor…'; }
 
   try {
     await insertCardsRemote([{
@@ -1882,11 +1942,11 @@ async function gazeteAddCard() {
     buildDateFilters();
     updateStats();
     statusEl.style.display = 'block';
-    statusEl.textContent = '✅ "' + gazetePendingCard.dutch + '" kartına eklendi!';
-    if (btn) { btn.textContent = '✓ Eklendi'; }
+    statusEl.textContent = '"' + gazetePendingCard.dutch + '" kartına eklendi!';
+    if (btn) { btn.innerHTML = ic('check') + 'Eklendi'; }
     gazetePendingCard = null;
   } catch (e) {
-    if (btn) { btn.disabled = false; btn.textContent = '➕ Karta Ekle'; }
+    if (btn) { btn.disabled = false; btn.innerHTML = ic('plus') + 'Karta Ekle'; }
     statusEl.style.display = 'block';
     statusEl.style.color = '#f87171';
     statusEl.textContent = '❌ Hata: ' + e.message;
@@ -1998,7 +2058,7 @@ function renderListenSetup(el) {
 
   el.innerHTML = `
     <div class="listen-setup">
-      <div class="listen-setup-label">KAPSAM</div>
+      <div class="listen-setup-label">Kapsam</div>
       <div class="listen-scope-grid">
         <div class="listen-scope-card ${listenScope==='today'?'active':''}" onclick="setListenScope('today')">
           <div class="lsc-title">Bugün</div>
@@ -2012,16 +2072,16 @@ function renderListenSetup(el) {
           ${listenLessonDate ? `<div class="lsc-sub">${listenLessonDate}</div>` : ''}
         </div>
       </div>
-      ${listenScope==='lesson' ? `<div class="listen-lesson-chips">${sentenceDates.map(d => `<button class="listen-opt-btn ${d===listenLessonDate?'active':''}" onclick="selectListenLesson('${d}')">${d==='STAJ'?'📚 STAJ':d}</button>`).join('')}</div>` : ''}
+      ${listenScope==='lesson' ? `<div class="listen-lesson-chips">${sentenceDates.map(d => `<button class="listen-opt-btn ${d===listenLessonDate?'active':''}" onclick="selectListenLesson('${d}')">${d}</button>`).join('')}</div>` : ''}
 
       <div class="listen-setup-count">${count} cümle dinlenecek</div>
 
-      <div class="listen-setup-label">HER CÜMLE</div>
+      <div class="listen-setup-label">Her cümle</div>
       <div class="listen-setup-row">
         ${[1,2,3,5,7].map(n => `<button class="listen-setup-opt ${n===listenRepeatCount?'active':''}" onclick="setListenRepeat(${n})">${n}×${n===7?'<div class="lso-sub">ezberlik</div>':''}</button>`).join('')}
       </div>
 
-      <div class="listen-setup-label">⏱ ARALARDA BOŞLUK</div>
+      <div class="listen-setup-label">${ic('clock')}Aralarda boşluk</div>
       <div class="listen-setup-row">
         <button class="listen-setup-opt ${listenGap==='none'?'active':''}" onclick="setListenGap('none')">Yok</button>
         <button class="listen-setup-opt ${listenGap==='short'?'active':''}" onclick="setListenGap('short')">Kısa</button>
@@ -2029,14 +2089,14 @@ function renderListenSetup(el) {
         <button class="listen-setup-opt ${listenGap==='long'?'active':''}" onclick="setListenGap('long')">Uzun<div class="lso-sub">ağır ağır</div></button>
       </div>
 
-      <div class="listen-setup-label">⚡ HIZ</div>
+      <div class="listen-setup-label">${ic('bolt')}Hız</div>
       <div class="listen-setup-row">
         ${[0.75,1,1.25,1.5,2].map(s => `<button class="listen-setup-opt ${s===listenSpeed?'active':''}" onclick="setListenSpeed(${s})">${s}×</button>`).join('')}
       </div>
 
       <div class="listen-setup-actions">
         <button class="listen-setup-cancel" onclick="showScreen('cards')">Vazgeç</button>
-        <button class="listen-setup-start" onclick="listenStartPlayback()">▶️ Başlat</button>
+        <button class="listen-setup-start" onclick="listenStartPlayback()">${ic('play')} Başlat</button>
       </div>
     </div>
   `;
@@ -2044,7 +2104,7 @@ function renderListenSetup(el) {
 
 function renderListenPlayback(el, progressText) {
   if (!listenQueue.length) {
-    el.innerHTML = '<div class="listen-empty">🎧<br><br>Dinlenecek cümle bulunamadı.</div>';
+    el.innerHTML = '<div class="listen-empty">' + ic('headphones') + '<br><br>Dinlenecek cümle bulunamadı.</div>';
     if (progressText) progressText.textContent = '';
     return;
   }
@@ -2055,21 +2115,21 @@ function renderListenPlayback(el, progressText) {
 
   el.innerHTML = `
     <div class="listen-lesson-tag">
-      <button class="listen-setup-link" onclick="listenBackToSetup()">⚙️ Ayarlar</button>
-      <span>${card.date === 'STAJ' ? '📚 STAJ' : card.date}</span>
+      <button class="listen-setup-link" onclick="listenBackToSetup()">${ic('settings')}Ayarlar</button>
+      <span>${card.date}</span>
     </div>
     <div class="listen-progress-bar-bg"><div class="listen-progress-bar-fill" style="width:${pct}%"></div></div>
 
     <div class="listen-card-box">
-      <div class="listen-word">${card.dutch}</div>
+      <div class="listen-word" lang="nl">${card.dutch}</div>
       <div class="listen-tr">${card.turkish}</div>
       ${card.note ? `<div class="listen-note">${card.note}</div>` : ''}
     </div>
 
     <div class="listen-controls">
-      <button class="listen-ctrl-btn small" onclick="listenPrev()">⏮</button>
-      <button class="listen-ctrl-btn play" onclick="listenTogglePlay()">${listenPlaying ? '⏸' : '▶️'}</button>
-      <button class="listen-ctrl-btn small" onclick="listenNextManual()">⏭</button>
+      <button class="listen-ctrl-btn small" onclick="listenPrev()" title="Önceki">${ic('prev')}</button>
+      <button class="listen-ctrl-btn play" onclick="listenTogglePlay()" title="${listenPlaying ? 'Duraklat' : 'Oynat'}">${listenPlaying ? ic('pause') : ic('play')}</button>
+      <button class="listen-ctrl-btn small" onclick="listenNextManual()" title="Sonraki">${ic('next')}</button>
     </div>
 
     <div class="listen-playback-meta">
@@ -2169,7 +2229,7 @@ async function addExampleAsCard(e, itemId, i) {
   const ex = item.examples[i];
 
   btn.disabled = true;
-  btn.textContent = '⏳...';
+  btn.textContent = '…';
 
   try {
     await insertCardsRemote([{
@@ -2186,11 +2246,11 @@ async function addExampleAsCard(e, itemId, i) {
     cacheCards();
     buildDateFilters();
     updateStats();
-    btn.textContent = '✓ Eklendi';
+    btn.innerHTML = ic('check') + ' Eklendi';
     btn.classList.add('added');
   } catch (err) {
     btn.disabled = false;
-    btn.textContent = '➕ Ezberle';
+    btn.innerHTML = ic('plus') + ' Ezberle';
     alert('Hata: ' + err.message);
   }
 }
@@ -2352,14 +2412,14 @@ function isDue(id) {
 function srStatusLabel(id) {
   const p = srInfo(id);
   if (!p) return null;
-  if (p.sr_step >= SR_INTERVALS.length) return { cls: 'sr-ok', text: '✓ Tamamlandı (7/7)' };
+  if (p.sr_step >= SR_INTERVALS.length) return { cls: 'sr-ok', text: ic('check') + ' Tamamlandı (7/7)' };
   const due = new Date(p.sr_next_due).getTime();
   const diff = due - Date.now();
   const n = p.sr_step + 1;
-  if (diff <= 0) return { cls: 'sr-due', text: `🔁 ${n}. tekrar — ŞİMDİ!` };
-  if (diff < 3600000) return { cls: 'sr-soon', text: `🔁 ${n}. tekrar — ${Math.ceil(diff/60000)} dk sonra` };
-  if (diff < 86400000) return { cls: 'sr-soon', text: `🔁 ${n}. tekrar — ${Math.ceil(diff/3600000)} saat sonra` };
-  return { cls: 'sr-ok', text: `🔁 ${n}. tekrar — ${Math.ceil(diff/86400000)} gün sonra` };
+  if (diff <= 0) return { cls: 'sr-due', text: `${n}. tekrar — şimdi!` };
+  if (diff < 3600000) return { cls: 'sr-soon', text: `${n}. tekrar — ${Math.ceil(diff/60000)} dk sonra` };
+  if (diff < 86400000) return { cls: 'sr-soon', text: `${n}. tekrar — ${Math.ceil(diff/3600000)} saat sonra` };
+  return { cls: 'sr-ok', text: `${n}. tekrar — ${Math.ceil(diff/86400000)} gün sonra` };
 }
 async function startSR(id) {
   const next = new Date(Date.now() + SR_INTERVALS[0] * 60000).toISOString();
@@ -2534,9 +2594,9 @@ function renderTekrar() {
   if (!due.length && !upcoming.length && !completed.length) {
     html = `<div class="tekrar-empty"><div style="font-size:32px;margin-bottom:8px">🎉</div><div>Şu an tekrar edilecek kart yok.</div><div style="font-size:12px;margin-top:6px;color:var(--text3)">Kartlarda "Öğrendim" butonuna bas, program başlar.</div></div>`;
   } else {
-    if (due.length) html += `<div class="tekrar-section"><div class="tekrar-section-title"><span class="ts-dot" style="background:#f87171"></span> ŞİMDİ tekrar et (${due.length})</div>${due.map(i=>tekrarCard(i)).join('')}</div>`;
+    if (due.length) html += `<div class="tekrar-section"><div class="tekrar-section-title"><span class="ts-dot" style="background:var(--red)"></span> Şimdi tekrar et (${due.length})</div>${due.map(i=>tekrarCard(i)).join('')}</div>`;
     if (upcoming.length) html += `<div class="tekrar-section"><div class="tekrar-section-title"><span class="ts-dot" style="background:var(--orange)"></span> Bugün yaklaşan (${upcoming.length})</div>${upcoming.map(i=>tekrarCard(i,true)).join('')}</div>`;
-    if (completed.length) html += `<div class="tekrar-section"><div class="tekrar-section-title"><span class="ts-dot" style="background:var(--green)"></span> Tamamlanan (${completed.length})</div>${completed.map(i=>`<div class="tekrar-card"><div class="tekrar-card-head"><div class="tekrar-card-dutch">${i.dutch}</div><div class="tekrar-card-tr">${i.turkish}</div><div class="tekrar-card-meta">✓ 7/7 tekrar tamamlandı</div></div></div>`).join('')}</div>`;
+    if (completed.length) html += `<div class="tekrar-section"><div class="tekrar-section-title"><span class="ts-dot" style="background:var(--green)"></span> Tamamlanan (${completed.length})</div>${completed.map(i=>`<div class="tekrar-card"><div class="tekrar-card-head"><div class="tekrar-card-dutch" lang="nl">${i.dutch}</div><div class="tekrar-card-tr">${i.turkish}</div><div class="tekrar-card-meta">${ic('check','c-green')} 7/7 tekrar tamamlandı</div></div></div>`).join('')}</div>`;
   }
   document.getElementById('tekrar-content').innerHTML = html;
   const tc = document.getElementById('tekrar-count');
@@ -2580,7 +2640,7 @@ function renderTekrarCalendar() {
     return gunler[d.getDay()] + '\n' + d.getDate();
   });
 
-  let html = `<div class="tekrar-calendar"><div class="tc-title">📅 Tekrar Takvimi</div><div class="tc-grid">`;
+  let html = `<div class="tekrar-calendar"><div class="tc-title">${ic('calendar')}Tekrar Takvimi</div><div class="tc-grid">`;
   if (overdueCount > 0) {
     html += `<div class="tc-day has-due"><div class="tc-day-label">Geciken</div><div class="tc-day-count">${overdueCount}</div></div>`;
   }
@@ -2604,7 +2664,7 @@ function tekrarCard(item, readonly=false) {
   const n = p ? p.sr_step + 1 : 1;
   const diff = p && p.sr_next_due ? new Date(p.sr_next_due).getTime() - Date.now() : 0;
   let t = diff > 0 ? (diff < 3600000 ? Math.ceil(diff/60000)+' dk sonra' : Math.ceil(diff/3600000)+' saat sonra') : 'şimdi!';
-  return `<div class="tekrar-card"><div class="tekrar-card-head" onclick="toggleTekrarCard(${item.id})"><div class="tekrar-card-dutch">${item.dutch}</div><div class="tekrar-card-tr">${item.turkish}</div><div class="tekrar-card-meta">${n}. tekrar — ${t}</div></div><div class="card-body" id="tbody-${item.id}">${item.note?`<div class="section"><div class="sec-title">📌 Not</div><div class="note-box">${item.note}</div></div>`:''}<div class="section"><div class="sec-title">💬 Örnek cümleler</div><div class="examples">${item.examples.map(ex=>`<div class="ex-item"><div class="ex-nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div></div>`).join('')}</div></div>${item.legal?`<div class="section"><div class="legal-box"><div class="legal-lbl">⚖️ Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>`:''}</div><div class="tekrar-card-actions"><button class="btn-speak" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')">🔊 Dinle</button>${!readonly?`<button class="btn-done" onclick="markRepeat(${item.id})">✓ Tekrar ettim</button>`:''}</div></div>`;
+  return `<div class="tekrar-card"><div class="tekrar-card-head" onclick="toggleTekrarCard(${item.id})"><div class="tekrar-card-dutch" lang="nl">${item.dutch}</div><div class="tekrar-card-tr">${item.turkish}</div><div class="tekrar-card-meta">${n}. tekrar — ${t}</div></div><div class="card-body" id="tbody-${item.id}">${item.note?`<div class="section"><div class="sec-title">${ic('pin')}Not</div><div class="note-box">${item.note}</div></div>`:''}<div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map(ex=>`<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div></div>`).join('')}</div></div>${item.legal?`<div class="section"><div class="legal-box"><div class="legal-lbl">${ic('scale')}Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>`:''}</div><div class="tekrar-card-actions"><button class="btn-speak" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')">${ic('volume')}Dinle</button>${!readonly?`<button class="btn-done" onclick="markRepeat(${item.id})">${ic('check')}Tekrar ettim</button>`:''}</div></div>`;
 }
 function toggleTekrarCard(id) { const b = document.getElementById('tbody-'+id); if (b) b.classList.toggle('open'); }
 async function markRepeat(id) { await doRepeat(id); recordActivity(); updateStats(); renderTekrar(); }
@@ -2656,7 +2716,7 @@ function buildDateFilters() {
     const btn = document.createElement('button');
     btn.className = 'fbtn date-btn';
     btn.dataset.date = date;
-    btn.textContent = date === 'STAJ' ? '📚 STAJ' : date;
+    btn.textContent = date;
     container.appendChild(btn);
   });
   container.querySelectorAll('.date-btn').forEach(btn => {
@@ -2690,10 +2750,10 @@ function renderAll() {
   content.innerHTML = sortedDates.map(date => {
     const isOpen = openGroups.has(date);
     const key = date.replace('/', '_');
-    const label = date === 'STAJ' ? '📚 STAJ — Genel Kelimeler' : date;
+    const label = date === 'STAJ' ? 'STAJ — Genel Kelimeler' : date;
     return `<div class="date-group ${isOpen ? 'open' : ''}" id="dg-${key}" data-date="${date}">
       <div class="date-label" onclick="toggleGroup('${date}')">
-        <span class="dl-dot"></span><span>${label}</span>
+        <span>${label}</span>
         <span class="dl-meta">${grouped[date].length} kart</span>
         <span class="dl-arrow">›</span>
       </div>
@@ -2720,23 +2780,23 @@ function renderCard(item) {
   return `<div class="card${due ? ' expanded' : ''}" id="card-${item.id}">
     <div class="card-head" onclick="toggleCard(${item.id})">
       <span class="badge ${badgeCls}">${typeLbl}</span>
-      <div style="flex:1;min-width:0"><div class="card-dutch">${item.dutch}</div><div class="card-tr">${item.turkish}</div></div>
+      <div style="flex:1;min-width:0"><div class="card-dutch" lang="nl">${item.dutch}</div><div class="card-tr">${item.turkish}</div></div>
       <span style="color:var(--text3);font-size:18px;flex-shrink:0;margin-top:2px" id="arr-${item.id}">›</span>
     </div>
     ${sr ? `<div class="sr-status ${sr.cls}"><span class="sr-dot"></span>${sr.text}</div>` : ''}
     <div class="card-footer">
       <button class="btn-detail" onclick="toggleCard(${item.id})">Detay</button>
-      <button class="btn-speak" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')" title="Hollandaca dinle">🔊</button>
-      ${known && due ? `<button class="btn-repeat" onclick="quickRepeat(event,${item.id})">🔁 Tekrar ettim</button>` : ''}
+      <button class="btn-speak icon-only" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')" title="Hollandaca dinle">${ic('volume')}</button>
+      ${known && due ? `<button class="btn-repeat" onclick="quickRepeat(event,${item.id})">${ic('repeat')}Tekrar ettim</button>` : ''}
       <button class="btn-known ${known?'known':''}" onclick="toggleKnown(event,${item.id})">
-        ${known ? '✓ Öğrenildi' : '📖 Öğrendim'}
+        ${known ? ic('check') + 'Öğrenildi' : ic('book') + 'Öğrendim'}
       </button>
-      <button class="btn-detail" style="color:#f87171;border-color:#5a2424" onclick="confirmDelete(event,${item.id})" title="Sil">🗑️</button>
+      <button class="btn-detail danger icon-only" onclick="confirmDelete(event,${item.id})" title="Sil">${ic('trash')}</button>
     </div>
     <div class="card-body" id="body-${item.id}">
-      ${item.note ? `<div class="section"><div class="sec-title">📌 Not</div><div class="note-box">${item.note}</div></div>` : ''}
-      <div class="section"><div class="sec-title">💬 Örnek cümleler</div><div class="examples">${item.examples.map((ex,i)=>`<div class="ex-item"><div class="ex-nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div><button class="btn-add-example" onclick="addExampleAsCard(event,${item.id},${i})">➕ Ezberle</button></div>`).join('')}</div></div>
-      ${item.legal ? `<div class="section"><div class="legal-box"><div class="legal-lbl">⚖️ Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>` : ''}
+      ${item.note ? `<div class="section"><div class="sec-title">${ic('pin')}Not</div><div class="note-box">${item.note}</div></div>` : ''}
+      <div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map((ex,i)=>`<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div><button class="btn-add-example" onclick="addExampleAsCard(event,${item.id},${i})">${ic('plus')} Ezberle</button></div>`).join('')}</div></div>
+      ${item.legal ? `<div class="section"><div class="legal-box"><div class="legal-lbl">${ic('scale')}Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>` : ''}
     </div>
   </div>`;
 }
@@ -2801,12 +2861,12 @@ function refreshCard(id) {
   if (footer) {
     footer.innerHTML = `
       <button class="btn-detail" onclick="toggleCard(${id})">Detay</button>
-      <button class="btn-speak" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')" title="Hollandaca dinle">🔊</button>
-      ${known && due ? `<button class="btn-repeat" onclick="quickRepeat(event,${id})">🔁 Tekrar ettim</button>` : ''}
+      <button class="btn-speak icon-only" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')" title="Hollandaca dinle">${ic('volume')}</button>
+      ${known && due ? `<button class="btn-repeat" onclick="quickRepeat(event,${id})">${ic('repeat')}Tekrar ettim</button>` : ''}
       <button class="btn-known ${known?'known':''}" onclick="toggleKnown(event,${id})">
-        ${known ? '✓ Öğrenildi' : '📖 Öğrendim'}
+        ${known ? ic('check') + 'Öğrenildi' : ic('book') + 'Öğrendim'}
       </button>
-      <button class="btn-detail" style="color:#f87171;border-color:#5a2424" onclick="confirmDelete(event,${id})" title="Sil">🗑️</button>
+      <button class="btn-detail danger icon-only" onclick="confirmDelete(event,${id})" title="Sil">${ic('trash')}</button>
     `;
   }
 
