@@ -381,6 +381,30 @@ body {
   line-height: 1.6;
 }
 
+/* Eenvoudige uitleg — Hollandaca açıklama */
+.uitleg-box {
+  background: rgba(79,142,247,0.08);
+  border: 1px solid rgba(79,142,247,0.25);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* Türev / Köken — etimoloji */
+.etym-box {
+  background: rgba(167,139,250,0.07);
+  border: 1px solid rgba(167,139,250,0.22);
+  border-left: 3px solid var(--purple);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
 .examples { display: flex; flex-direction: column; gap: 8px; }
 .ex-item {
   border-left: 2px solid var(--border2);
@@ -1142,6 +1166,8 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
     <div id="gp-loading" style="color:var(--text3);font-size:13px;">Analiz ediliyor…</div>
     <div id="gp-content" style="display:none;">
       <div id="gp-turkish" style="font-size:15px;color:var(--text2);margin-bottom:10px;"></div>
+      <div id="gp-uitleg" class="uitleg-box" lang="nl" style="margin-bottom:8px;display:none;"></div>
+      <div id="gp-etymology" class="etym-box" style="margin-bottom:8px;display:none;"></div>
       <div id="gp-note" style="font-size:13px;color:var(--text3);background:var(--bg3);border-radius:8px;padding:10px;margin-bottom:10px;line-height:1.6;"></div>
       <div id="gp-examples" style="margin-bottom:12px;"></div>
       <div style="display:flex;gap:8px;">
@@ -1257,6 +1283,7 @@ async function loadCardsFromDB() {
   const data = await sbFetch('cards?select=*&order=id.asc');
   return data.map(c => ({
     id: c.id, date: c.date, type: c.type, dutch: c.dutch, turkish: c.turkish,
+    uitleg: c.uitleg, etymology: c.etymology,
     note: c.note, examples: c.examples || [], legal: c.legal, isLegal: c.is_legal
   }));
 }
@@ -1297,6 +1324,7 @@ async function insertCardsRemote(cardsArr) {
   // Supabase'e id olmadan gönder (identity column otomatik atar)
   const payload = cardsArr.map(c => ({
     date: c.date, type: c.type, dutch: c.dutch, turkish: c.turkish,
+    uitleg: c.uitleg || null, etymology: c.etymology || null,
     note: c.note, examples: c.examples, legal: c.legal, is_legal: c.is_legal
   }));
   return sbFetch('cards', {
@@ -1873,6 +1901,12 @@ function gazeteTapWord(el, word) {
   analyzeWord(word).then(card => {
     gazetePendingCard = card;
     document.getElementById('gp-turkish').textContent = card.turkish;
+    const uEl = document.getElementById('gp-uitleg');
+    uEl.textContent = card.uitleg || '';
+    uEl.style.display = card.uitleg ? 'block' : 'none';
+    const eEl = document.getElementById('gp-etymology');
+    eEl.textContent = card.etymology || '';
+    eEl.style.display = card.etymology ? 'block' : 'none';
     document.getElementById('gp-note').textContent = card.note || '';
     const exDiv = document.getElementById('gp-examples');
     exDiv.innerHTML = (card.examples || []).map(ex =>
@@ -1930,6 +1964,8 @@ async function gazeteAddCard() {
     await insertCardsRemote([{
       date: gazetePendingCard.date,
       type: gazetePendingCard.type || 'woord',
+      uitleg: gazetePendingCard.uitleg || null,
+      etymology: gazetePendingCard.etymology || null,
       dutch: gazetePendingCard.dutch,
       turkish: gazetePendingCard.turkish,
       note: gazetePendingCard.note || null,
@@ -2664,7 +2700,7 @@ function tekrarCard(item, readonly=false) {
   const n = p ? p.sr_step + 1 : 1;
   const diff = p && p.sr_next_due ? new Date(p.sr_next_due).getTime() - Date.now() : 0;
   let t = diff > 0 ? (diff < 3600000 ? Math.ceil(diff/60000)+' dk sonra' : Math.ceil(diff/3600000)+' saat sonra') : 'şimdi!';
-  return `<div class="tekrar-card"><div class="tekrar-card-head" onclick="toggleTekrarCard(${item.id})"><div class="tekrar-card-dutch" lang="nl">${item.dutch}</div><div class="tekrar-card-tr">${item.turkish}</div><div class="tekrar-card-meta">${n}. tekrar — ${t}</div></div><div class="card-body" id="tbody-${item.id}">${item.note?`<div class="section"><div class="sec-title">${ic('pin')}Not</div><div class="note-box">${item.note}</div></div>`:''}<div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map(ex=>`<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div></div>`).join('')}</div></div>${item.legal?`<div class="section"><div class="legal-box"><div class="legal-lbl">${ic('scale')}Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>`:''}</div><div class="tekrar-card-actions"><button class="btn-speak" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')">${ic('volume')}Dinle</button>${!readonly?`<button class="btn-done" onclick="markRepeat(${item.id})">${ic('check')}Tekrar ettim</button>`:''}</div></div>`;
+  return `<div class="tekrar-card"><div class="tekrar-card-head" onclick="toggleTekrarCard(${item.id})"><div class="tekrar-card-dutch" lang="nl">${item.dutch}</div><div class="tekrar-card-tr">${item.turkish}</div><div class="tekrar-card-meta">${n}. tekrar — ${t}</div></div><div class="card-body" id="tbody-${item.id}">${item.uitleg?`<div class="section"><div class="sec-title">${ic('book')}Eenvoudige uitleg</div><div class="uitleg-box" lang="nl">${item.uitleg}</div></div>`:''}${item.etymology?`<div class="section"><div class="sec-title">${ic('search')}Türev / Köken</div><div class="etym-box">${item.etymology}</div></div>`:''}${item.note?`<div class="section"><div class="sec-title">${ic('pin')}Not</div><div class="note-box">${item.note}</div></div>`:''}<div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map(ex=>`<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div></div>`).join('')}</div></div>${item.legal?`<div class="section"><div class="legal-box"><div class="legal-lbl">${ic('scale')}Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>`:''}</div><div class="tekrar-card-actions"><button class="btn-speak" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')">${ic('volume')}Dinle</button>${!readonly?`<button class="btn-done" onclick="markRepeat(${item.id})">${ic('check')}Tekrar ettim</button>`:''}</div></div>`;
 }
 function toggleTekrarCard(id) { const b = document.getElementById('tbody-'+id); if (b) b.classList.toggle('open'); }
 async function markRepeat(id) { await doRepeat(id); recordActivity(); updateStats(); renderTekrar(); }
@@ -2794,6 +2830,8 @@ function renderCard(item) {
       <button class="btn-detail danger icon-only" onclick="confirmDelete(event,${item.id})" title="Sil">${ic('trash')}</button>
     </div>
     <div class="card-body" id="body-${item.id}">
+      ${item.uitleg ? `<div class="section"><div class="sec-title">${ic('book')}Eenvoudige uitleg</div><div class="uitleg-box" lang="nl">${item.uitleg}</div></div>` : ''}
+      ${item.etymology ? `<div class="section"><div class="sec-title">${ic('search')}Türev / Köken</div><div class="etym-box">${item.etymology}</div></div>` : ''}
       ${item.note ? `<div class="section"><div class="sec-title">${ic('pin')}Not</div><div class="note-box">${item.note}</div></div>` : ''}
       <div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map((ex,i)=>`<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div><button class="btn-add-example" onclick="addExampleAsCard(event,${item.id},${i})">${ic('plus')} Ezberle</button></div>`).join('')}</div></div>
       ${item.legal ? `<div class="section"><div class="legal-box"><div class="legal-lbl">${ic('scale')}Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>` : ''}
