@@ -2904,12 +2904,25 @@ async function markRepeat(id) { await doRepeat(id); recordActivity(); updateStat
 // FİLTRELEME / SIRALAMA
 // ════════════════════════════════════════
 function sortDates(dates) {
-  const real = dates.filter(d => d !== 'STAJ').sort((a,b) => {
-    const [da,ma] = a.split('/').map(Number);
-    const [db,mb] = b.split('/').map(Number);
-    return (mb - ma) || (db - da);
+  // Etiketler üç türde olabilir:
+  //   "27/05"          → düz tarih
+  //   "GAZETE 03/09"   → önekli tarih
+  //   "STAJ", "MOEST"  → tarihsiz etiket
+  // Tarih içerenler yeniden eskiye sıralanır; tarihsizler alfabetik olarak sona eklenir.
+  function parseDate(label) {
+    const m = String(label).match(/(\d{1,2})\/(\d{1,2})/);
+    if (!m) return null;
+    return { d: Number(m[1]), mo: Number(m[2]) };
+  }
+  const dated = [];
+  const undated = [];
+  dates.forEach(d => (parseDate(d) ? dated : undated).push(d));
+  dated.sort((a, b) => {
+    const pa = parseDate(a), pb = parseDate(b);
+    return (pb.mo - pa.mo) || (pb.d - pa.d);
   });
-  return dates.includes('STAJ') ? [...real, 'STAJ'] : real;
+  undated.sort();
+  return [...dated, ...undated];
 }
 function getFiltered() {
   return CARDS.filter(item => {
