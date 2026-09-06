@@ -808,6 +808,44 @@ input[type="file"] { display: none; }
 
 .listen-playback-meta { text-align: center; font-size: 12px; color: var(--text3); font-variant-numeric: tabular-nums; }
 
+.listen-playlist-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text3); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  padding: 20px 16px 8px;
+}
+.listen-playlist {
+  max-height: 280px; overflow-y: auto;
+  padding: 0 16px 16px; display: flex; flex-direction: column; gap: 6px;
+}
+.listen-playlist-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 10px;
+  background: var(--bg2); border: 1px solid var(--border);
+  cursor: pointer; transition: background 0.15s, border-color 0.15s;
+}
+.listen-playlist-item:active { background: var(--bg3); }
+.listen-playlist-item.current {
+  background: rgba(79,142,247,0.12); border-color: var(--accent);
+}
+.lp-num {
+  flex-shrink: 0; width: 22px; text-align: center;
+  font-size: 12px; color: var(--text3); font-variant-numeric: tabular-nums;
+}
+.listen-playlist-item.current .lp-num { color: var(--accent); font-weight: 700; }
+.lp-text { flex: 1; min-width: 0; }
+.lp-nl {
+  font-size: 13.5px; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.listen-playlist-item.current .lp-nl { color: var(--accent); font-weight: 600; }
+.lp-tr {
+  font-size: 11.5px; color: var(--text3);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lp-playing { flex-shrink: 0; color: var(--accent); display: flex; }
+.lp-playing svg { width: 16px; height: 16px; }
+
 .listen-empty { text-align: center; padding: 60px 20px; color: var(--text3); }
 
 /* ── Gazete modu ── */
@@ -2172,7 +2210,24 @@ function renderListenPlayback(el, progressText) {
       ${listenRepeatCount>1 ? `Tekrar: ${Math.min(listenRepeatsDone+1,listenRepeatCount)}/${listenRepeatCount}` : ''}
       ${listenSpeed!==1 ? ` · Hız ${listenSpeed}×` : ''}
     </div>
+
+    <div class="listen-playlist-label">${ic('message')}Sıradaki cümleler (${listenQueue.length})</div>
+    <div class="listen-playlist" id="listen-playlist">
+      ${listenQueue.map((c, idx) => `
+        <div class="listen-playlist-item ${idx===listenIndex?'current':''}" onclick="listenJumpTo(${idx})" id="lp-item-${idx}">
+          <span class="lp-num">${idx+1}</span>
+          <div class="lp-text">
+            <div class="lp-nl" lang="nl">${c.dutch}</div>
+            <div class="lp-tr">${c.turkish}</div>
+          </div>
+          ${idx===listenIndex && listenPlaying ? `<span class="lp-playing">${ic('play')}</span>` : ''}
+        </div>
+      `).join('')}
+    </div>
   `;
+
+  const currentEl = document.getElementById('lp-item-' + listenIndex);
+  if (currentEl) currentEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 
 async function listenPlayCurrent() {
@@ -2254,12 +2309,47 @@ function listenPrev() {
   if (listenPlaying) listenPlayCurrent();
 }
 
+function listenJumpTo(idx) {
+  if (idx < 0 || idx >= listenQueue.length || idx === listenIndex) return;
+  listenIndex = idx;
+  listenAbortToken++;
+  if (currentAudio) { try { currentAudio.pause(); } catch(e) {} }
+  renderListenScreen();
+  if (listenPlaying) listenPlayCurrent();
+}
+
 // ════════════════════════════════════════
 // ÖRNEK CÜMLEYİ AYRI KART OLARAK EKLE
 // ════════════════════════════════════════
+function findExampleCardId(ex) {
+  const match = CARDS.find(c => c.type === 'zin' && c.dutch === ex.nl && c.turkish === ex.tr);
+  return match ? match.id : null;
+}
+
 async function addExampleAsCard(e, itemId, i) {
   e.stopPropagation();
   const btn = e.currentTarget;
+
+  // Zaten eklenmişse: geri al (sil)
+  if (btn.dataset.addedId) {
+    const addedId = parseInt(btn.dataset.addedId);
+    btn.disabled = true;
+    try {
+      await deleteCardRemote(addedId);
+      CARDS = CARDS.filter(c => c.id !== addedId);
+      cacheCards();
+      buildDateFilters();
+      updateStats();
+      delete btn.dataset.addedId;
+      btn.classList.remove('added');
+      btn.innerHTML = ic('plus') + ' Ezberle';
+    } catch (err) {
+      alert('Geri alma hatası: ' + err.message);
+    }
+    btn.disabled = false;
+    return;
+  }
+
   const item = CARDS.find(c => c.id === itemId);
   if (!item || !item.examples[i]) return;
   const ex = item.examples[i];
@@ -2268,7 +2358,7 @@ async function addExampleAsCard(e, itemId, i) {
   btn.textContent = '…';
 
   try {
-    await insertCardsRemote([{
+    const result = await insertCardsRemote([{
       date: item.date,
       type: 'zin',
       dutch: ex.nl,
@@ -2278,17 +2368,19 @@ async function addExampleAsCard(e, itemId, i) {
       legal: null,
       is_legal: false
     }]);
+    const newId = result && result[0] && result[0].id;
     CARDS = await loadCardsFromDB();
     cacheCards();
     buildDateFilters();
     updateStats();
+    if (newId) btn.dataset.addedId = newId;
     btn.innerHTML = ic('check') + ' Eklendi';
     btn.classList.add('added');
   } catch (err) {
-    btn.disabled = false;
     btn.innerHTML = ic('plus') + ' Ezberle';
     alert('Hata: ' + err.message);
   }
+  btn.disabled = false;
 }
 
 async function initApp() {
@@ -2833,7 +2925,7 @@ function renderCard(item) {
       ${item.uitleg ? `<div class="section"><div class="sec-title">${ic('book')}Eenvoudige uitleg</div><div class="uitleg-box" lang="nl">${item.uitleg}</div></div>` : ''}
       ${item.etymology ? `<div class="section"><div class="sec-title">${ic('search')}Türev / Köken</div><div class="etym-box">${item.etymology}</div></div>` : ''}
       ${item.note ? `<div class="section"><div class="sec-title">${ic('pin')}Not</div><div class="note-box">${item.note}</div></div>` : ''}
-      <div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map((ex,i)=>`<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div><button class="btn-add-example" onclick="addExampleAsCard(event,${item.id},${i})">${ic('plus')} Ezberle</button></div>`).join('')}</div></div>
+      <div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map((ex,i)=>{const exId=findExampleCardId(ex);return `<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div><button class="btn-add-example ${exId?'added':''}" ${exId?`data-added-id="${exId}"`:''} onclick="addExampleAsCard(event,${item.id},${i})">${exId?ic('check')+' Eklendi':ic('plus')+' Ezberle'}</button></div>`;}).join('')}</div></div>
       ${item.legal ? `<div class="section"><div class="legal-box"><div class="legal-lbl">${ic('scale')}Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>` : ''}
     </div>
   </div>`;
