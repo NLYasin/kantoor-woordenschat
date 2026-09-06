@@ -505,6 +505,31 @@ body {
 }
 .tekrar-section-title .ts-dot { width: 6px; height: 6px; border-radius: 50%; }
 
+/* ── Tekrarlar: gün gün takvim görünümü ── */
+.tekrar-daygroup { padding: 4px 16px 8px; }
+.tekrar-dayhead {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 0 10px;
+  position: sticky; top: 0; z-index: 5;
+  background: var(--bg);
+}
+.td-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.td-labels { flex: 1; min-width: 0; }
+.td-main { font-size: 14px; font-weight: 700; color: var(--text); }
+.td-sub { font-size: 11.5px; color: var(--text3); margin-top: 1px; }
+.td-count {
+  flex-shrink: 0; font-size: 12px; font-weight: 700;
+  color: var(--text2); background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 999px; padding: 2px 10px;
+  font-variant-numeric: tabular-nums;
+}
+.tekrar-daygroup.overdue .td-main { color: var(--red); }
+.tekrar-daygroup.overdue .td-count { color: var(--red); border-color: rgba(224,92,92,0.35); background: rgba(224,92,92,0.10); }
+.tekrar-daygroup.today .td-main { color: var(--orange); }
+.tekrar-daygroup.today .td-count { color: var(--orange); border-color: rgba(240,180,41,0.35); background: rgba(240,180,41,0.10); }
+.tekrar-daygroup.done .td-main { color: var(--green); }
+
 .tekrar-card {
   background: var(--bg2); border: 1px solid var(--border);
   border-radius: var(--radius); margin-bottom: 8px; overflow: hidden;
@@ -2711,24 +2736,97 @@ function updateStats() {
 // ════════════════════════════════════════
 function renderTekrar() {
   renderTekrarCalendar();
-  const due = CARDS.filter(i => isDue(i.id));
-  const upcoming = CARDS.filter(i => {
+
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const dayMs = 86400000;
+
+  // Aktif (tekrar bekleyen) ve tamamlanan kartları ayır
+  const active = [];
+  const completed = [];
+  CARDS.forEach(i => {
     const p = srInfo(i.id);
-    if (!p || p.sr_step >= SR_INTERVALS.length || isDue(i.id) || !p.sr_next_due) return false;
-    return new Date(p.sr_next_due).getTime() < Date.now() + 86400000;
+    if (!p) return;
+    if (p.sr_step >= SR_INTERVALS.length) { completed.push(i); return; }
+    if (!p.sr_next_due) return;
+    active.push({ card: i, due: new Date(p.sr_next_due).getTime() });
   });
-  const completed = CARDS.filter(i => { const p = srInfo(i.id); return p && p.sr_step >= SR_INTERVALS.length; });
-  let html = '';
-  if (!due.length && !upcoming.length && !completed.length) {
-    html = `<div class="tekrar-empty"><div style="font-size:32px;margin-bottom:8px">🎉</div><div>Şu an tekrar edilecek kart yok.</div><div style="font-size:12px;margin-top:6px;color:var(--text3)">Kartlarda "Öğrendim" butonuna bas, program başlar.</div></div>`;
-  } else {
-    if (due.length) html += `<div class="tekrar-section"><div class="tekrar-section-title"><span class="ts-dot" style="background:var(--red)"></span> Şimdi tekrar et (${due.length})</div>${due.map(i=>tekrarCard(i)).join('')}</div>`;
-    if (upcoming.length) html += `<div class="tekrar-section"><div class="tekrar-section-title"><span class="ts-dot" style="background:var(--orange)"></span> Bugün yaklaşan (${upcoming.length})</div>${upcoming.map(i=>tekrarCard(i,true)).join('')}</div>`;
-    if (completed.length) html += `<div class="tekrar-section"><div class="tekrar-section-title"><span class="ts-dot" style="background:var(--green)"></span> Tamamlanan (${completed.length})</div>${completed.map(i=>`<div class="tekrar-card"><div class="tekrar-card-head"><div class="tekrar-card-dutch" lang="nl">${i.dutch}</div><div class="tekrar-card-tr">${i.turkish}</div><div class="tekrar-card-meta">${ic('check','c-green')} 7/7 tekrar tamamlandı</div></div></div>`).join('')}</div>`;
+
+  if (!active.length && !completed.length) {
+    document.getElementById('tekrar-content').innerHTML =
+      `<div class="tekrar-empty"><div style="font-size:32px;margin-bottom:8px">🎉</div><div>Şu an tekrar edilecek kart yok.</div><div style="font-size:12px;margin-top:6px;color:var(--text3)">Kartlarda "Öğrendim" butonuna bas, program başlar.</div></div>`;
+    const tc0 = document.getElementById('tekrar-count');
+    if (tc0) tc0.textContent = '';
+    return;
   }
+
+  // Gecikmiş + gün gün grupla
+  const overdue = [];
+  const byDay = new Map(); // dayIndex -> [entry]
+  active.forEach(e => {
+    const dayIndex = Math.floor((e.due - startOfToday) / dayMs);
+    if (dayIndex < 0) { overdue.push(e); return; }
+    if (!byDay.has(dayIndex)) byDay.set(dayIndex, []);
+    byDay.get(dayIndex).push(e);
+  });
+  overdue.sort((a, b) => a.due - b.due);
+
+  const dayNames = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+  const monthNames = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+  function dayHeading(dayIndex) {
+    const d = new Date(startOfToday + dayIndex * dayMs);
+    const dateLbl = `${d.getDate()} ${monthNames[d.getMonth()]} ${dayNames[d.getDay()]}`;
+    if (dayIndex === 0) return { label: 'Bugün', sub: dateLbl, cls: 'today' };
+    if (dayIndex === 1) return { label: 'Yarın', sub: dateLbl, cls: 'soon' };
+    return { label: dateLbl, sub: `${dayIndex} gün sonra`, cls: '' };
+  }
+
+  let html = '';
+
+  // Gecikmiş
+  if (overdue.length) {
+    html += `<div class="tekrar-daygroup overdue">
+      <div class="tekrar-dayhead">
+        <span class="td-dot" style="background:var(--red)"></span>
+        <div class="td-labels"><div class="td-main">Gecikmiş</div><div class="td-sub">zamanı geçti</div></div>
+        <span class="td-count">${overdue.length}</span>
+      </div>
+      ${overdue.map(e => tekrarCard(e.card)).join('')}
+    </div>`;
+  }
+
+  // Gün gün
+  [...byDay.keys()].sort((a, b) => a - b).forEach(dayIndex => {
+    const entries = byDay.get(dayIndex).sort((a, b) => a.due - b.due);
+    const h = dayHeading(dayIndex);
+    const isToday = dayIndex === 0;
+    html += `<div class="tekrar-daygroup ${h.cls}">
+      <div class="tekrar-dayhead">
+        <span class="td-dot" style="background:${isToday ? 'var(--orange)' : 'var(--accent)'}"></span>
+        <div class="td-labels"><div class="td-main">${h.label}</div><div class="td-sub">${h.sub}</div></div>
+        <span class="td-count">${entries.length}</span>
+      </div>
+      ${entries.map(e => tekrarCard(e.card, !isToday)).join('')}
+    </div>`;
+  });
+
+  // Tamamlanan
+  if (completed.length) {
+    html += `<div class="tekrar-daygroup done">
+      <div class="tekrar-dayhead">
+        <span class="td-dot" style="background:var(--green)"></span>
+        <div class="td-labels"><div class="td-main">Tamamlanan</div><div class="td-sub">7/7 tekrar bitti</div></div>
+        <span class="td-count">${completed.length}</span>
+      </div>
+      ${completed.map(i => `<div class="tekrar-card"><div class="tekrar-card-head"><div class="tekrar-card-dutch" lang="nl">${i.dutch}</div><div class="tekrar-card-tr">${i.turkish}</div><div class="tekrar-card-meta">${ic('check','c-green')} 7/7 tekrar tamamlandı</div></div></div>`).join('')}
+    </div>`;
+  }
+
   document.getElementById('tekrar-content').innerHTML = html;
+  const dueCount = overdue.length + (byDay.get(0) ? byDay.get(0).length : 0);
   const tc = document.getElementById('tekrar-count');
-  if (tc) tc.textContent = due.length ? `${due.length} bekliyor` : '';
+  if (tc) tc.textContent = dueCount ? `${dueCount} bekliyor` : '';
 }
 
 function renderTekrarCalendar() {
