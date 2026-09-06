@@ -2811,6 +2811,10 @@ function sortDates(dates) {
 function getFiltered() {
   return CARDS.filter(item => {
     const known = PROGRESS[item.id] && PROGRESS[item.id].is_known;
+    // Öğrenilen kartlar varsayılan listelerden gizlenir — sadece "Öğrendiklerim"
+    // filtresi seçiliyken görünür. Bu, Kartlar sekmesini aktif öğrenme kuyruğuna
+    // dönüştürür; öğrenilenler Tekrar sekmesinden takip edilir.
+    if (known && currentFilter !== 'known') return false;
     const mf = currentFilter === 'all' ? true
       : currentFilter === 'known' ? known
       : currentFilter === 'juridisch' ? item.isLegal
