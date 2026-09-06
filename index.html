@@ -420,6 +420,9 @@ body {
 .btn-add-example:active { opacity: 0.7; }
 .btn-add-example.added { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
 .btn-add-example:disabled { opacity: 0.6; cursor: default; }
+.ex-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.btn-listen-extra { color: var(--accent); }
+.btn-listen-extra.added { background: rgba(79,142,247,0.12); border-color: var(--accent); color: var(--accent); }
 .ex-tr { font-size: 12px; color: var(--text3); margin-top: 2px; }
 
 .legal-box {
@@ -2095,15 +2098,42 @@ function saveListenPrefs() {
   } catch(e) {}
 }
 
+// ── Dinlemeye elle eklenen örnek cümleler ──
+// Kart olarak eklenmezler; sadece Dinleme Modu kuyruğunda yer alırlar.
+let listenExtras = [];   // [{ id:'x-<hash>', dutch, turkish, date, type:'zin', note }]
+
+function loadListenExtras() {
+  try { listenExtras = JSON.parse(localStorage.getItem('kv_listen_extras') || '[]'); } catch(e) { listenExtras = []; }
+}
+function saveListenExtras() {
+  try { localStorage.setItem('kv_listen_extras', JSON.stringify(listenExtras)); } catch(e) {}
+}
+function extraKey(nl) {
+  let h = 0;
+  for (let i = 0; i < nl.length; i++) { h = ((h << 5) - h + nl.charCodeAt(i)) | 0; }
+  return 'x-' + Math.abs(h);
+}
+function findListenExtra(ex) {
+  return listenExtras.find(e => e.dutch === ex.nl) || null;
+}
+
 function getListenScopeCards() {
+  // Kuyruk: tüm cümle kartları (öğrenilenler dahil) + dinlemeye eklenen örnek cümleler
   const sentences = CARDS.filter(c => c.type === 'zin');
-  if (listenScope === 'today') return sentences.filter(c => isDue(c.id));
-  if (listenScope === 'lesson') return listenLessonDate ? sentences.filter(c => c.date === listenLessonDate) : [];
-  return sentences; // 'all'
+  if (listenScope === 'today') {
+    return sentences.filter(c => isDue(c.id));
+  }
+  if (listenScope === 'lesson') {
+    if (!listenLessonDate) return [];
+    return sentences.filter(c => c.date === listenLessonDate)
+      .concat(listenExtras.filter(e => e.date === listenLessonDate));
+  }
+  return sentences.concat(listenExtras); // 'all'
 }
 
 function startListenMode() {
   loadListenPrefs();
+  loadListenExtras();
   listenSetupMode = true;
   listenQueue = [];
   renderListenScreen();
@@ -2346,6 +2376,36 @@ function listenJumpTo(idx) {
 // ════════════════════════════════════════
 // ÖRNEK CÜMLEYİ AYRI KART OLARAK EKLE
 // ════════════════════════════════════════
+function toggleListenExtra(e, itemId, i) {
+  e.stopPropagation();
+  const btn = e.currentTarget;
+  const item = CARDS.find(c => c.id === itemId);
+  if (!item || !item.examples[i]) return;
+  const ex = item.examples[i];
+
+  loadListenExtras();
+  const existing = findListenExtra(ex);
+
+  if (existing) {
+    listenExtras = listenExtras.filter(x => x.dutch !== ex.nl);
+    saveListenExtras();
+    btn.classList.remove('added');
+    btn.innerHTML = ic('headphones') + ' Dinle listesi';
+  } else {
+    listenExtras.push({
+      id: extraKey(ex.nl),
+      dutch: ex.nl,
+      turkish: ex.tr,
+      date: item.date,
+      type: 'zin',
+      note: `"${item.dutch}" örnek cümlesi`
+    });
+    saveListenExtras();
+    btn.classList.add('added');
+    btn.innerHTML = ic('check') + ' Dinlemede';
+  }
+}
+
 function findExampleCardId(ex) {
   const match = CARDS.find(c => c.type === 'zin' && c.dutch === ex.nl && c.turkish === ex.tr);
   return match ? match.id : null;
@@ -2414,6 +2474,7 @@ async function initApp() {
   loadAppearancePrefs();
   loadProgressData();
   loadLocalDeleted();
+  loadListenExtras();
   buildTypeFilterListeners();
   document.getElementById('search').addEventListener('input', e => {
     searchQuery = e.target.value;
@@ -3027,7 +3088,7 @@ function renderCard(item) {
       ${item.uitleg ? `<div class="section"><div class="sec-title">${ic('book')}Eenvoudige uitleg</div><div class="uitleg-box" lang="nl">${item.uitleg}</div></div>` : ''}
       ${item.etymology ? `<div class="section"><div class="sec-title">${ic('search')}Türev / Köken</div><div class="etym-box">${item.etymology}</div></div>` : ''}
       ${item.note ? `<div class="section"><div class="sec-title">${ic('pin')}Not</div><div class="note-box">${item.note}</div></div>` : ''}
-      <div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map((ex,i)=>{const exId=findExampleCardId(ex);return `<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div><button class="btn-add-example ${exId?'added':''}" ${exId?`data-added-id="${exId}"`:''} onclick="addExampleAsCard(event,${item.id},${i})">${exId?ic('check')+' Eklendi':ic('plus')+' Ezberle'}</button></div>`;}).join('')}</div></div>
+      <div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map((ex,i)=>{const exId=findExampleCardId(ex);const inListen=findListenExtra(ex);return `<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div><div class="ex-actions"><button class="btn-add-example ${exId?'added':''}" ${exId?`data-added-id="${exId}"`:''} onclick="addExampleAsCard(event,${item.id},${i})">${exId?ic('check')+' Eklendi':ic('plus')+' Ezberle'}</button><button class="btn-add-example btn-listen-extra ${inListen?'added':''}" onclick="toggleListenExtra(event,${item.id},${i})">${inListen?ic('check')+' Dinlemede':ic('headphones')+' Dinle listesi'}</button></div></div>`;}).join('')}</div></div>
       ${item.legal ? `<div class="section"><div class="legal-box"><div class="legal-lbl">${ic('scale')}Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>` : ''}
     </div>
   </div>`;
