@@ -131,9 +131,6 @@ body {
   background: var(--bg2);
   border-bottom: 1px solid var(--border);
   padding: 16px 16px 12px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
   box-shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
 
@@ -221,7 +218,12 @@ body {
 
 .content { padding: 0 16px; }
 
-.date-group { margin-bottom: 10px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.date-group { margin-bottom: 10px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; border-left-width: 3px; }
+
+/* Durum renkleri — hiç başlanmamış / devam ediyor / tamamlandı */
+.date-group.not-started { border-left-color: var(--border); }
+.date-group.in-progress { border-left-color: var(--accent); }
+.date-group.completed { border-left-color: var(--green); }
 
 .date-label {
   font-size: 13px;
@@ -238,10 +240,22 @@ body {
   transition: background 0.15s;
 }
 .date-label:hover { background: var(--bg3); }
+
+.dl-progress {
+  font-size: 11px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: 2px 8px; border-radius: 999px;
+  background: var(--bg3); color: var(--text2);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.date-group.in-progress .dl-progress { background: rgba(79,142,247,0.12); color: var(--accent); border-color: rgba(79,142,247,0.35); }
+.date-group.completed .dl-progress { background: rgba(52,199,89,0.12); color: var(--green); border-color: rgba(52,199,89,0.35); }
+
 .date-label .dl-meta {
   font-size: 11px;
   color: var(--text3);
-  margin-left: auto;
   font-family: var(--mono);
 }
 .date-label .dl-arrow {
@@ -255,6 +269,13 @@ body {
 
 .date-cards { display: none; padding: 10px 12px 12px; }
 .date-group.open .date-cards { display: block; }
+
+.date-empty {
+  display: flex; align-items: center; gap: 8px;
+  padding: 16px 8px; font-size: 13px; color: var(--text3);
+}
+.date-empty .ic { width: 16px; height: 16px; flex-shrink: 0; }
+
 
 .card {
   background: var(--bg2);
@@ -2924,22 +2945,38 @@ function sortDates(dates) {
   undated.sort();
   return [...dated, ...undated];
 }
+// Tip + tarih + arama filtresine uyup uymadığını kontrol eder — "öğrenildi mi"
+// durumundan bağımsızdır. Hem kart listesi hem tarih grubu görünürlüğü için kullanılır.
+function matchesTypeDateSearch(item) {
+  const mf = currentFilter === 'all' ? true
+    : currentFilter === 'known' ? true
+    : currentFilter === 'juridisch' ? item.isLegal
+    : currentFilter === 'uitdrukking' ? item.type === 'uitdrukking'
+    : item.type === currentFilter;
+  const df = currentDate === 'all' ? true : item.date === currentDate;
+  const q = searchQuery.toLowerCase();
+  return mf && df && (!q || item.dutch.toLowerCase().includes(q) || item.turkish.toLowerCase().includes(q));
+}
+
 function getFiltered() {
   return CARDS.filter(item => {
     const known = PROGRESS[item.id] && PROGRESS[item.id].is_known;
     // Öğrenilen kartlar varsayılan listelerden gizlenir — sadece "Öğrendiklerim"
     // filtresi seçiliyken görünür. Bu, Kartlar sekmesini aktif öğrenme kuyruğuna
     // dönüştürür; öğrenilenler Tekrar sekmesinden takip edilir.
-    if (known && currentFilter !== 'known') return false;
-    const mf = currentFilter === 'all' ? true
-      : currentFilter === 'known' ? known
-      : currentFilter === 'juridisch' ? item.isLegal
-      : currentFilter === 'uitdrukking' ? item.type === 'uitdrukking'
-      : item.type === currentFilter;
-    const df = currentDate === 'all' ? true : item.date === currentDate;
-    const q = searchQuery.toLowerCase();
-    return mf && df && (!q || item.dutch.toLowerCase().includes(q) || item.turkish.toLowerCase().includes(q));
+    if (currentFilter === 'known') return known && matchesTypeDateSearch(item);
+    if (known) return false;
+    return matchesTypeDateSearch(item);
   });
+}
+
+// Bir tarih grubunun toplam kart / öğrenilen kart sayısı — aktif tip filtresinden
+// bağımsız, dersin genel tamamlanma durumunu gösterir.
+function dateGroupStats(date) {
+  const all = CARDS.filter(c => c.date === date);
+  const total = all.length;
+  const learned = all.filter(c => PROGRESS[c.id] && PROGRESS[c.id].is_known).length;
+  return { total, learned };
 }
 function buildTypeFilterListeners() {
   document.querySelectorAll('#type-filters .fbtn').forEach(btn => {
@@ -2985,12 +3022,16 @@ function buildDateFilters() {
 function renderAll() {
   const content = document.getElementById('content');
   const filtered = getFiltered();
-  if (!filtered.length) { content.innerHTML = '<div class="empty">Sonuç bulunamadı</div>'; return; }
   const grouped = {};
   filtered.forEach(item => { if (!grouped[item.date]) grouped[item.date] = []; grouped[item.date].push(item); });
-  const sortedDates = sortDates(Object.keys(grouped));
 
-  // İlk render'da hiçbir grup açık değilse, en yeni tarihi otomatik aç
+  // Tarih listesi tip/tarih/arama filtresine göre belirlenir — "öğrenildi" durumu
+  // bir dersi listeden düşürmez, sadece içindeki kart say fısını etkiler.
+  const dateSource = CARDS.filter(matchesTypeDateSearch);
+  const sortedDates = sortDates([...new Set(dateSource.map(c => c.date))]);
+
+  if (!sortedDates.length) { content.innerHTML = '<div class="empty">Sonuç bulunamadı</div>'; return; }
+
   if (openGroups.size === 0 && sortedDates.length) {
     openGroups.add(sortedDates[0]);
   }
@@ -2999,13 +3040,22 @@ function renderAll() {
     const isOpen = openGroups.has(date);
     const key = date.replace('/', '_');
     const label = date === 'STAJ' ? 'STAJ — Genel Kelimeler' : date;
-    return `<div class="date-group ${isOpen ? 'open' : ''}" id="dg-${key}" data-date="${date}">
+    const stats = dateGroupStats(date);
+    const items = grouped[date] || [];
+    let stateClass = 'not-started';
+    if (stats.learned > 0 && stats.learned < stats.total) stateClass = 'in-progress';
+    else if (stats.total > 0 && stats.learned === stats.total) stateClass = 'completed';
+    const bodyHtml = items.length
+      ? items.map(renderCard).join('')
+      : `<div class="date-empty">${ic('check','c-green')} Bu derste görüntülenecek kart kalmadı — hepsi öğrenildi.</div>`;
+    return `<div class="date-group ${isOpen ? 'open' : ''} ${stateClass}" id="dg-${key}" data-date="${date}">
       <div class="date-label" onclick="toggleGroup('${date}')">
         <span>${label}</span>
-        <span class="dl-meta">${grouped[date].length} kart</span>
+        <span class="dl-progress">${stats.learned}/${stats.total}</span>
+        <span class="dl-meta">${items.length} kart</span>
         <span class="dl-arrow">›</span>
       </div>
-      <div class="date-cards">${grouped[date].map(renderCard).join('')}</div>
+      <div class="date-cards">${bodyHtml}</div>
     </div>`;
   }).join('');
 }
@@ -3071,7 +3121,9 @@ async function toggleKnown(e, id) {
     recordActivity();
   }
   updateStats();
-  refreshCard(id);
+  // Kart artık listeden kaybolabilir/görünebilir ve üst tarih rozeti değişir —
+  // bu yüzden sadece kartı değil, tüm listeyi yeniden çiziyoruz.
+  renderAll();
 }
 
 async function quickRepeat(e, id) {
