@@ -2385,8 +2385,11 @@ async function addExampleAsCard(e, itemId, i) {
     btn.disabled = true;
     try {
       await deleteCardRemote(addedId);
+      await deleteProgressRemote(addedId);
+      delete PROGRESS[addedId];
       CARDS = CARDS.filter(c => c.id !== addedId);
       cacheCards();
+      cacheProgress();
       buildDateFilters();
       updateStats();
       delete btn.dataset.addedId;
@@ -2422,9 +2425,15 @@ async function addExampleAsCard(e, itemId, i) {
     CARDS = await loadCardsFromDB();
     cacheCards();
     buildDateFilters();
+    // Kart doğrudan "öğrenildi" kabul edilir — sıfırdan öğrenme sürecinden geçmesine
+    // gerek yok, tekrar programı hemen başlar.
+    if (newId) {
+      await startSR(newId);
+      recordActivity();
+    }
     updateStats();
     if (newId) btn.dataset.addedId = newId;
-    btn.innerHTML = ic('check') + ' Eklendi';
+    btn.innerHTML = ic('check') + ' Öğrenildi';
     btn.classList.add('added');
     if (currentScreen === 'tekrar') renderTekrarCalendar();
   } catch (err) {
