@@ -2082,6 +2082,7 @@ let listenPlaying = false;
 let listenRepeatsDone = 0;
 let listenAbortToken = 0;
 let listenSetupMode = true;
+let lastScrolledIndex = -1;
 
 // Ayarlar — oturumlar arası localStorage'da saklanır
 let listenScope = 'today';       // 'today' | 'all' | 'lesson'
@@ -2116,14 +2117,26 @@ function saveListenPrefs() {
   } catch(e) {}
 }
 
+// Aynı Hollandaca cümleden yalnızca birini bırakır — kopya kartlar
+// dinleme kuyruğunda arka arkaya iki kez okunmasın diye.
+function dedupeByDutch(list) {
+  const seen = new Set();
+  return list.filter(c => {
+    const key = (c.dutch || '').trim().toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 function getListenScopeCards() {
   // Kuyruk: tüm cümle kartları — öğrenilenler dahil.
   // "Ezberle" ile eklenen örnek cümleler zin tipinde kaydedildiği için
   // otomatik olarak buraya dahil olurlar.
   const sentences = CARDS.filter(c => c.type === 'zin');
-  if (listenScope === 'today') return sentences.filter(c => isDue(c.id));
-  if (listenScope === 'lesson') return listenLessonDate ? sentences.filter(c => c.date === listenLessonDate) : [];
-  return sentences; // 'all'
+  if (listenScope === 'today') return dedupeByDutch(sentences.filter(c => isDue(c.id)));
+  if (listenScope === 'lesson') return listenLessonDate ? dedupeByDutch(sentences.filter(c => c.date === listenLessonDate)) : [];
+  return dedupeByDutch(sentences); // 'all'
 }
 
 function startListenMode() {
@@ -2275,8 +2288,13 @@ function renderListenPlayback(el, progressText) {
     </div>
   `;
 
-  const currentEl = document.getElementById('lp-item-' + listenIndex);
-  if (currentEl) currentEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  // Listeyi yalnızca çalan cümle değiştiğinde kaydır — her tekrar sayacı
+  // güncellemesinde kaydırmak ekranı sürekli oynatıyordu.
+  if (lastScrolledIndex !== listenIndex) {
+    lastScrolledIndex = listenIndex;
+    const currentEl = document.getElementById('lp-item-' + listenIndex);
+    if (currentEl) currentEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
 }
 
 async function listenPlayCurrent() {
@@ -2406,6 +2424,15 @@ async function addExampleAsCard(e, itemId, i) {
   const item = CARDS.find(c => c.id === itemId);
   if (!item || !item.examples[i]) return;
   const ex = item.examples[i];
+
+  // Aynı cümle zaten kart olarak varsa yenisini oluşturma — mevcut karta bağlan.
+  const existingId = findExampleCardId(ex);
+  if (existingId) {
+    btn.dataset.addedId = existingId;
+    btn.innerHTML = ic('check') + ' Öğrenildi';
+    btn.classList.add('added');
+    return;
+  }
 
   btn.disabled = true;
   btn.textContent = '…';
@@ -2859,6 +2886,7 @@ function renderTekrar() {
   }
 
   document.getElementById('tekrar-content').innerHTML = html;
+  restoreOpenTekrarBodies();
   const dueCount = overdue.length + (byDay.get(0) ? byDay.get(0).length : 0);
   const tc = document.getElementById('tekrar-count');
   if (tc) tc.textContent = dueCount ? `${dueCount} bekliyor` : '';
@@ -2927,7 +2955,20 @@ function tekrarCard(item, readonly=false) {
   let t = diff > 0 ? (diff < 3600000 ? Math.ceil(diff/60000)+' dk sonra' : Math.ceil(diff/3600000)+' saat sonra') : 'şimdi!';
   return `<div class="tekrar-card"><div class="tekrar-card-head" onclick="toggleTekrarCard(${item.id})"><div class="tekrar-card-dutch" lang="nl">${item.dutch}</div><div class="tekrar-card-tr">${item.turkish}</div><div class="tekrar-card-meta">${n}. tekrar — ${t}</div></div><div class="card-body" id="tbody-${item.id}">${item.uitleg?`<div class="section"><div class="sec-title">${ic('book')}Eenvoudige uitleg</div><div class="uitleg-box" lang="nl">${item.uitleg}</div></div>`:''}${item.etymology?`<div class="section"><div class="sec-title">${ic('search')}Türev / Köken</div><div class="etym-box">${item.etymology}</div></div>`:''}${item.note?`<div class="section"><div class="sec-title">${ic('pin')}Not</div><div class="note-box">${item.note}</div></div>`:''}${(item.examples && item.examples.length)?`<div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map((ex,i)=>{const exId=findExampleCardId(ex);return `<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div><button class="btn-add-example ${exId?'added':''}" ${exId?`data-added-id="${exId}"`:''} onclick="addExampleAsCard(event,${item.id},${i})">${exId?ic('check')+' Eklendi':ic('plus')+' Ezberle'}</button></div>`;}).join('')}</div></div>`:''}${item.legal?`<div class="section"><div class="legal-box"><div class="legal-lbl">${ic('scale')}Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>`:''}</div><div class="tekrar-card-actions"><button class="btn-speak" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')">${ic('volume')}Dinle</button>${!readonly?`<button class="btn-done" onclick="markRepeat(${item.id})">${ic('check')}Tekrar ettim</button>`:''}</div></div>`;
 }
-function toggleTekrarCard(id) { const b = document.getElementById('tbody-'+id); if (b) b.classList.toggle('open'); }
+let openTekrarBodies = new Set();
+function toggleTekrarCard(id) {
+  const b = document.getElementById('tbody-'+id);
+  if (!b) return;
+  const nowOpen = b.classList.toggle('open');
+  if (nowOpen) openTekrarBodies.add(id); else openTekrarBodies.delete(id);
+}
+// Otomatik yenileme sonrası açık kalan detayları geri açar.
+function restoreOpenTekrarBodies() {
+  openTekrarBodies.forEach(id => {
+    const b = document.getElementById('tbody-'+id);
+    if (b) b.classList.add('open');
+  });
+}
 async function markRepeat(id) { await doRepeat(id); recordActivity(); updateStats(); renderTekrar(); }
 
 // ════════════════════════════════════════
@@ -3067,6 +3108,7 @@ function renderAll() {
       <div class="date-cards">${bodyHtml}</div>
     </div>`;
   }).join('');
+  restoreOpenCardBodies();
 }
 
 function toggleGroup(date) {
@@ -3110,6 +3152,7 @@ function renderCard(item) {
   </div>`;
 }
 
+let openCardBodies = new Set();
 function toggleCard(id) {
   const body = document.getElementById('body-'+id);
   const card = document.getElementById('card-'+id);
@@ -3118,6 +3161,18 @@ function toggleCard(id) {
   const open = body.classList.toggle('open');
   card.classList.toggle('expanded', open);
   if (arr) arr.textContent = open ? '⌄' : '›';
+  if (open) openCardBodies.add(id); else openCardBodies.delete(id);
+}
+// renderAll sonrası açık kalan kart detaylarını geri açar.
+function restoreOpenCardBodies() {
+  openCardBodies.forEach(id => {
+    const body = document.getElementById('body-'+id);
+    const card = document.getElementById('card-'+id);
+    const arr = document.getElementById('arr-'+id);
+    if (body) body.classList.add('open');
+    if (card) card.classList.add('expanded');
+    if (arr) arr.textContent = '⌄';
+  });
 }
 
 async function toggleKnown(e, id) {
