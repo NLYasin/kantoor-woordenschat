@@ -1390,13 +1390,15 @@ async function upsertProgress(cardId, patch) {
   PROGRESS[cardId] = merged;
   cacheProgress();
   if (!isOnline) return;
-  try {
-    await sbFetch('progress?on_conflict=card_id', {
-      method: 'POST',
-      headers: { 'Prefer': 'resolution=merge-duplicates' },
-      body: JSON.stringify({ card_id: cardId, ...merged, updated_at: new Date().toISOString() })
-    });
-  } catch (e) { console.warn('Sync failed for progress', cardId, e); }
+  await sbFetch('progress?on_conflict=card_id', {
+    method: 'POST',
+    headers: { 'Prefer': 'resolution=merge-duplicates' },
+    body: JSON.stringify({ card_id: cardId, ...merged, updated_at: new Date().toISOString() })
+  });
+  // Not: önceden burada hata sessizce yutuluyordu (try/catch + console.warn).
+  // Bu, "öğrenildi" olarak işaretlemenin sunucuya hiç yazılmamasına rağmen
+  // arayüzün başarılı gibi davranmasına yol açabiliyordu. Artık hata olursa
+  // çağıran fonksiyona (addExampleAsCard, toggleKnown vb.) yükseltilir.
 }
 
 async function deleteProgressRemote(cardId) {
@@ -2463,6 +2465,7 @@ async function addExampleAsCard(e, itemId, i) {
     btn.innerHTML = ic('check') + ' Öğrenildi';
     btn.classList.add('added');
     if (currentScreen === 'tekrar') renderTekrarCalendar();
+    if (currentScreen === 'cards') renderAll();
   } catch (err) {
     btn.innerHTML = ic('plus') + ' Ezberle';
     alert('Hata: ' + err.message);
@@ -2969,7 +2972,16 @@ function restoreOpenTekrarBodies() {
     if (b) b.classList.add('open');
   });
 }
-async function markRepeat(id) { await doRepeat(id); recordActivity(); updateStats(); renderTekrar(); }
+async function markRepeat(id) {
+  try {
+    await doRepeat(id);
+    recordActivity();
+  } catch (err) {
+    alert('Kaydetme hatası: ' + err.message);
+  }
+  updateStats();
+  renderTekrar();
+}
 
 // ════════════════════════════════════════
 // FİLTRELEME / SIRALAMA
@@ -3178,11 +3190,15 @@ function restoreOpenCardBodies() {
 async function toggleKnown(e, id) {
   e.stopPropagation();
   const known = PROGRESS[id] && PROGRESS[id].is_known;
-  if (known) {
-    await unmarkKnown(id);
-  } else {
-    await startSR(id);
-    recordActivity();
+  try {
+    if (known) {
+      await unmarkKnown(id);
+    } else {
+      await startSR(id);
+      recordActivity();
+    }
+  } catch (err) {
+    alert('Kaydetme hatası: ' + err.message + '\n\nİnternet bağlantını kontrol edip tekrar dene.');
   }
   updateStats();
   // Kart artık listeden kaybolabilir/görünebilir ve üst tarih rozeti değişir —
@@ -3192,8 +3208,12 @@ async function toggleKnown(e, id) {
 
 async function quickRepeat(e, id) {
   e.stopPropagation();
-  await doRepeat(id);
-  recordActivity();
+  try {
+    await doRepeat(id);
+    recordActivity();
+  } catch (err) {
+    alert('Kaydetme hatası: ' + err.message);
+  }
   updateStats();
   refreshCard(id);
 }
