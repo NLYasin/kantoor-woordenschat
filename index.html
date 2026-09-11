@@ -3319,7 +3319,28 @@ initApp();
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      // Yeni bir sürüm bulununca kullanıcı beklemeden otomatik güncelle.
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // Bu ilk kurulum değil, mevcut bir sürümün üzerine güncelleme —
+            // sayfayı otomatik tazele ki kullanıcı "kapat aç" yapmak zorunda kalmasın.
+            window.location.reload();
+          }
+        });
+      });
+    }).catch(() => {});
+
+    // Kontrolü devralan yeni SW olursa da tazele (skipWaiting + clients.claim ile eşleşir).
+    let refreshed = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshed) return;
+      refreshed = true;
+      window.location.reload();
+    });
   });
 }
 </script>
