@@ -173,19 +173,59 @@ body {
 
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 10px;
   padding: 12px 16px;
 }
 .stat {
   background: var(--bg2);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 10px 8px;
+  border-radius: 14px;
+  padding: 14px 12px;
   text-align: center;
 }
-.stat-num { font-size: 22px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
-.stat-lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.stat-num { font-size: 28px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.stat-sub { font-size: 17px; font-weight: 600; color: var(--text3); }
+.stat-lbl { font-size: 11.5px; color: var(--text3); margin-top: 3px; }
+
+/* Birincil istatistik: bugün yapılacak iş — tıklanabilir, göze çarpan */
+.stat-primary {
+  font-family: var(--font); cursor: pointer;
+  background: rgba(79,142,247,0.10);
+  border-color: rgba(79,142,247,0.40);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.stat-primary:active { opacity: 0.8; }
+.stat-primary .stat-num { color: var(--accent); }
+.stat-primary .stat-lbl { color: var(--accent); font-weight: 600; }
+
+.stat-bar {
+  height: 5px; background: var(--bg3); border-radius: 99px;
+  overflow: hidden; margin-top: 8px;
+}
+.stat-bar-fill {
+  height: 100%; background: var(--green); border-radius: 99px;
+  transition: width 0.4s ease; min-width: 3px;
+}
+
+/* ── Tarih filtreleri: gruplanmış ── */
+.date-section { margin-bottom: 10px; }
+.date-section-label {
+  font-size: 10px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 6px; padding-left: 2px;
+}
+.date-section-chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.date-more-hint {
+  font-size: 11px; color: var(--text3);
+  padding: 4px 6px; font-variant-numeric: tabular-nums;
+}
+.date-toggle-all {
+  font-family: var(--font); font-size: 12px; font-weight: 600;
+  color: var(--accent); background: transparent; border: none;
+  padding: 4px 2px; cursor: pointer;
+}
+.date-toggle-all:active { opacity: 0.7; }
 
 .filters {
   padding: 0 16px 12px;
@@ -475,7 +515,7 @@ body {
   align-self: center;
   flex-shrink: 0;
 }
-#date-filters { border-top: 1px solid var(--border); margin: 0 0 10px 0; padding: 8px 16px 8px 16px; display: flex; gap: 6px; flex-wrap: wrap; }
+#date-filters { border-top: 1px solid var(--border); margin: 0 0 10px 0; padding: 10px 16px 8px 16px; display: block; }
 .fbtn.date-btn { background: var(--bg3); }
 .fbtn.date-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
@@ -1056,10 +1096,15 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
 </div>
 
 <div class="stats-row">
-  <div class="stat"><div class="stat-num" id="s-total">0</div><div class="stat-lbl">Kart</div></div>
-  <div class="stat"><div class="stat-num" id="s-known">0</div><div class="stat-lbl">Öğrenildi</div></div>
-  <div class="stat"><div class="stat-num" id="s-legal">0</div><div class="stat-lbl">Hukuki</div></div>
-  <div class="stat"><div class="stat-num" id="s-due">0</div><div class="stat-lbl">Tekrar</div></div>
+  <button class="stat stat-primary" onclick="showScreen('tekrar')">
+    <div class="stat-num" id="s-due">0</div>
+    <div class="stat-lbl">Bugün tekrar</div>
+  </button>
+  <div class="stat">
+    <div class="stat-num"><span id="s-known">0</span><span class="stat-sub">/<span id="s-total">0</span></span></div>
+    <div class="stat-lbl">Öğrenildi</div>
+    <div class="stat-bar"><div class="stat-bar-fill" id="s-bar"></div></div>
+  </div>
 </div>
 
 <div class="filters" id="type-filters">
@@ -2831,8 +2876,9 @@ function updateStats() {
   const knownCount = CARDS.filter(i => PROGRESS[i.id] && PROGRESS[i.id].is_known).length;
   document.getElementById('s-total').textContent = CARDS.length;
   document.getElementById('s-known').textContent = knownCount;
-  document.getElementById('s-legal').textContent = CARDS.filter(i => i.isLegal).length;
   document.getElementById('s-due').textContent = dueCount;
+  const bar = document.getElementById('s-bar');
+  if (bar) bar.style.width = CARDS.length ? Math.round((knownCount / CARDS.length) * 100) + '%' : '0%';
   const badge = document.getElementById('nav-badge');
   if (badge) { if (dueCount > 0) { badge.style.display = ''; badge.textContent = dueCount; } else badge.style.display = 'none'; }
   const trashCountEl = document.getElementById('trash-count');
@@ -3093,32 +3139,89 @@ function buildTypeFilterListeners() {
     });
   });
 }
-function buildDateFilters() {
-  const dates = sortDates([...new Set(CARDS.map(i => i.date))]);
-  const container = document.getElementById('date-filters');
-  container.innerHTML = '';
-  const allBtn = document.createElement('button');
-  allBtn.className = 'fbtn date-btn active';
-  allBtn.dataset.date = 'all';
-  allBtn.textContent = 'Tüm tarihler';
-  container.appendChild(allBtn);
-  dates.forEach(date => {
-    const btn = document.createElement('button');
-    btn.className = 'fbtn date-btn';
-    btn.dataset.date = date;
-    btn.textContent = date;
-    container.appendChild(btn);
+// ── Tarih etiketi biçimlendirme ──
+const AY_KISA = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+
+// "27/05" → "27 May" (bu yıl) veya "27 May 2025" (geçmiş yıl)
+// "GAZETE 12/09" → "12 Eyl"  (grup başlığı zaten GAZETE olduğu için önek düşer)
+// "STAJ", "MOEST" → olduğu gibi
+function formatDateLabel(raw) {
+  const m = String(raw).match(/(\d{1,2})\/(\d{1,2})/);
+  if (!m) return raw;
+  const gun = Number(m[1]);
+  const ay = Number(m[2]);
+  const simdi = new Date();
+  const buYil = simdi.getFullYear();
+  // Etiketlerde yıl yok; ay bugünün ayından büyükse geçen yıla ait kabul edilir.
+  const yil = (ay > simdi.getMonth() + 1) ? buYil - 1 : buYil;
+  const ayAdi = AY_KISA[ay - 1] || ay;
+  return yil === buYil ? `${gun} ${ayAdi}` : `${gun} ${ayAdi} ${yil}`;
+}
+
+// Etiketleri üç gruba ayırır: gazete / ders tarihleri / diğer
+function groupDateLabels(dates) {
+  const gazete = [], ders = [], diger = [];
+  dates.forEach(d => {
+    if (/^GAZETE/i.test(d)) gazete.push(d);
+    else if (/\d{1,2}\/\d{1,2}/.test(d)) ders.push(d);
+    else diger.push(d);
   });
+  return { gazete: sortDates(gazete), ders: sortDates(ders), diger: diger.sort() };
+}
+
+let dateFiltersExpanded = false;
+const DATE_COLLAPSE_LIMIT = 4; // katlanmışken grup başına gösterilecek etiket sayısı
+
+function buildDateFilters() {
+  const container = document.getElementById('date-filters');
+  const dates = [...new Set(CARDS.map(i => i.date))];
+  const { gazete, ders, diger } = groupDateLabels(dates);
+
+  const chip = (date) =>
+    `<button class="fbtn date-btn ${currentDate === date ? 'active' : ''}" data-date="${date}">${formatDateLabel(date)}</button>`;
+
+  const section = (baslik, list) => {
+    if (!list.length) return '';
+    const gorunen = dateFiltersExpanded ? list : list.slice(0, DATE_COLLAPSE_LIMIT);
+    const gizli = list.length - gorunen.length;
+    return `<div class="date-section">
+      <div class="date-section-label">${baslik}</div>
+      <div class="date-section-chips">
+        ${gorunen.map(chip).join('')}
+        ${gizli > 0 ? `<span class="date-more-hint">+${gizli}</span>` : ''}
+      </div>
+    </div>`;
+  };
+
+  const toplam = gazete.length + ders.length + diger.length;
+  const katlanabilir = toplam > DATE_COLLAPSE_LIMIT;
+
+  container.innerHTML = `
+    <div class="date-section">
+      <div class="date-section-chips">
+        <button class="fbtn date-btn ${currentDate === 'all' ? 'active' : ''}" data-date="all">Tümü</button>
+      </div>
+    </div>
+    ${section('Gazete', gazete)}
+    ${section('Dersler', ders)}
+    ${section('Diğer', diger)}
+    ${katlanabilir ? `<button class="date-toggle-all" onclick="toggleDateFilters()">${dateFiltersExpanded ? 'Daha az göster' : 'Tümünü göster'}</button>` : ''}
+  `;
+
   container.querySelectorAll('.date-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      container.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
       currentDate = btn.dataset.date;
-      // Belirli bir tarih seçildiğinde sadece o açılsın
-      if (currentDate !== 'all') { openGroups = new Set([currentDate]); }
+      // Bir tarih seçmek o dersi açar; "Tümü" hiçbirini açmaz.
+      openGroups = currentDate === 'all' ? new Set() : new Set([currentDate]);
+      buildDateFilters();
       renderAll();
     });
   });
+}
+
+function toggleDateFilters() {
+  dateFiltersExpanded = !dateFiltersExpanded;
+  buildDateFilters();
 }
 
 // ════════════════════════════════════════
@@ -3137,14 +3240,12 @@ function renderAll() {
 
   if (!sortedDates.length) { content.innerHTML = '<div class="empty">Sonuç bulunamadı</div>'; return; }
 
-  if (openGroups.size === 0 && sortedDates.length) {
-    openGroups.add(sortedDates[0]);
-  }
-
   content.innerHTML = sortedDates.map(date => {
     const isOpen = openGroups.has(date);
     const key = date.replace('/', '_');
-    const label = date === 'STAJ' ? 'STAJ — Genel Kelimeler' : date;
+    const label = date === 'STAJ' ? 'STAJ — Genel Kelimeler'
+      : /^GAZETE/i.test(date) ? 'Gazete · ' + formatDateLabel(date)
+      : formatDateLabel(date);
     const stats = dateGroupStats(date);
     const items = grouped[date] || [];
     let stateClass = 'not-started';
