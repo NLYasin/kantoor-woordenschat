@@ -108,23 +108,31 @@ body {
   zoom: var(--fs-scale);
 }
 
-/* Liggende stand (telefoon gedraaid) — content in twee kolommen, compactere top-bar */
+/* Yatay telefon: kartlar iki kolon, üst bar daha ince */
 @media (orientation: landscape) and (max-width: 900px) {
   .top-bar { padding: 10px 16px 8px; }
   .top-bar p { display: none; }
-  .stats-row { grid-template-columns: repeat(4, 1fr); padding: 8px 16px; }
   .date-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-content: start; }
   .date-group.open .date-cards { display: grid; }
   .card { margin-bottom: 0; }
 }
 
-/* Tablet / breder scherm: drie kolommen */
+/* Tablet ve masaüstü: tüm bölümler aynı genişlikte ortalanır.
+   Daha önce #date-filters bu kuralın dışında kaldığı için filtreler
+   sola yapışıp kart listesiyle hizasız görünüyordu. */
 @media (min-width: 700px) {
-  .content { max-width: 900px; margin: 0 auto; }
+  .top-bar > *,
+  .stats-row,
+  #type-filters,
+  #date-filters,
+  .content {
+    max-width: 880px;
+    margin-left: auto;
+    margin-right: auto;
+  }
   .date-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .date-group.open .date-cards { display: grid; }
   .card { margin-bottom: 0; }
-  .top-bar, .stats-row, .filters { max-width: 900px; margin-left: auto; margin-right: auto; }
 }
 
 .top-bar {
@@ -208,24 +216,39 @@ body {
   transition: width 0.4s ease; min-width: 3px;
 }
 
-/* ── Tarih filtreleri: gruplanmış ── */
-.date-section { margin-bottom: 10px; }
-.date-section-label {
-  font-size: 10px; font-weight: 700; color: var(--text3);
-  text-transform: uppercase; letter-spacing: 0.06em;
-  margin-bottom: 6px; padding-left: 2px;
+/* ── Tarih filtreleri: grup etiketi ve çipler aynı satırda ──
+   Her grup kendi satırında ama başlık solda inline duruyor;
+   böylece dikeyde üç ayrı blok yerine kompakt bir liste oluşuyor. */
+.date-section {
+  display: flex; align-items: baseline; gap: 10px;
+  margin-bottom: 7px;
 }
-.date-section-chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.date-section-label {
+  flex: 0 0 52px;
+  font-size: 10px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  padding-top: 5px;
+}
+.date-section-chips {
+  flex: 1; display: flex; gap: 5px; flex-wrap: wrap; align-items: center;
+}
 .date-more-hint {
   font-size: 11px; color: var(--text3);
-  padding: 4px 6px; font-variant-numeric: tabular-nums;
+  padding: 4px 4px; font-variant-numeric: tabular-nums;
 }
 .date-toggle-all {
   font-family: var(--font); font-size: 12px; font-weight: 600;
   color: var(--accent); background: transparent; border: none;
-  padding: 4px 2px; cursor: pointer;
+  padding: 2px 0 0 62px; cursor: pointer;
 }
 .date-toggle-all:active { opacity: 0.7; }
+
+/* Dar ekranda başlık üste geçsin, yatayda yer kalmıyor */
+@media (max-width: 480px) {
+  .date-section { flex-direction: column; gap: 4px; }
+  .date-section-label { flex: none; padding-top: 0; }
+  .date-toggle-all { padding-left: 0; }
+}
 
 .filters {
   padding: 0 16px 12px;
@@ -294,10 +317,23 @@ body {
 .date-group.completed .dl-progress { background: rgba(52,199,89,0.12); color: var(--green); border-color: rgba(52,199,89,0.35); }
 
 .date-label .dl-meta {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text3);
-  font-family: var(--mono);
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
 }
+
+/* Ders satırının altında ince ilerleme çizgisi — kaç kartın
+   öğrenildiğini rakama bakmadan bir bakışta gösterir. */
+.dl-progress-line {
+  height: 2px; background: var(--border);
+  position: relative; overflow: hidden;
+}
+.dl-progress-line-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--green); transition: width 0.4s ease;
+}
+.date-group.not-started .dl-progress-line { opacity: 0; }
 .date-label .dl-arrow {
   font-size: 16px;
   color: var(--text3);
@@ -880,6 +916,11 @@ input[type="file"] { display: none; }
   cursor: pointer;
 }
 .listen-counted-btn:active { opacity: 0.75; }
+.listen-counted-btn.done {
+  background: var(--bg3); border-color: var(--border);
+  color: var(--text3); cursor: default;
+}
+.listen-counted-btn.done:active { opacity: 1; }
 .listen-counted-btn .ic { width: 18px; height: 18px; }
 
 .listen-progress-bar-bg {
@@ -2142,6 +2183,9 @@ let listenRepeatsDone = 0;
 let listenAbortToken = 0;
 let listenSetupMode = true;
 let lastScrolledIndex = -1;
+// Bu oturumda "tekrar olarak sayıldı" işaretlenen kart id'leri —
+// aynı cümlede butona tekrar basınca ikinci kez saymayı engeller.
+let listenCountedIds = new Set();
 
 // Ayarlar — oturumlar arası localStorage'da saklanır
 let listenScope = 'today';       // 'today' | 'all' | 'lesson'
@@ -2226,6 +2270,7 @@ function listenBackToSetup() {
 }
 
 function listenStartPlayback() {
+  listenCountedIds = new Set(); // yeni oturumda sayım durumu sıfırlanır
   const cards = getListenScopeCards();
   if (!cards.length) { alert('Bu kapsamda dinlenecek cümle yok.'); return; }
   listenQueue = cards;
@@ -2321,8 +2366,8 @@ function renderListenPlayback(el, progressText) {
       ${card.note ? `<div class="listen-note">${card.note}</div>` : ''}
     </div>
 
-    <button class="listen-counted-btn" onclick="listenMarkCounted()">
-      ${ic('circle-check')} Tekrar olarak say
+    <button class="listen-counted-btn ${listenCountedIds.has(card.id) ? 'done' : ''}" onclick="listenMarkCounted()" ${listenCountedIds.has(card.id) ? 'disabled' : ''}>
+      ${listenCountedIds.has(card.id) ? ic('check') + ' Sayıldı' : ic('circle-check') + ' Tekrar olarak say'}
     </button>
 
     <div class="listen-controls">
@@ -2421,9 +2466,15 @@ function listenPause() {
 // sıradaki cümleye geçer. Cümlenin ses tekrarı kaç kez çalınırsa çalınsın
 // (1×, 3×, 7× ayarı fark etmez), bu buton her basışta yalnızca BİR tekrar sayar
 // ve derhal ileri gider — aynı cümlede takılı kalıp geri dönme riski olmaz.
+// "Tekrar olarak say": bu cümle için TAM OLARAK BİR tekrar kaydeder.
+// Ses hâlâ çalıyorsa kesmez — ayarlanan tekrar sayısı (1×/3×/5×/7×) tamamlanıp
+// zincir kendiliğinden ilerleyene kadar dinlemeye devam edersin.
+// Aynı cümlede butona birden fazla kez basmak ikinci bir tekrar saymaz.
 async function listenMarkCounted() {
   const card = listenQueue[listenIndex];
   if (!card) return;
+  if (listenCountedIds.has(card.id)) return; // bu cümle için zaten sayıldı
+
   const known = PROGRESS[card.id] && PROGRESS[card.id].is_known;
   try {
     if (known) {
@@ -2436,11 +2487,9 @@ async function listenMarkCounted() {
     alert('Kaydetme hatası: ' + err.message + '\n\nBu cümle henüz sayılmadı, tekrar dene.');
     return;
   }
+  listenCountedIds.add(card.id);
   updateStats();
-  // Mevcut sesi/oynatma zincirini durdurup derhal sıradaki cümleye geç.
-  listenAbortToken++;
-  if (currentAudio) { try { currentAudio.pause(); } catch(e) {} }
-  listenNext();
+  renderListenScreen(); // buton "Sayıldı" durumuna geçsin
 }
 
 function listenNext() {
@@ -3197,15 +3246,16 @@ function buildDateFilters() {
   const katlanabilir = toplam > DATE_COLLAPSE_LIMIT;
 
   container.innerHTML = `
-    <div class="date-section">
+    <div class="date-section date-section-all">
+      <div class="date-section-label">Filtre</div>
       <div class="date-section-chips">
-        <button class="fbtn date-btn ${currentDate === 'all' ? 'active' : ''}" data-date="all">Tümü</button>
+        <button class="fbtn date-btn ${currentDate === 'all' ? 'active' : ''}" data-date="all">Tüm kartlar</button>
       </div>
     </div>
     ${section('Gazete', gazete)}
     ${section('Dersler', ders)}
     ${section('Diğer', diger)}
-    ${katlanabilir ? `<button class="date-toggle-all" onclick="toggleDateFilters()">${dateFiltersExpanded ? 'Daha az göster' : 'Tümünü göster'}</button>` : ''}
+    ${katlanabilir ? `<button class="date-toggle-all" onclick="toggleDateFilters()">${dateFiltersExpanded ? '− Daha az göster' : '+ Tümünü göster'}</button>` : ''}
   `;
 
   container.querySelectorAll('.date-btn').forEach(btn => {
@@ -3261,6 +3311,7 @@ function renderAll() {
         <span class="dl-meta">${items.length} kart</span>
         <span class="dl-arrow">›</span>
       </div>
+      <div class="dl-progress-line"><div class="dl-progress-line-fill" style="width:${stats.total ? Math.round((stats.learned/stats.total)*100) : 0}%"></div></div>
       <div class="date-cards">${bodyHtml}</div>
     </div>`;
   }).join('');
