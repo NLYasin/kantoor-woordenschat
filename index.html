@@ -520,6 +520,43 @@ body {
 .btn-add-example:disabled { opacity: 0.6; cursor: default; }
 .ex-tr { font-size: 12px; color: var(--text3); margin-top: 2px; }
 
+/* ── Önce Hollandaca modu ───────────────────────────────── */
+/* Liste satırında Türkçe anlam yerine Hollandaca uitleg özeti */
+.card-preview {
+  font-size: 12.5px;
+  color: var(--text3);
+  margin-top: 3px;
+  line-height: 1.45;
+}
+/* "Türkçesi" düğmesi — kart detayında tek düğme */
+.btn-tr-reveal {
+  font-family: var(--font);
+  font-size: 12px;
+  min-height: 36px;
+  width: 100%;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px dashed var(--border2);
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn-tr-reveal:active { opacity: 0.7; }
+.btn-tr-reveal.open { border-style: solid; background: var(--bg3); color: var(--text3); }
+.tr-block { display: none; margin-top: 12px; }
+.tr-block.open { display: block; }
+/* Örnek cümlelerde Türkçe satırı tek tek açılır */
+.ex-tr.veil { display: none; }
+.ex-tr-btn {
+  font-family: var(--font); font-size: 11px;
+  background: none; border: none; padding: 3px 0;
+  color: var(--text3); cursor: pointer; text-align: left;
+  display: block; opacity: 0.85;
+}
+.ex-tr-btn:active { opacity: 0.5; }
+.ex-tr-btn.hide { display: none; }
+
 .legal-box {
   background: var(--orange-bg);
   border: 1px solid var(--orange-border);
@@ -1192,6 +1229,16 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
       <div class="theme-toggle" id="theme-toggle">
         <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')"><svg class="ic"><use href="#i-moon"/></svg>Koyu</button>
         <button class="theme-btn" data-theme="light" onclick="setTheme('light')"><svg class="ic"><use href="#i-sun"/></svg>Açık</button>
+      </div>
+    </div>
+    <div class="settings-row">
+      <div>
+        <div class="settings-row-label">Önce Hollandaca</div>
+        <div class="settings-row-desc">Kartta önce Hollandaca açıklama görünür; Türkçe anlam, köken ve not tek düğmeyle açılır</div>
+      </div>
+      <div class="theme-toggle" id="nlfirst-toggle">
+        <button class="theme-btn nlfirst-btn" data-nlfirst="1" onclick="setNlFirst(true)">Açık</button>
+        <button class="theme-btn nlfirst-btn" data-nlfirst="0" onclick="setNlFirst(false)">Kapalı</button>
       </div>
     </div>
     <div class="settings-row">
@@ -2031,6 +2078,96 @@ function setFontScale(scale) {
   try { localStorage.setItem('kv_fontscale', scale); } catch(e) {}
 }
 
+// ── Önce Hollandaca ──────────────────────────────────────
+// Açıkken: listede ve kart detayında önce Hollandaca açıklama görünür,
+// Türkçe karşılık + köken + not tek düğmeyle açılır.
+let nlFirst = true;
+function loadNlFirstPref() {
+  try {
+    const v = localStorage.getItem('kv_nlfirst');
+    nlFirst = (v === null) ? true : (v === '1');
+  } catch(e) { nlFirst = true; }
+  applyNlFirstUI();
+}
+function applyNlFirstUI() {
+  document.querySelectorAll('.nlfirst-btn').forEach(b => {
+    b.classList.toggle('active', (b.dataset.nlfirst === '1') === nlFirst);
+  });
+}
+function setNlFirst(on) {
+  nlFirst = !!on;
+  try { localStorage.setItem('kv_nlfirst', nlFirst ? '1' : '0'); } catch(e) {}
+  applyNlFirstUI();
+  if (typeof renderAll === 'function' && CARDS.length) { renderAll(); restoreOpenCardBodies(); }
+  if (document.getElementById('screen-tekrar') && typeof renderTekrar === 'function') {
+    try { renderTekrar(); } catch(e) {}
+  }
+}
+// Liste satırındaki önizleme: Hollandaca uitleg, yoksa ilk örnek cümle, o da yoksa Türkçe.
+function previewLine(item) {
+  if (!nlFirst) return { text: item.turkish, nl: false };
+  const src = (item.uitleg && item.uitleg.trim())
+    ? item.uitleg
+    : ((item.examples && item.examples.length && item.examples[0].nl) ? item.examples[0].nl : '');
+  if (!src) return { text: '', nl: false };
+  const t = src.length > 95 ? src.slice(0, 92).trim() + '…' : src;
+  return { text: t, nl: true };
+}
+// Kart gövdesi — hem Kartlar hem Tekrar ekranında kullanılır. pfx: 'c' | 't'
+function cardBodyHtml(item, pfx) {
+  const uitleg = (item.uitleg && item.uitleg.trim()) ? item.uitleg : '';
+  // uitleg yoksa üstte ilk Hollandaca örnek cümle gösterilir (geçiş dönemi yedeği)
+  const fallbackNl = (!uitleg && item.examples && item.examples.length) ? item.examples[0].nl : '';
+  const topNl = uitleg || fallbackNl;
+  const topBox = topNl
+    ? `<div class="section"><div class="sec-title">${ic('book')}Eenvoudige uitleg</div><div class="uitleg-box" lang="nl">${topNl}</div></div>`
+    : '';
+  const etymBox = item.etymology ? `<div class="section"><div class="sec-title">${ic('search')}Türev / Köken</div><div class="etym-box">${item.etymology}</div></div>` : '';
+  const noteBox = item.note ? `<div class="section"><div class="sec-title">${ic('pin')}Not</div><div class="note-box">${item.note}</div></div>` : '';
+  const legalBox = item.legal ? `<div class="section"><div class="legal-box"><div class="legal-lbl">${ic('scale')}Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>` : '';
+
+  const exList = (item.examples && item.examples.length)
+    ? `<div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map((ex,i)=>{
+        const exId = findExampleCardId(ex);
+        const eid = `${pfx}${item.id}-${i}`;
+        const trPart = nlFirst
+          ? `<button class="ex-tr-btn" id="exb-${eid}" onclick="revealExTr(event,'${eid}')">Türkçesi ›</button><div class="ex-tr veil" id="ext-${eid}">${ex.tr}</div>`
+          : `<div class="ex-tr">${ex.tr}</div>`;
+        return `<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div>${trPart}<button class="btn-add-example ${exId?'added':''}" ${exId?`data-added-id="${exId}"`:''} onclick="addExampleAsCard(event,${item.id},${i})">${exId?ic('check')+' Eklendi':ic('plus')+' Ezberle'}</button></div>`;
+      }).join('')}</div></div>`
+    : '';
+
+  if (!nlFirst) {
+    return topBox + etymBox + noteBox + exList + legalBox;
+  }
+  // Önce Hollandaca: uitleg → örnekler → tek düğme → (anlam + köken + not + hukuk)
+  const trId = `tr-${pfx}${item.id}`;
+  const trInner =
+    `<div class="section"><div class="sec-title">${ic('book')}Türkçe anlamı</div><div class="note-box">${item.turkish}</div></div>`
+    + etymBox + noteBox + legalBox;
+  return topBox + exList
+    + `<button class="btn-tr-reveal" id="btn-${trId}" onclick="toggleTrBlock(event,'${trId}')">${ic('search')}Türkçesi</button>`
+    + `<div class="tr-block" id="${trId}">${trInner}</div>`;
+}
+function toggleTrBlock(e, id) {
+  if (e) e.stopPropagation();
+  const el = document.getElementById(id);
+  const btn = document.getElementById('btn-' + id);
+  if (!el) return;
+  const open = el.classList.toggle('open');
+  if (btn) {
+    btn.classList.toggle('open', open);
+    btn.innerHTML = ic('search') + (open ? 'Türkçeyi gizle' : 'Türkçesi');
+  }
+}
+function revealExTr(e, eid) {
+  if (e) e.stopPropagation();
+  const tr = document.getElementById('ext-' + eid);
+  const btn = document.getElementById('exb-' + eid);
+  if (tr) tr.classList.remove('veil');
+  if (btn) btn.classList.add('hide');
+}
+
 // ════════════════════════════════════════
 // GAZETE MODU
 // ════════════════════════════════════════
@@ -2615,6 +2752,7 @@ async function initApp() {
   initTTS();
   initSessionTracking();
   loadAppearancePrefs();
+  loadNlFirstPref();
   loadProgressData();
   loadLocalDeleted();
   buildTypeFilterListeners();
@@ -3095,7 +3233,7 @@ function tekrarCard(item, readonly=false) {
   const n = p ? p.sr_step + 1 : 1;
   const diff = p && p.sr_next_due ? new Date(p.sr_next_due).getTime() - Date.now() : 0;
   let t = diff > 0 ? (diff < 3600000 ? Math.ceil(diff/60000)+' dk sonra' : Math.ceil(diff/3600000)+' saat sonra') : 'şimdi!';
-  return `<div class="tekrar-card"><div class="tekrar-card-head" onclick="toggleTekrarCard(${item.id})"><div class="tekrar-card-dutch" lang="nl">${item.dutch}</div><div class="tekrar-card-tr">${item.turkish}</div><div class="tekrar-card-meta">${n}. tekrar — ${t}</div></div><div class="card-body" id="tbody-${item.id}">${item.uitleg?`<div class="section"><div class="sec-title">${ic('book')}Eenvoudige uitleg</div><div class="uitleg-box" lang="nl">${item.uitleg}</div></div>`:''}${item.etymology?`<div class="section"><div class="sec-title">${ic('search')}Türev / Köken</div><div class="etym-box">${item.etymology}</div></div>`:''}${item.note?`<div class="section"><div class="sec-title">${ic('pin')}Not</div><div class="note-box">${item.note}</div></div>`:''}${(item.examples && item.examples.length)?`<div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map((ex,i)=>{const exId=findExampleCardId(ex);return `<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div><button class="btn-add-example ${exId?'added':''}" ${exId?`data-added-id="${exId}"`:''} onclick="addExampleAsCard(event,${item.id},${i})">${exId?ic('check')+' Eklendi':ic('plus')+' Ezberle'}</button></div>`;}).join('')}</div></div>`:''}${item.legal?`<div class="section"><div class="legal-box"><div class="legal-lbl">${ic('scale')}Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>`:''}</div><div class="tekrar-card-actions"><button class="btn-speak" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')">${ic('volume')}Dinle</button>${!readonly?`<button class="btn-done" onclick="markRepeat(${item.id})">${ic('check')}Tekrar ettim</button>`:''}</div></div>`;
+  return `<div class="tekrar-card"><div class="tekrar-card-head" onclick="toggleTekrarCard(${item.id})"><div class="tekrar-card-dutch" lang="nl">${item.dutch}</div>${(()=>{const p2=previewLine(item);return p2.text?`<div class="${p2.nl?'card-preview':'tekrar-card-tr'}"${p2.nl?' lang="nl"':''}>${p2.text}</div>`:'';})()}<div class="tekrar-card-meta">${n}. tekrar — ${t}</div></div><div class="card-body" id="tbody-${item.id}">${cardBodyHtml(item, 't')}</div><div class="tekrar-card-actions"><button class="btn-speak" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')">${ic('volume')}Dinle</button>${!readonly?`<button class="btn-done" onclick="markRepeat(${item.id})">${ic('check')}Tekrar ettim</button>`:''}</div></div>`;
 }
 let openTekrarBodies = new Set();
 function toggleTekrarCard(id) {
@@ -3337,7 +3475,7 @@ function renderCard(item) {
   return `<div class="card${due ? ' expanded' : ''}" id="card-${item.id}">
     <div class="card-head" onclick="toggleCard(${item.id})">
       <span class="badge ${badgeCls}">${typeLbl}</span>
-      <div style="flex:1;min-width:0"><div class="card-dutch" lang="nl">${item.dutch}</div><div class="card-tr">${item.turkish}</div></div>
+      <div style="flex:1;min-width:0"><div class="card-dutch" lang="nl">${item.dutch}</div>${(()=>{const p=previewLine(item);return p.text?`<div class="${p.nl?'card-preview':'card-tr'}"${p.nl?' lang="nl"':''}>${p.text}</div>`:'';})()}</div>
       <span style="color:var(--text3);font-size:18px;flex-shrink:0;margin-top:2px" id="arr-${item.id}">›</span>
     </div>
     ${sr ? `<div class="sr-status ${sr.cls}"><span class="sr-dot"></span>${sr.text}</div>` : ''}
@@ -3351,11 +3489,7 @@ function renderCard(item) {
       <button class="btn-detail danger icon-only" onclick="confirmDelete(event,${item.id})" title="Sil">${ic('trash')}</button>
     </div>
     <div class="card-body" id="body-${item.id}">
-      ${item.uitleg ? `<div class="section"><div class="sec-title">${ic('book')}Eenvoudige uitleg</div><div class="uitleg-box" lang="nl">${item.uitleg}</div></div>` : ''}
-      ${item.etymology ? `<div class="section"><div class="sec-title">${ic('search')}Türev / Köken</div><div class="etym-box">${item.etymology}</div></div>` : ''}
-      ${item.note ? `<div class="section"><div class="sec-title">${ic('pin')}Not</div><div class="note-box">${item.note}</div></div>` : ''}
-      ${(item.examples && item.examples.length) ? `<div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map((ex,i)=>{const exId=findExampleCardId(ex);return `<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div><button class="btn-add-example ${exId?'added':''}" ${exId?`data-added-id="${exId}"`:''} onclick="addExampleAsCard(event,${item.id},${i})">${exId?ic('check')+' Eklendi':ic('plus')+' Ezberle'}</button></div>`;}).join('')}</div></div>` : ''}
-      ${item.legal ? `<div class="section"><div class="legal-box"><div class="legal-lbl">${ic('scale')}Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>` : ''}
+      ${cardBodyHtml(item, 'c')}
     </div>
   </div>`;
 }
