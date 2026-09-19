@@ -2106,21 +2106,17 @@ function setNlFirst(on) {
 // Liste satırındaki önizleme: Hollandaca uitleg, yoksa ilk örnek cümle, o da yoksa Türkçe.
 function previewLine(item) {
   if (!nlFirst) return { text: item.turkish, nl: false };
-  const src = (item.uitleg && item.uitleg.trim())
-    ? item.uitleg
-    : ((item.examples && item.examples.length && item.examples[0].nl) ? item.examples[0].nl : '');
-  if (!src) return { text: '', nl: false };
+  const src = (item.uitleg && item.uitleg.trim()) ? item.uitleg : '';
+  if (!src) return { text: item.turkish, nl: false };
   const t = src.length > 95 ? src.slice(0, 92).trim() + '…' : src;
   return { text: t, nl: true };
 }
 // Kart gövdesi — hem Kartlar hem Tekrar ekranında kullanılır. pfx: 'c' | 't'
 function cardBodyHtml(item, pfx) {
   const uitleg = (item.uitleg && item.uitleg.trim()) ? item.uitleg : '';
-  // uitleg yoksa üstte ilk Hollandaca örnek cümle gösterilir (geçiş dönemi yedeği)
-  const fallbackNl = (!uitleg && item.examples && item.examples.length) ? item.examples[0].nl : '';
-  const topNl = uitleg || fallbackNl;
-  const topBox = topNl
-    ? `<div class="section"><div class="sec-title">${ic('book')}Eenvoudige uitleg</div><div class="uitleg-box" lang="nl">${topNl}</div></div>`
+  // uitleg yoksa bölüm hiç gösterilmez — örnek cümleyi açıklama diye göstermek yanıltıcı
+  const topBox = uitleg
+    ? `<div class="section"><div class="sec-title">${ic('book')}Eenvoudige uitleg</div><div class="uitleg-box" lang="nl">${uitleg}</div></div>`
     : '';
   const etymBox = item.etymology ? `<div class="section"><div class="sec-title">${ic('search')}Türev / Köken</div><div class="etym-box">${item.etymology}</div></div>` : '';
   const noteBox = item.note ? `<div class="section"><div class="sec-title">${ic('pin')}Not</div><div class="note-box">${item.note}</div></div>` : '';
@@ -2839,6 +2835,7 @@ async function addNewCards() {
     statusEl.textContent = `⏳ ${newCards.length} kart ekleniyor...`;
     await insertCardsRemote(newCards.map(c => ({
       date: c.date, type: c.type, dutch: c.dutch, turkish: c.turkish,
+      uitleg: c.uitleg || null, etymology: c.etymology || null,
       note: c.note || null, examples: c.examples || [], legal: c.legal || null,
       is_legal: c.is_legal || c.isLegal || false
     })));
