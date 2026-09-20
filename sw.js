@@ -4,7 +4,7 @@
 // güncellemeleri PWA'da her zaman en güncel haliyle gelir, eski cache
 // asılı kalmaz.
 
-const CACHE_NAME = 'woordenschat-v20'; // her güncellemede bu numarayı artır
+const CACHE_NAME = 'woordenschat-v23'; // her güncellemede bu numarayı artır
 const ASSETS = [
   './index.html',
   './manifest.json',

@@ -1020,6 +1020,28 @@ input[type="file"] { display: none; }
   font-size: 11.5px; color: var(--text3);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+/* Playlist'te cümlenin kaçıncı tekrarda olduğunu gösteren rozet */
+.lp-sr {
+  flex-shrink: 0; font-size: 10.5px; font-weight: 600;
+  padding: 2px 7px; border-radius: 999px;
+  border: 1px solid var(--border2); color: var(--text3);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.lp-sr.due { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+.lp-sr.done { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.lp-sr.new { background: var(--bg3); }
+/* Tümünü tekrar olarak say */
+.listen-markall {
+  font-family: var(--font); font-size: 13px; font-weight: 500;
+  margin: 0 16px 16px; padding: 12px;
+  width: calc(100% - 32px); min-height: 44px;
+  border-radius: 10px; border: 1px solid var(--green-border);
+  background: var(--green-bg); color: var(--green);
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.listen-markall:active { opacity: 0.7; }
+.listen-markall:disabled { opacity: 0.55; cursor: default; }
+.listen-markall .ic { width: 17px; height: 17px; }
 .lp-playing { flex-shrink: 0; color: var(--accent); display: flex; }
 .lp-playing svg { width: 16px; height: 16px; }
 
@@ -2082,6 +2104,10 @@ function setFontScale(scale) {
 // Açıkken: listede ve kart detayında önce Hollandaca açıklama görünür,
 // Türkçe karşılık + köken + not tek düğmeyle açılır.
 let nlFirst = true;
+// Yeniden çizimlerde (30 sn'lik yenileme, "Öğrendim", "Tekrar ettim" vb.) açık kalan
+// Türkçe bloklarını ve tek tek açılmış örnek çevirilerini hatırlar.
+let openTrBlocks = new Set();
+let revealedExTr = new Set();
 function loadNlFirstPref() {
   try {
     const v = localStorage.getItem('kv_nlfirst');
@@ -2096,6 +2122,8 @@ function applyNlFirstUI() {
 }
 function setNlFirst(on) {
   nlFirst = !!on;
+  openTrBlocks.clear();
+  revealedExTr.clear();
   try { localStorage.setItem('kv_nlfirst', nlFirst ? '1' : '0'); } catch(e) {}
   applyNlFirstUI();
   if (typeof renderAll === 'function' && CARDS.length) { renderAll(); restoreOpenCardBodies(); }
@@ -2126,8 +2154,9 @@ function cardBodyHtml(item, pfx) {
     ? `<div class="section"><div class="sec-title">${ic('message')}Örnek cümleler</div><div class="examples">${item.examples.map((ex,i)=>{
         const exId = findExampleCardId(ex);
         const eid = `${pfx}${item.id}-${i}`;
+        const exShown = revealedExTr.has(eid);
         const trPart = nlFirst
-          ? `<button class="ex-tr-btn" id="exb-${eid}" onclick="revealExTr(event,'${eid}')">Türkçesi ›</button><div class="ex-tr veil" id="ext-${eid}">${ex.tr}</div>`
+          ? `<button class="ex-tr-btn${exShown?' hide':''}" id="exb-${eid}" onclick="revealExTr(event,'${eid}')">Türkçesi ›</button><div class="ex-tr${exShown?'':' veil'}" id="ext-${eid}">${ex.tr}</div>`
           : `<div class="ex-tr">${ex.tr}</div>`;
         return `<div class="ex-item"><div class="ex-nl" lang="nl">${ex.nl}</div>${trPart}<button class="btn-add-example ${exId?'added':''}" ${exId?`data-added-id="${exId}"`:''} onclick="addExampleAsCard(event,${item.id},${i})">${exId?ic('check')+' Eklendi':ic('plus')+' Ezberle'}</button></div>`;
       }).join('')}</div></div>`
@@ -2141,9 +2170,10 @@ function cardBodyHtml(item, pfx) {
   const trInner =
     `<div class="section"><div class="sec-title">${ic('book')}Türkçe anlamı</div><div class="note-box">${item.turkish}</div></div>`
     + etymBox + noteBox + legalBox;
+  const trOpen = openTrBlocks.has(trId);
   return topBox + exList
-    + `<button class="btn-tr-reveal" id="btn-${trId}" onclick="toggleTrBlock(event,'${trId}')">${ic('search')}Türkçesi</button>`
-    + `<div class="tr-block" id="${trId}">${trInner}</div>`;
+    + `<button class="btn-tr-reveal${trOpen?' open':''}" id="btn-${trId}" onclick="toggleTrBlock(event,'${trId}')">${ic('search')}${trOpen?'Türkçeyi gizle':'Türkçesi'}</button>`
+    + `<div class="tr-block${trOpen?' open':''}" id="${trId}">${trInner}</div>`;
 }
 function toggleTrBlock(e, id) {
   if (e) e.stopPropagation();
@@ -2151,6 +2181,7 @@ function toggleTrBlock(e, id) {
   const btn = document.getElementById('btn-' + id);
   if (!el) return;
   const open = el.classList.toggle('open');
+  if (open) openTrBlocks.add(id); else openTrBlocks.delete(id);
   if (btn) {
     btn.classList.toggle('open', open);
     btn.innerHTML = ic('search') + (open ? 'Türkçeyi gizle' : 'Türkçesi');
@@ -2160,6 +2191,7 @@ function revealExTr(e, eid) {
   if (e) e.stopPropagation();
   const tr = document.getElementById('ext-' + eid);
   const btn = document.getElementById('exb-' + eid);
+  revealedExTr.add(eid);
   if (tr) tr.classList.remove('veil');
   if (btn) btn.classList.add('hide');
 }
@@ -2312,6 +2344,7 @@ async function gazeteAddCard() {
 // ════════════════════════════════════════
 let listenQueue = [];
 let listenIndex = 0;
+let listenPlaylistScroll = 0;   // playlist kaydırma konumu (render'lar arasında korunur)
 let listenPlaying = false;
 let listenRepeatsDone = 0;
 let listenAbortToken = 0;
@@ -2409,6 +2442,8 @@ function listenStartPlayback() {
   if (!cards.length) { alert('Bu kapsamda dinlenecek cümle yok.'); return; }
   listenQueue = cards;
   listenIndex = 0;
+  listenPlaylistScroll = 0;
+  lastScrolledIndex = -1;
   listenPlaying = false;
   listenRepeatsDone = 0;
   listenSetupMode = false;
@@ -2485,58 +2520,180 @@ function renderListenPlayback(el, progressText) {
 
   const card = listenQueue[listenIndex];
   if (progressText) progressText.textContent = `${listenIndex + 1} / ${listenQueue.length}`;
-  const pct = Math.round(((listenIndex) / Math.max(1, listenQueue.length - 1)) * 100);
 
+  // Kuyruk aynıysa DOM'u BAŞTAN YARATMA — sadece değişen parçaları güncelle.
+  // Tam yeniden çizim, kaydırılabilir listenin scrollTop'unu sıfırladığı için
+  // liste her tekrar sayacı güncellemesinde en başa fırlıyordu.
+  const sig = listenQueue.map(c => c.id).join(',');
+  const existing = document.getElementById('listen-playlist');
+  if (existing && existing.dataset.sig === sig) {
+    listenPatchPlayback();
+    return;
+  }
+
+  const pct = Math.round(((listenIndex) / Math.max(1, listenQueue.length - 1)) * 100);
   el.innerHTML = `
     <div class="listen-lesson-tag">
       <button class="listen-setup-link" onclick="listenBackToSetup()">${ic('settings')}Ayarlar</button>
-      <span>${card.date}</span>
+      <span id="listen-date">${card.date}</span>
     </div>
-    <div class="listen-progress-bar-bg"><div class="listen-progress-bar-fill" style="width:${pct}%"></div></div>
+    <div class="listen-progress-bar-bg"><div class="listen-progress-bar-fill" id="listen-progress-fill" style="width:${pct}%"></div></div>
 
-    <div class="listen-card-box">
-      <div class="listen-word" lang="nl">${card.dutch}</div>
-      <div class="listen-tr">${card.turkish}</div>
-      ${card.note ? `<div class="listen-note">${card.note}</div>` : ''}
-    </div>
+    <div class="listen-card-box" id="listen-card-box">${listenCardBoxHtml(card)}</div>
 
-    <button class="listen-counted-btn ${listenCountedIds.has(card.id) ? 'done' : ''}" onclick="listenMarkCounted()" ${listenCountedIds.has(card.id) ? 'disabled' : ''}>
-      ${listenCountedIds.has(card.id) ? ic('check') + ' Sayıldı' : ic('circle-check') + ' Tekrar olarak say'}
-    </button>
+    <button class="listen-counted-btn" id="listen-counted" onclick="listenMarkCounted()"></button>
 
     <div class="listen-controls">
       <button class="listen-ctrl-btn small" onclick="listenPrev()" title="Önceki">${ic('prev')}</button>
-      <button class="listen-ctrl-btn play" onclick="listenTogglePlay()" title="${listenPlaying ? 'Duraklat' : 'Oynat'}">${listenPlaying ? ic('pause') : ic('play')}</button>
+      <button class="listen-ctrl-btn play" id="listen-play-btn" onclick="listenTogglePlay()"></button>
       <button class="listen-ctrl-btn small" onclick="listenNextManual()" title="Sonraki">${ic('next')}</button>
     </div>
 
-    <div class="listen-playback-meta">
-      ${listenRepeatCount>1 ? `Tekrar: ${Math.min(listenRepeatsDone+1,listenRepeatCount)}/${listenRepeatCount}` : ''}
-      ${listenSpeed!==1 ? ` · Hız ${listenSpeed}×` : ''}
-    </div>
+    <div class="listen-playback-meta" id="listen-meta"></div>
 
     <div class="listen-playlist-label">${ic('message')}Sıradaki cümleler (${listenQueue.length})</div>
-    <div class="listen-playlist" id="listen-playlist">
+    <div class="listen-playlist" id="listen-playlist" data-sig="${sig}">
       ${listenQueue.map((c, idx) => `
-        <div class="listen-playlist-item ${idx===listenIndex?'current':''}" onclick="listenJumpTo(${idx})" id="lp-item-${idx}">
+        <div class="listen-playlist-item" onclick="listenJumpTo(${idx})" id="lp-item-${idx}">
           <span class="lp-num">${idx+1}</span>
           <div class="lp-text">
             <div class="lp-nl" lang="nl">${c.dutch}</div>
             <div class="lp-tr">${c.turkish}</div>
           </div>
-          ${idx===listenIndex && listenPlaying ? `<span class="lp-playing">${ic('play')}</span>` : ''}
+          <span class="lp-sr" id="lp-sr-${idx}"></span>
+          <span class="lp-playing" id="lp-play-${idx}"></span>
         </div>
       `).join('')}
     </div>
+    <button class="listen-markall" id="listen-markall" onclick="listenMarkAllCounted()"></button>
   `;
+  lastScrolledIndex = -1;
+  listenPatchPlayback();
+}
 
-  // Listeyi yalnızca çalan cümle değiştiğinde kaydır — her tekrar sayacı
-  // güncellemesinde kaydırmak ekranı sürekli oynatıyordu.
+function listenCardBoxHtml(card) {
+  return `<div class="listen-word" lang="nl">${card.dutch}</div>
+    <div class="listen-tr">${card.turkish}</div>
+    ${card.note ? `<div class="listen-note">${card.note}</div>` : ''}`;
+}
+
+// Çalan cümle / tekrar sayacı / işaretleme durumu değiştiğinde yalnızca ilgili
+// düğümleri günceller. Playlist DOM'una dokunulmaz, bu yüzden kaydırma konumu bozulmaz.
+function listenPatchPlayback() {
+  const card = listenQueue[listenIndex];
+  if (!card) return;
+
+  const dateEl = document.getElementById('listen-date');
+  if (dateEl) dateEl.textContent = card.date;
+
+  const fill = document.getElementById('listen-progress-fill');
+  if (fill) fill.style.width = Math.round(((listenIndex) / Math.max(1, listenQueue.length - 1)) * 100) + '%';
+
+  const box = document.getElementById('listen-card-box');
+  if (box && box.dataset.cardId !== String(card.id)) {
+    box.dataset.cardId = String(card.id);
+    box.innerHTML = listenCardBoxHtml(card);
+  }
+
+  const counted = listenCountedIds.has(card.id);
+  const cbtn = document.getElementById('listen-counted');
+  if (cbtn) {
+    cbtn.classList.toggle('done', counted);
+    cbtn.disabled = counted;
+    cbtn.innerHTML = counted ? ic('check') + ' Sayıldı' : ic('circle-check') + ' Tekrar olarak say';
+  }
+
+  const pbtn = document.getElementById('listen-play-btn');
+  if (pbtn) {
+    pbtn.title = listenPlaying ? 'Duraklat' : 'Oynat';
+    pbtn.innerHTML = listenPlaying ? ic('pause') : ic('play');
+  }
+
+  const meta = document.getElementById('listen-meta');
+  if (meta) {
+    meta.textContent = (listenRepeatCount > 1 ? `Tekrar: ${Math.min(listenRepeatsDone+1, listenRepeatCount)}/${listenRepeatCount}` : '')
+      + (listenSpeed !== 1 ? (listenRepeatCount > 1 ? ' · ' : '') + `Hız ${listenSpeed}×` : '');
+  }
+
+  listenQueue.forEach((c, idx) => {
+    const item = document.getElementById('lp-item-' + idx);
+    if (!item) return;
+    item.classList.toggle('current', idx === listenIndex);
+    const play = document.getElementById('lp-play-' + idx);
+    if (play) {
+      const want = (idx === listenIndex && listenPlaying) ? ic('play') : '';
+      if (play.dataset.on !== (want ? '1' : '0')) { play.dataset.on = want ? '1' : '0'; play.innerHTML = want; }
+    }
+    const badge = document.getElementById('lp-sr-' + idx);
+    if (badge) {
+      const b = srBadge(c.id);
+      if (badge.dataset.v !== b.cls + '|' + b.text) {
+        badge.dataset.v = b.cls + '|' + b.text;
+        badge.className = 'lp-sr ' + b.cls;
+        badge.textContent = b.text;
+      }
+    }
+  });
+
+  const kalan = listenQueue.filter(c => !listenCountedIds.has(c.id)).length;
+  const mbtn = document.getElementById('listen-markall');
+  if (mbtn) {
+    mbtn.disabled = !kalan;
+    mbtn.innerHTML = kalan
+      ? ic('circle-check') + ` Tümünü tekrar olarak say (${kalan})`
+      : ic('check') + ' Tüm cümleler sayıldı';
+  }
+
+  // Çalan cümle değiştiyse listeyi ona kadar kaydır (takip). Kullanıcı elle
+  // kaydırdıysa araya girmez, çünkü yalnızca index değişiminde çalışır.
   if (lastScrolledIndex !== listenIndex) {
     lastScrolledIndex = listenIndex;
-    const currentEl = document.getElementById('lp-item-' + listenIndex);
-    if (currentEl) currentEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const pl = document.getElementById('listen-playlist');
+    const cur = document.getElementById('lp-item-' + listenIndex);
+    if (pl && cur) {
+      const cTop = cur.offsetTop - pl.offsetTop;
+      const cBot = cTop + cur.offsetHeight;
+      if (cTop < pl.scrollTop || cBot > pl.scrollTop + pl.clientHeight) {
+        const target = Math.max(0, cTop - (pl.clientHeight - cur.offsetHeight) / 2);
+        if (typeof pl.scrollTo === 'function') pl.scrollTo({ top: target, behavior: 'smooth' });
+        else pl.scrollTop = target;
+      }
+    }
   }
+}
+
+// Playlist rozeti: cümlenin aralıklı tekrar programında kaçıncı adımda olduğu
+function srBadge(id) {
+  const p = srInfo(id);
+  if (!p) return { cls: 'new', text: 'yeni' };
+  const total = SR_INTERVALS.length;
+  if (p.sr_step >= total) return { cls: 'done', text: `${total}/${total}` };
+  const n = p.sr_step + 1;
+  const due = p.sr_next_due ? new Date(p.sr_next_due).getTime() - Date.now() : 0;
+  return { cls: due <= 0 ? 'due' : '', text: `${n}/${total}` };
+}
+
+// Tüm kuyruğu tek seferde tekrar olarak işaretler (her cümle için BİR tekrar).
+// Zaten sayılmış cümleler atlanır, ikinci kez sayılmaz.
+async function listenMarkAllCounted() {
+  const targets = listenQueue.filter(c => !listenCountedIds.has(c.id));
+  if (!targets.length) return;
+  const btn = document.getElementById('listen-markall');
+  if (btn) { btn.disabled = true; btn.innerHTML = ic('clock') + ` Kaydediliyor 0/${targets.length}`; }
+  let ok = 0, fail = 0;
+  for (const c of targets) {
+    try {
+      const known = PROGRESS[c.id] && PROGRESS[c.id].is_known;
+      if (known) await doRepeat(c.id); else await startSR(c.id);
+      listenCountedIds.add(c.id);
+      recordActivity();
+      ok++;
+    } catch (err) { fail++; }
+    if (btn) btn.innerHTML = ic('clock') + ` Kaydediliyor ${ok+fail}/${targets.length}`;
+  }
+  updateStats();
+  renderListenScreen();
+  if (fail) alert(`${ok} cümle sayıldı, ${fail} tanesi kaydedilemedi. Butona tekrar basıp kalanları deneyebilirsin.`);
 }
 
 async function listenPlayCurrent() {
