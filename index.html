@@ -936,13 +936,26 @@ input[type="file"] { display: none; }
   min-height: 36px; display: inline-flex; align-items: center; gap: 4px;
 }
 .listen-card-box {
-  margin: 8px 16px 20px; padding: 32px 20px; background: var(--bg2);
+  margin: 8px 16px 20px; padding: 18px 20px; background: var(--bg2);
   border: 1px solid var(--border); border-radius: 18px; text-align: center;
-  min-height: 160px; display: flex; flex-direction: column; justify-content: center;
+  /* SABİT yükseklik: cümle uzunluğu veya not satırı değişince altındaki
+     kontroller ve liste sayfada aşağı-yukarı kaymasın */
+  height: 12.5em; box-sizing: border-box; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center;
 }
-.listen-word { font-size: 24px; font-weight: 700; color: var(--text); line-height: 1.4; }
-.listen-tr { font-size: 15px; color: var(--text2); margin-top: 10px; }
-.listen-note { font-size: 12px; color: var(--text3); margin-top: 14px; line-height: 1.5; padding: 0 8px; }
+.lcb-inner { width: 100%; }
+/* Cümle ASLA kesilmez: sığmazsa fitListenBox() yazıyı küçültür */
+.listen-word { font-size: 24px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.listen-word.long  { font-size: 20px; }
+.listen-word.xlong { font-size: 17px; }
+.listen-tr {
+  font-size: 15px; color: var(--text2); margin-top: 8px;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
+.listen-note {
+  font-size: 12px; color: var(--text3); margin-top: 10px; line-height: 1.45; padding: 0 8px;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden;
+}
 
 .listen-counted-btn {
   display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -1042,7 +1055,7 @@ input[type="file"] { display: none; }
 .listen-markall:active { opacity: 0.7; }
 .listen-markall:disabled { opacity: 0.55; cursor: default; }
 .listen-markall .ic { width: 17px; height: 17px; }
-.lp-playing { flex-shrink: 0; color: var(--accent); display: flex; }
+.lp-playing { flex-shrink: 0; width: 16px; height: 16px; color: var(--accent); display: flex; }
 .lp-playing svg { width: 16px; height: 16px; }
 
 .listen-empty { text-align: center; padding: 60px 20px; color: var(--text3); }
@@ -1607,17 +1620,142 @@ let timeLog = {};     // {date: seconds}
 let dailyGoal = 5;
 let sessionStart = null; // aktif oturum başlangıcı
 
+// ── Cihazlar arası senkronizasyon ────────────────────────
+// Her cihaz KENDİ katkısını ayrı bir satıra yazar (app_state tablosu:
+// 'activity:<cihaz>' ve 'timelog:<cihaz>'). Toplam = tüm cihazların toplamı.
+// Böylece iki cihaz aynı anda yazsa bile hiçbir şey ezilmez ve çift sayılmaz.
+// kv_activity / kv_timelog artık yalnızca BU cihazın katkısını tutar; eski
+// yerel geçmiş de bu cihazın katkısı sayıldığı için ilk senkronda kaybolmaz.
+const DEVICE_ID = (() => {
+  try {
+    let id = localStorage.getItem('kv_device_id');
+    if (!id) {
+      id = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      localStorage.setItem('kv_device_id', id);
+    }
+    return id;
+  } catch(e) { return 'd-anon'; }
+})();
+let myActivity = {}, myTime = {};         // bu cihaz
+let otherActivity = {}, otherTime = {};   // diğer cihazlar (sunucudan)
+let stateSyncOk = false;                  // app_state tablosu erişilebilir mi
+let statePushTimer = null;
+let lastServerRefresh = 0;
+
+function sumMaps(a, b) {
+  const o = { ...a };
+  for (const k in b) o[k] = (o[k] || 0) + (b[k] || 0);
+  return o;
+}
+function recomputeTotals() {
+  activityLog = sumMaps(myActivity, otherActivity);
+  timeLog = sumMaps(myTime, otherTime);
+}
+
 function loadProgressData() {
-  try { activityLog = JSON.parse(localStorage.getItem('kv_activity') || '{}'); } catch(e) { activityLog = {}; }
-  try { timeLog = JSON.parse(localStorage.getItem('kv_timelog') || '{}'); } catch(e) { timeLog = {}; }
+  try { myActivity = JSON.parse(localStorage.getItem('kv_activity') || '{}'); } catch(e) { myActivity = {}; }
+  try { myTime = JSON.parse(localStorage.getItem('kv_timelog') || '{}'); } catch(e) { myTime = {}; }
+  try { otherActivity = JSON.parse(localStorage.getItem('kv_activity_others') || '{}'); } catch(e) { otherActivity = {}; }
+  try { otherTime = JSON.parse(localStorage.getItem('kv_timelog_others') || '{}'); } catch(e) { otherTime = {}; }
   try { dailyGoal = parseInt(localStorage.getItem('kv_daily_goal')) || 5; } catch(e) {}
+  recomputeTotals();
 }
 
 function saveActivityLog() {
-  try { localStorage.setItem('kv_activity', JSON.stringify(activityLog)); } catch(e) {}
+  try { localStorage.setItem('kv_activity', JSON.stringify(myActivity)); } catch(e) {}
+  scheduleStatePush();
 }
 function saveTimeLog() {
-  try { localStorage.setItem('kv_timelog', JSON.stringify(timeLog)); } catch(e) {}
+  try { localStorage.setItem('kv_timelog', JSON.stringify(myTime)); } catch(e) {}
+  scheduleStatePush();
+}
+
+// Sunucudan diğer cihazların katkısını ve ortak ayarları çeker
+async function pullState() {
+  try {
+    const rows = await sbFetch('app_state?select=key,value') || [];
+    const oa = {}, ot = {};
+    let goal = null;
+    for (const r of rows) {
+      const v = r.value || {};
+      if (r.key.startsWith('activity:') && r.key !== 'activity:' + DEVICE_ID) {
+        for (const d in v) oa[d] = (oa[d] || 0) + (v[d] || 0);
+      } else if (r.key.startsWith('timelog:') && r.key !== 'timelog:' + DEVICE_ID) {
+        for (const d in v) ot[d] = (ot[d] || 0) + (v[d] || 0);
+      } else if (r.key === 'daily_goal') {
+        goal = parseInt(v);
+      }
+    }
+    otherActivity = oa; otherTime = ot;
+    try {
+      localStorage.setItem('kv_activity_others', JSON.stringify(oa));
+      localStorage.setItem('kv_timelog_others', JSON.stringify(ot));
+    } catch(e) {}
+    if (goal) {
+      dailyGoal = goal;
+      try { localStorage.setItem('kv_daily_goal', goal); } catch(e) {}
+    }
+    recomputeTotals();
+    stateSyncOk = true;
+  } catch (e) {
+    // Tablo yoksa veya çevrimdışıysa uygulama yerel verilerle çalışmaya devam eder
+    console.warn('app_state okunamadı (tablo oluşturuldu mu?)', e);
+    stateSyncOk = false;
+  }
+}
+
+// Bu cihazın katkısını sunucuya yazar. keepalive: sayfa kapanırken de gitsin.
+async function pushState(keepalive) {
+  clearTimeout(statePushTimer); statePushTimer = null;
+  const now = new Date().toISOString();
+  const rows = [
+    { key: 'activity:' + DEVICE_ID, value: myActivity, updated_at: now },
+    { key: 'timelog:'  + DEVICE_ID, value: myTime,     updated_at: now }
+  ];
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/app_state?on_conflict=key', {
+      method: 'POST',
+      keepalive: !!keepalive,
+      headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify(rows)
+    });
+  } catch(e) {}
+}
+function scheduleStatePush() {
+  clearTimeout(statePushTimer);
+  statePushTimer = setTimeout(() => pushState(false), 4000);
+}
+async function pushDailyGoal() {
+  try {
+    await sbFetch('app_state?on_conflict=key', {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({ key: 'daily_goal', value: dailyGoal, updated_at: new Date().toISOString() })
+    });
+  } catch(e) {}
+}
+
+// Uygulama ön plana geldiğinde diğer cihazdaki değişiklikleri çeker:
+// kartlar, öğrenme/tekrar durumu, seri, süre, günlük hedef.
+async function refreshFromServer(force) {
+  if (!force && Date.now() - lastServerRefresh < 15000) return;
+  lastServerRefresh = Date.now();
+  try {
+    const [cards, prog] = await Promise.all([loadCardsFromDB(), loadProgressFromDB(), pullState()]);
+    CARDS = cards.filter(c => !DELETED[c.id]);
+    PROGRESS = prog;
+    isOnline = true;
+    cacheCards(); cacheProgress();
+    setSyncStatus('online', stateSyncOk ? 'Bağlı — tüm cihazlar senkronize' : 'Bağlı — ilerleme tablosu eksik (SQL çalıştır)');
+  } catch (e) {
+    return;
+  }
+  if (typeof buildDateFilters === 'function') buildDateFilters();
+  updateStats();
+  renderAll();
+  if (typeof restoreOpenCardBodies === 'function') restoreOpenCardBodies();
+  if (currentScreen === 'tekrar') renderTekrar();
+  if (currentScreen === 'progress') renderProgress();
 }
 
 function startSession() {
@@ -1629,7 +1767,8 @@ function stopSession() {
   sessionStart = null;
   if (elapsed < 2) return; // 2 saniyeden kısa sayma
   const today = todayStr();
-  timeLog[today] = (timeLog[today] || 0) + elapsed;
+  myTime[today] = (myTime[today] || 0) + elapsed;
+  recomputeTotals();
   saveTimeLog();
   if (currentScreen === 'progress') renderProgress();
 }
@@ -1637,12 +1776,12 @@ function stopSession() {
 function initSessionTracking() {
   // Sayfa görünürlüğü değişince
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) stopSession();
-    else startSession();
+    if (document.hidden) { stopSession(); pushState(true); }
+    else { startSession(); refreshFromServer(false); }
   });
   // Sayfa kapanınca
-  window.addEventListener('beforeunload', stopSession);
-  window.addEventListener('pagehide', stopSession);
+  window.addEventListener('beforeunload', () => { stopSession(); pushState(true); });
+  window.addEventListener('pagehide', () => { stopSession(); pushState(true); });
   // Başlat
   if (!document.hidden) startSession();
 }
@@ -1674,7 +1813,8 @@ function todayStr() {
 
 function recordActivity() {
   const today = todayStr();
-  activityLog[today] = (activityLog[today] || 0) + 1;
+  myActivity[today] = (myActivity[today] || 0) + 1;
+  recomputeTotals();
   saveActivityLog();
   const todayCount = activityLog[today];
   const wasAtGoal = todayCount === dailyGoal;
@@ -1725,6 +1865,7 @@ function checkStreakMilestone() {
 function setDailyGoal(n) {
   dailyGoal = n;
   try { localStorage.setItem('kv_daily_goal', n); } catch(e) {}
+  pushDailyGoal();
   renderProgress();
 }
 
@@ -2572,9 +2713,11 @@ function renderListenPlayback(el, progressText) {
 }
 
 function listenCardBoxHtml(card) {
-  return `<div class="listen-word" lang="nl">${card.dutch}</div>
+  const len = (card.dutch || '').length;
+  const cls = len > 110 ? ' xlong' : (len > 60 ? ' long' : '');
+  return `<div class="lcb-inner"><div class="listen-word${cls}" lang="nl">${card.dutch}</div>
     <div class="listen-tr">${card.turkish}</div>
-    ${card.note ? `<div class="listen-note">${card.note}</div>` : ''}`;
+    ${card.note ? `<div class="listen-note">${card.note}</div>` : ''}</div>`;
 }
 
 // Çalan cümle / tekrar sayacı / işaretleme durumu değiştiğinde yalnızca ilgili
@@ -2593,6 +2736,7 @@ function listenPatchPlayback() {
   if (box && box.dataset.cardId !== String(card.id)) {
     box.dataset.cardId = String(card.id);
     box.innerHTML = listenCardBoxHtml(card);
+    fitListenBox();
   }
 
   const counted = listenCountedIds.has(card.id);
@@ -2646,20 +2790,52 @@ function listenPatchPlayback() {
 
   // Çalan cümle değiştiyse listeyi ona kadar kaydır (takip). Kullanıcı elle
   // kaydırdıysa araya girmez, çünkü yalnızca index değişiminde çalışır.
+  // Çalan cümle değiştiğinde listeyi kaydır: çalan satır HER ZAMAN listenin
+  // en üstünde durur (üstünde bir önceki satırın yarısı görünür, bağlam için).
+  // getBoundingClientRect kullanılıyor: offsetTop, offsetParent'a göre
+  // hesaplandığı için bazı düzenlerde yanlış konum veriyordu.
   if (lastScrolledIndex !== listenIndex) {
     lastScrolledIndex = listenIndex;
-    const pl = document.getElementById('listen-playlist');
-    const cur = document.getElementById('lp-item-' + listenIndex);
-    if (pl && cur) {
-      const cTop = cur.offsetTop - pl.offsetTop;
-      const cBot = cTop + cur.offsetHeight;
-      if (cTop < pl.scrollTop || cBot > pl.scrollTop + pl.clientHeight) {
-        const target = Math.max(0, cTop - (pl.clientHeight - cur.offsetHeight) / 2);
-        if (typeof pl.scrollTo === 'function') pl.scrollTo({ top: target, behavior: 'smooth' });
-        else pl.scrollTop = target;
-      }
-    }
+    listenPinCurrent();
   }
+}
+
+// Kart kutusu sabit yükseklikte; içerik sığmazsa önce not satırı gizlenir,
+// sonra Hollandaca cümlenin yazısı sığana kadar küçültülür (en az 13px).
+// Böylece cümle hiç kesilmez ve kutu boyu değişmediği için sayfa kaymaz.
+function fitListenBox() {
+  const box = document.getElementById('listen-card-box');
+  if (!box) return;
+  const inner = box.querySelector('.lcb-inner');
+  const w = box.querySelector('.listen-word');
+  const note = box.querySelector('.listen-note');
+  if (!inner || !w) return;
+  w.style.fontSize = '';
+  if (note) note.style.display = '';
+  const cs = getComputedStyle(box);
+  const avail = box.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  const fits = () => inner.offsetHeight <= avail;
+  if (fits()) return;
+  if (note) { note.style.display = 'none'; if (fits()) return; }
+  let size = parseFloat(getComputedStyle(w).fontSize);
+  while (!fits() && size > 13) { size -= 1; w.style.fontSize = size + 'px'; }
+}
+window.addEventListener('resize', () => { if (document.getElementById('listen-card-box')) fitListenBox(); });
+
+function listenPinCurrent() {
+  const pl = document.getElementById('listen-playlist');
+  const cur = document.getElementById('lp-item-' + listenIndex);
+  if (!pl || !cur) return;
+  // Düzen oturduktan sonra ölç (kart kutusu yeni cümleyle güncellendi)
+  requestAnimationFrame(() => {
+    const plTop = pl.getBoundingClientRect().top;
+    const curTop = cur.getBoundingClientRect().top;
+    const prev = cur.previousElementSibling;
+    const peek = prev ? Math.round(prev.offsetHeight / 2) : 0;   // önceki satırdan biraz görünsün
+    const target = Math.max(0, pl.scrollTop + (curTop - plTop) - peek);
+    if (typeof pl.scrollTo === 'function') pl.scrollTo({ top: target, behavior: 'smooth' });
+    else pl.scrollTop = target;
+  });
 }
 
 // Playlist rozeti: cümlenin aralıklı tekrar programında kaçıncı adımda olduğu
@@ -2716,7 +2892,9 @@ async function listenPlayCurrent() {
     }
     if (myToken !== listenAbortToken || !listenPlaying) return;
     listenRepeatsDone++;
-    if (i < listenRepeatCount - 1 && gapMs > 0) await sleep(gapMs);
+    // Her tekrardan sonra — SON tekrar dahil — bekleme süresi dolsun.
+    // Önceden son tekrardan sonra önce cümle değişiyor, sessizlik yeni cümlede yaşanıyordu.
+    if (gapMs > 0) await sleep(gapMs);
     if (myToken !== listenAbortToken || !listenPlaying) return;
   }
 
@@ -2725,8 +2903,6 @@ async function listenPlayCurrent() {
   if (listenIndex < listenQueue.length - 1) {
     listenIndex++;
     renderListenScreen();
-    if (gapMs > 0) await sleep(gapMs);
-    if (myToken !== listenAbortToken || !listenPlaying) return;
     listenPlayCurrent();
   } else {
     listenPlaying = false;
@@ -2920,7 +3096,10 @@ async function initApp() {
     isOnline = true;
     cacheCards();
     cacheProgress();
-    setSyncStatus('online', 'Bağlı — veriler senkronize');
+    await pullState();
+    if (stateSyncOk) pushState(false);   // bu cihazın geçmişini ilk kez yükler
+    lastServerRefresh = Date.now();
+    setSyncStatus('online', stateSyncOk ? 'Bağlı — tüm cihazlar senkronize' : 'Bağlı — ilerleme tablosu eksik (SQL çalıştır)');
   } catch (e) {
     console.warn('Supabase bağlantısı başarısız, yerel önbellek kullanılıyor', e);
     isOnline = false;
@@ -3182,8 +3361,14 @@ async function resetProgress() {
   if (!confirm('Tüm öğrenme ilerlemesi ve tekrar geçmişi silinecek. Bu işlem geri alınamaz. Onaylıyor musun?')) return;
   PROGRESS = {};
   cacheProgress();
+  myActivity = {}; myTime = {}; otherActivity = {}; otherTime = {};
+  recomputeTotals();
+  try {
+    ['kv_activity','kv_timelog','kv_activity_others','kv_timelog_others'].forEach(k => localStorage.removeItem(k));
+  } catch(e) {}
   if (isOnline) {
     try { await sbFetch('progress?card_id=gte.0', { method: 'DELETE' }); } catch(e) {}
+    try { await sbFetch('app_state?or=(key.like.activity:*,key.like.timelog:*)', { method: 'DELETE' }); } catch(e) {}
   }
   updateStats();
   renderAll();
