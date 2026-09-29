@@ -1043,19 +1043,6 @@ input[type="file"] { display: none; }
 
 .listen-empty { text-align: center; padding: 60px 20px; color: var(--text3); }
 
-/* ── Gazete modu ── */
-.gz-word {
-  cursor: pointer; border-radius: 3px;
-  transition: background 0.1s;
-  display: inline;
-}
-.gz-word:hover { background: color-mix(in srgb, var(--accent) 20%, transparent); }
-.gz-word.selected { background: color-mix(in srgb, var(--accent) 35%, transparent); color: var(--accent); }
-#gazete-reader {
-  font-size: 15px; line-height: 1.9; color: var(--text);
-  font-family: var(--font); letter-spacing: 0.01em;
-}
-
 /* ── Süre istatistikleri ── */
 .time-stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
 .time-stat-card {
@@ -1198,7 +1185,6 @@ button, input, select, textarea { font-family: var(--font); }
 .tema-row { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 200px; }
 .tema-row label { font-size: 12px; font-weight: 700; color: var(--text3); }
 .tema-row select { flex: 1; min-height: 40px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); padding: 0 10px; font-size: 13px; }
-#gp-content .tema-row { margin-bottom: 12px; }
 .btn-link { min-height: 40px; background: none; border: none; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text2); padding: 0 6px; }
 .btn-link.danger { color: var(--red); }
 .btn-link .ic { width: 16px; height: 16px; }
@@ -1611,54 +1597,6 @@ button, input, select, textarea { font-family: var(--font); }
   <div id="listen-content"></div>
 </div><!-- end screen-listen -->
 
-<!-- ── SCHERM 6: Gazete ── -->
-<div class="screen" id="screen-gazete">
-  <div class="tekrar-header">
-    <h2><svg class="ic"><use href="#i-news"/></svg>Gazete Modu</h2>
-    <span class="tc" id="gazete-status-text"></span>
-  </div>
-
-  <div id="gazete-input-area" style="padding:14px 16px;">
-    <div style="font-size:13px;color:var(--text2);margin-bottom:10px;">
-      Volkskrant veya başka bir Hollandaca metni yapıştır. Kelimeye dokununca Claude analiz eder, kartına dönüştürürsün.
-    </div>
-    <textarea id="gazete-text-input"
-      placeholder="Hollandaca metni buraya yapıştır..."
-      style="width:100%;min-height:140px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px;color:var(--text);font-family:var(--font);font-size:14px;resize:vertical;line-height:1.6;"></textarea>
-    <div style="display:flex;gap:8px;margin-top:10px;">
-      <button class="btn-settings primary" style="flex:1" onclick="gazeteParse()"><svg class="ic"><use href="#i-book"/></svg>Metni Yükle</button>
-      <button class="btn-settings" onclick="gazeteClear()"><svg class="ic"><use href="#i-x"/></svg>Temizle</button>
-    </div>
-  </div>
-
-  <div id="gazete-reader" lang="nl" style="display:none;padding:0 16px 100px;"></div>
-
-  <!-- Kelime analiz paneli -->
-  <div id="gazete-panel" style="display:none;position:fixed;bottom:65px;left:0;right:0;background:var(--bg2);border-top:2px solid var(--accent);border-radius:16px 16px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,0.4);">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <span id="gp-word" lang="nl" style="font-size:20px;font-weight:700;color:var(--text);"></span>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button class="btn-speak icon-only" id="gp-speak-btn" onclick="gazeteSpeakWord()" title="Dinle"><svg class="ic"><use href="#i-volume"/></svg></button>
-        <button onclick="gazeteClosePanel()" title="Kapat" style="background:transparent;border:none;color:var(--text3);font-size:20px;cursor:pointer;min-width:40px;min-height:40px;display:inline-flex;align-items:center;justify-content:center;"><svg class="ic"><use href="#i-x"/></svg></button>
-      </div>
-    </div>
-    <div id="gp-loading" style="color:var(--text3);font-size:13px;">Analiz ediliyor…</div>
-    <div id="gp-content" style="display:none;">
-      <div id="gp-turkish" style="font-size:15px;color:var(--text2);margin-bottom:10px;"></div>
-      <div id="gp-uitleg" class="uitleg-box" lang="nl" style="margin-bottom:8px;display:none;"></div>
-      <div id="gp-etymology" class="etym-box" style="margin-bottom:8px;display:none;"></div>
-      <div id="gp-note" style="font-size:13px;color:var(--text3);background:var(--bg3);border-radius:8px;padding:10px;margin-bottom:10px;line-height:1.6;"></div>
-      <div id="gp-examples" style="margin-bottom:12px;"></div>
-      <div class="tema-row"><label for="gp-tema">Tema</label><select id="gp-tema"></select></div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn-settings primary" style="flex:1" onclick="gazeteAddCard()"><svg class="ic"><use href="#i-plus"/></svg>Karta Ekle</button>
-        <button class="btn-settings" onclick="gazeteClosePanel()">Kapat</button>
-      </div>
-      <div id="gp-added-status" style="display:none;font-size:12px;color:var(--green);margin-top:8px;text-align:center;"><svg class="ic"><use href="#i-circle-check"/></svg> Kart eklendi!</div>
-    </div>
-  </div>
-</div><!-- end screen-gazete -->
-
 <!-- ── Kutlama animasyonu ── -->
 <div id="celebration" style="display:none; position:fixed; inset:0; z-index:9999; pointer-events:none; align-items:center; justify-content:center; flex-direction:column; gap:12px;">
   <div id="celebration-emoji" style="font-size:72px;"></div>
@@ -1681,10 +1619,6 @@ button, input, select, textarea { font-family: var(--font); }
   <button class="nav-btn" id="nav-sesli" onclick="showScreen('sesli')">
     <span class="nav-icon"><svg class="ic"><use href="#i-microphone"/></svg></span>
     <span>Tekrar</span>
-  </button>
-  <button class="nav-btn" id="nav-gazete" onclick="showScreen('gazete')">
-    <span class="nav-icon"><svg class="ic"><use href="#i-news"/></svg></span>
-    <span>Gazete</span>
   </button>
   <button class="nav-btn" id="nav-progress" onclick="showScreen('progress')">
     <span class="nav-icon"><svg class="ic"><use href="#i-chart"/></svg></span>
@@ -2603,156 +2537,6 @@ function revealExTr(e, eid) {
   revealedExTr.add(eid);
   if (tr) tr.classList.remove('veil');
   if (btn) btn.classList.add('hide');
-}
-
-// ════════════════════════════════════════
-// GAZETE MODU
-// ════════════════════════════════════════
-let gazetePendingCard = null; // analiz edilmiş kart verisi
-
-function gazeteParse() {
-  const input = document.getElementById('gazete-text-input');
-  const text = input.value.trim();
-  if (!text) return;
-
-  const reader = document.getElementById('gazete-reader');
-  const inputArea = document.getElementById('gazete-input-area');
-
-  // Metni kelimelere böl, her kelimeye tıklanabilir span ver
-  const words = text.split(/(\s+|[.,!?;:"()«»—–\-\n])/);
-  reader.innerHTML = words.map(w => {
-    const clean = w.replace(/[.,!?;:"()«»—–\-\n]/g, '').trim();
-    if (!clean || clean.length < 2) return w.replace(/\n/g, '<br>');
-    return `<span class="gz-word" onclick="gazeteTapWord(this,'${clean.replace(/'/g,"\\'")}')">` + w + '</span>';
-  }).join('');
-
-  reader.style.display = 'block';
-  inputArea.style.display = 'none';
-}
-
-function gazeteClear() {
-  document.getElementById('gazete-text-input').value = '';
-  document.getElementById('gazete-reader').innerHTML = '';
-  document.getElementById('gazete-reader').style.display = 'none';
-  document.getElementById('gazete-input-area').style.display = 'block';
-  gazeteClosePanel();
-}
-
-function gazeteTapWord(el, word) {
-  // Önceki seçimi temizle
-  document.querySelectorAll('.gz-word.selected').forEach(e => e.classList.remove('selected'));
-  el.classList.add('selected');
-
-  const panel = document.getElementById('gazete-panel');
-  const loading = document.getElementById('gp-loading');
-  const content = document.getElementById('gp-content');
-  const addedStatus = document.getElementById('gp-added-status');
-
-  document.getElementById('gp-word').textContent = word;
-  document.getElementById('gp-speak-btn').dataset.word = word;
-  loading.style.display = 'block';
-  content.style.display = 'none';
-  addedStatus.style.display = 'none';
-  panel.style.display = 'block';
-  gazetePendingCard = null;
-
-  // Claude Haiku ile analiz
-  analyzeWord(word).then(card => {
-    gazetePendingCard = card;
-    const gpTema = document.getElementById('gp-tema');
-    if (gpTema) {
-      gpTema.innerHTML = TEMAS.map(t => `<option value="${t.id}">${t.label}</option>`).join('');
-      gpTema.value = (card.tema && TEMA_BY_ID[card.tema]) ? card.tema : autoTema(card);
-    }
-    document.getElementById('gp-turkish').textContent = card.turkish;
-    const uEl = document.getElementById('gp-uitleg');
-    uEl.textContent = card.uitleg || '';
-    uEl.style.display = card.uitleg ? 'block' : 'none';
-    const eEl = document.getElementById('gp-etymology');
-    eEl.textContent = card.etymology || '';
-    eEl.style.display = card.etymology ? 'block' : 'none';
-    document.getElementById('gp-note').textContent = card.note || '';
-    const exDiv = document.getElementById('gp-examples');
-    exDiv.innerHTML = (card.examples || []).map(ex =>
-      `<div style="border-left:2px solid var(--border2);padding-left:10px;margin-bottom:6px;">
-        <div style="font-size:13px;color:var(--text);">${ex.nl}</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:2px;">${ex.tr}</div>
-      </div>`
-    ).join('');
-    loading.style.display = 'none';
-    content.style.display = 'block';
-  }).catch(err => {
-    loading.innerHTML = ic('alert','c-red') + ' Hata: ' + err.message;
-  });
-}
-
-async function analyzeWord(word) {
-  const today = todayStr();
-  const ANALYZE_URL = EDGE_TTS_URL.replace('/tts', '/analyze');
-
-  const res = await fetch(ANALYZE_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ word })
-  });
-
-  if (!res.ok) {
-    const errText = await res.text().catch(() => '');
-    throw new Error('Analiz hatası (' + res.status + '): ' + errText.slice(0, 150));
-  }
-
-  const card = await res.json();
-  card.date = 'GAZETE ' + today.slice(8,10) + '/' + today.slice(5,7);
-  return card;
-}
-
-function gazeteClosePanel() {
-  document.getElementById('gazete-panel').style.display = 'none';
-  document.querySelectorAll('.gz-word.selected').forEach(e => e.classList.remove('selected'));
-}
-
-function gazeteSpeakWord() {
-  const word = document.getElementById('gp-speak-btn').dataset.word;
-  if (!word) return;
-  const fakeEvent = { stopPropagation: ()=>{}, currentTarget: document.getElementById('gp-speak-btn') };
-  speakDutch(fakeEvent, word);
-}
-
-async function gazeteAddCard() {
-  if (!gazetePendingCard) return;
-  const btn = document.querySelector('#gp-content .btn-settings.primary');
-  const statusEl = document.getElementById('gp-added-status');
-  if (btn) { btn.disabled = true; btn.textContent = 'Ekleniyor…'; }
-
-  try {
-    const chosenTema = (document.getElementById('gp-tema') || {}).value;
-    const ins = await insertCardsRemote([{
-      date: gazetePendingCard.date,
-      type: gazetePendingCard.type || 'woord',
-      uitleg: gazetePendingCard.uitleg || null,
-      etymology: gazetePendingCard.etymology || null,
-      dutch: gazetePendingCard.dutch,
-      turkish: gazetePendingCard.turkish,
-      note: gazetePendingCard.note || null,
-      examples: gazetePendingCard.examples || [],
-      legal: gazetePendingCard.legal || null,
-      is_legal: gazetePendingCard.is_legal || false
-    }]);
-    if (ins && ins[0] && ins[0].id && TEMA_BY_ID[chosenTema]) { TEMA_MAP[ins[0].id] = chosenTema; pushTemaMap(); }
-    CARDS = await loadCardsFromDB();
-    cacheCards();
-    buildDateFilters();
-    updateStats();
-    statusEl.style.display = 'block';
-    statusEl.textContent = '"' + gazetePendingCard.dutch + '" kartına eklendi!';
-    if (btn) { btn.innerHTML = ic('check') + 'Eklendi'; }
-    gazetePendingCard = null;
-  } catch (e) {
-    if (btn) { btn.disabled = false; btn.innerHTML = ic('plus') + 'Karta Ekle'; }
-    statusEl.style.display = 'block';
-    statusEl.style.color = 'var(--red)';
-    statusEl.textContent = '❌ Hata: ' + e.message;
-  }
 }
 
 // ════════════════════════════════════════
@@ -4164,7 +3948,6 @@ function showScreen(name) {
   if (name === 'trash') renderTrash();
   if (name === 'progress') renderProgress();
   if (name === 'listen') { startListenMode(); }
-  if (name === 'gazete') {} // kendi state'ini yönetiyor
   updateStats();
 }
 

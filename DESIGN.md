@@ -17,7 +17,7 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 - **Manrope** (`--font`) arayüzün tamamı; **Fraunces** (`--font-display`) yalnızca uygulama adı, ekran başlıkları, büyük sayılar ve çalışma oturumundaki odak Hollandaca. Monospace yalnızca JSON alanında (`--code`).
 - Fontlar Google Fonts'tan gelir; çevrimdışıyken sistem fontuna düşer.
 - Büyük harf etiketler yalnızca bölüm/kart başlıklarında.
-- `<html lang="tr">`; her Hollandaca öğe `lang="nl"` taşır: `.card-dutch`, `.tekrar-card-dutch`, `.ex-nl`, `.listen-word`, `#gp-word`, `#gazete-reader`, `.st-nl`, `.st-hint`, `.sesli-nl`.
+- `<html lang="tr">`; her Hollandaca öğe `lang="nl"` taşır: `.card-dutch`, `.tekrar-card-dutch`, `.ex-nl`, `.listen-word`, `.st-nl`, `.st-hint`, `.sesli-nl`.
 - `[lang="nl"]{hyphens:auto;overflow-wrap:anywhere}` sabittir.
 - Bayrak emojileri kullanılmaz.
 
@@ -33,7 +33,7 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 ## 3. Yoğunluk ve düzen
 
 - Yoğunluk kadranı 5–6. Kart listesi sıkı, ilerleme kartları nefes alır.
-- Alt navigasyon 5 öğe: Kartlar, Çalış, Tekrar, Gazete, İlerleme. Ayarlar üst çubuktaki dişli düğmesinde, Dinle Tekrar ekranında. Aktif öğe `--accent`.
+- Alt navigasyon 4 öğe: Kartlar, Çalış, Tekrar, İlerleme (Gazete modu v27'de kaldırıldı; "GAZETE dd/mm" tarihli kartlar tarih grubu olarak durur). Ayarlar üst çubuktaki dişli düğmesinde, Dinle Tekrar ekranında. Aktif öğe `--accent`.
 - Tarih grupları akordeon; ilk render'da en yeni grup açık, diğerleri kapalı.
 - Kart düzeni: rozet + Hollandaca + Türkçe üstte; altta tek satır: ses, tema, "Çalışmaya ekle". Tema seçimi ve "Kartı sil" kart detayının en altında.
 
