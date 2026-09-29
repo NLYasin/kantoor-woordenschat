@@ -2,29 +2,40 @@
 
 Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları PWA'sı) arayüzünde yapılan her değişikliğin uyması gereken kuralları tanımlar. Goed Bezig ile aynı aileden; kaynaklar Anthropic `frontend-design`, `taste-skill` ve `design-dna` incelemesi. Yalnızca bir **ürün arayüzüne** uyan kurallar alındı.
 
-## 1. Kimlik ve renk
+## 1. Kimlik ve renk — Delfts ailesi, gracht groen (v2)
 
-- Kimlik: "orman" ailesi. Koyu temada yeşile çalan koyu zemin (`--bg #0B1A13`), açık temada hafif yeşil-gri (`#F3F8F5`). Tek marka/aksiyon rengi: `--accent` (mavi). İkinci bir aksan (mor, indigo) ve gradyan düğme yok.
-- Semantik renkler yalnızca durum bildirir: `--green` öğrenildi/tamam, `--orange` bugün/yaklaşan, `--red` gecikmiş/tehlike. Hepsinin `-bg` ve `-border` tonu token'dır; hex gömülmez.
-- **Bilinçli istisna:** kart türü rozetleri (kelime = yeşil, cümle = mavi, hukuki = turuncu, deyim = mor) kategorik palettir; mor yalnızca burada yaşar.
-- Durum asla yalnızca renkle anlatılmaz: nokta/rozet yanında metin veya ikon olur.
-- Parlama (`box-shadow` glow) yok. Dekoratif nokta yok; nokta yalnızca gerçek durum taşır (`.sr-dot`, `.ts-dot`, `.sync-dot`).
-- Kontrast: gövde 4,5:1, büyük metin 3:1. `--text3` küçük metinde bu sınırın altına inmez.
+- Goed Bezig ile aynı sistem, farklı kimlik rengi. Kimlik: **gracht yeşili** `--accent` (açık `#2F6B4F`, koyu `#7FC4A2`) ve sahne yüzeyi `--hero` (Çalış ekranı üst kartı, seri kartı). Eylem: **oranje** `--cta #B8491A`; bir ekranda tek oranje birincil düğme.
+- Zemin: açık temada krem (`--bg #F5F1E8`, kart `#FFFFFF`, kenarlık `#E3DCCC`), koyu temada gece mavisi (`--bg #0F1930`, kart `#16233F`, kenarlık `#2C416D`).
+- Semantik renkler yalnızca durum bildirir: `--green` tamam, `--orange` (amber) bugün/yaklaşan, `--red` gecikmiş/tehlike. Amber, eylem oranjesiyle karışmasın diye koyu hardal tonundadır.
+- **Bilinçli istisna:** kart türü rozetleri kategorik palettir: kelime yeşil, cümle Delft mavisi (`--blue`), hukuki amber, deyim mor.
+- Yarı saydam tonlar `color-mix(in srgb, var(--token) N%, transparent)` ile yazılır; sabit rgba yok. Isı haritası ve takvim de accent'in %25/50/75/100 karışımıdır.
+- Durum asla yalnızca renkle anlatılmaz. Gradyan ve parlama yok.
+- Kontrast: gövde 4,5:1, büyük metin 3:1.
 
 ## 2. Tipografi ve Hollandaca
 
-- Tek font ailesi (`Segoe UI`, system-ui). Monospace yalnızca gerçek kod alanlarında (`--code`: JSON textarea). Etiket, tarih ve sayılarda mono kullanılmaz; sayılar `font-variant-numeric: tabular-nums` ile hizalanır.
-- Büyük harf etiketler (`.sec-title`, bölüm başlıkları) 11 px / 600 / `letter-spacing 0.04em`; geniş harf aralığı ve 9–10 px yok.
-- `<html lang="tr">`; her Hollandaca öğe `lang="nl"` taşır: `.card-dutch`, `.tekrar-card-dutch`, `.ex-nl`, `.listen-word`, `#gp-word`, `#gazete-reader`.
-- `[lang="nl"]{hyphens:auto;overflow-wrap:anywhere}`: `arbeidsongeschiktheidsverzekering` gibi bileşik kelimeler kartı taşıramaz.
-- Bayrak emojileri kullanılmaz (Windows'ta harfe döner).
+- **Manrope** (`--font`) arayüzün tamamı; **Fraunces** (`--font-display`) yalnızca uygulama adı, ekran başlıkları, büyük sayılar ve çalışma oturumundaki odak Hollandaca. Monospace yalnızca JSON alanında (`--code`).
+- Fontlar Google Fonts'tan gelir; çevrimdışıyken sistem fontuna düşer.
+- Büyük harf etiketler yalnızca bölüm/kart başlıklarında.
+- `<html lang="tr">`; her Hollandaca öğe `lang="nl"` taşır: `.card-dutch`, `.tekrar-card-dutch`, `.ex-nl`, `.listen-word`, `#gp-word`, `#gazete-reader`, `.st-nl`, `.st-hint`, `.sesli-nl`.
+- `[lang="nl"]{hyphens:auto;overflow-wrap:anywhere}` sabittir.
+- Bayrak emojileri kullanılmaz.
+
+## 2b. Öğrenme yöntemi (v2)
+
+- **Çalış** = aralıklı tekrar, hatırlamayı test ederek. Kart önce yalnızca Hollandaca gelir; "Cevabı göster" ile anlam, açıklama ve örnekler açılır. Not: **Bilmedim** (başa, 20 dk; aynı turda 4 kart sonra bir daha), **Zor** (aynı basamak, yarım aralık), **Bildim** (bir basamak ileri; yeni kart ilk seferde bilindiyse 3 gün). Mevcut `sr_step` / `sr_next_due` alanları kullanılır.
+- Yeni kartlar her gün kendiliğinden gelir (varsayılan 5, Ayarlar'dan 0–20), en eski karttan başlayarak. "Çalışmaya ekle" bir kartı hemen o günün çalışmasına sokar.
+- İpucu: kelime kartında ilk örnek cümle (kelime işaretli), cümle kartında Hollandaca açıklama.
+- **Tekrar** = sesli tekrar, çalışma takviminden bağımsız. "Tekrar ettim" yalnızca o cümleyi kaç kez sesli söylediğini sayar (`rehearse:<cihaz>`, app_state). Dinleme modu bu ekrandan açılır.
+- **Tema**: tarihe ek gruplama. Kaynak sırası: elle seçilen (`tema_map`, app_state) → JSON'daki `tema` → ilk 183 kart için hazır eşleme → anahtar kelime tahmini. Temalar: gesprek, overleg, schulden, wonen, inkomen, zorg, recht, gemeente, taal.
+- Yeni kart JSON'u Ayarlar'daki "Claude talimatını kopyala" ile istenir: kelime kartının ön yüzü tek kelime değil kalıp (`bezwaar maken tegen`, `de beschikking`).
 
 ## 3. Yoğunluk ve düzen
 
 - Yoğunluk kadranı 5–6. Kart listesi sıkı, ilerleme kartları nefes alır.
-- Alt navigasyon 6 öğe, tek satır, etiketli. Aktif öğe `--accent`.
+- Alt navigasyon 5 öğe: Kartlar, Çalış, Tekrar, Gazete, İlerleme. Ayarlar üst çubuktaki dişli düğmesinde, Dinle Tekrar ekranında. Aktif öğe `--accent`.
 - Tarih grupları akordeon; ilk render'da en yeni grup açık, diğerleri kapalı.
-- Kart düzeni: rozet + Hollandaca + Türkçe üstte, eylemler tek satır altta.
+- Kart düzeni: rozet + Hollandaca + Türkçe üstte; altta tek satır: ses, tema, "Çalışmaya ekle". Tema seçimi ve "Kartı sil" kart detayının en altında.
 
 ## 4. Dokunma ve erişilebilirlik
 
@@ -55,7 +66,7 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 - Arayüz ikonları Tabler set'inden (MIT), `currentColor`. Tek biçim: `index.html` içindeki inline SVG sprite (`<svg class="ic"><use href="#i-book"/></svg>`, JS'te `ic('book')`). Liste 250 kart civarı olduğu için kart içinde inline SVG kabul edilebilir; liste 1000+ karta çıkarsa Goed Bezig'deki CSS-mask yöntemine geç.
 - Yeni ikon eklerken sprite'a `<symbol id="i-ad">` ekle.
 - Emoji yalnızca duygu/kutlama anlarında: seri rozeti ikonları (🔥 💎 🥇 …), `showCelebration`, boş tekrar listesindeki 🎉.
-- Uygulama ikonu: yeşil zemin (`#1F9D6F`), üst üste iki beyaz kart, öndekinde Hollanda bayrağı bantları ve iki yeşil metin çizgisi. Goed Bezig ile aynı aile (bayrak bantlı kart), farklı renk ve şekil. `icon-192/512.png` (any), `icon-maskable-192/512.png` (%80 güvenli alan), `apple-touch-icon.png`, `favicon-16/32.png`. Üretici: `make-icons.ps1`.
+- Uygulama ikonu (v2): gracht yeşili zemin, arkada açık yeşil kart, önde krem kart üzerinde iki oranje metin çizgisi ve Hollanda bayrağı bantları. Goed Bezig ile aynı aile (bayrak bantlı kart). Üretici: Python + Pillow.
 
 ## 8. Metin (Türkçe arayüz)
 

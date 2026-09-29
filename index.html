@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Woordenschat">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0f1117">
+<meta name="theme-color" content="#0F1930">
 <meta name="format-detection" content="telephone=no">
 
 <!-- App-icoon (beginscherm) -->
@@ -30,6 +30,9 @@
     'Content-Type': 'application/json'
   };
 </script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap">
 <style>
 html {
   /* Schermrotatie + volledige hoogte ondersteunen */
@@ -37,61 +40,41 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 :root {
-  --bg: #0B1A13;
-  --bg2: #111E17;
-  --bg3: #1A2B20;
-  --border: #1E3028;
-  --border2: #2A4038;
-  --text: #E8EAF6;
-  --text2: #8B90B0;
-  --text3: #556070;
-  --accent: #4F8EF7;
-  --red: #F87171;
-  --red-bg: #2A1414;
-  --red-border: #5A2424;
-  --green: #34C98B;
-  --green-bg: #0D2218;
-  --green-border: #1A4A30;
-  --orange: #F0B429;
-  --orange-bg: #221A09;
-  --orange-border: #4A3510;
-  --purple: #A78BFA;
-  --purple-bg: #1A1530;
-  --purple-border: #352A5A;
-  --blue-bg: #0D1F35;
-  --blue-border: #1A3560;
-  --font: 'Segoe UI', system-ui, sans-serif;
-  /* Etiket ve sayılarda mono yerine ana font; gerçek kod alanları --code kullanır */
-  --mono: 'Segoe UI', system-ui, sans-serif;
+  /* KANTOOR WOORDENSCHAT — "Delfts" ailesi, gracht groen kimliği (koyu tema: gece mavisi) */
+  --bg: #0F1930; --bg2: #16233F; --bg3: #1C2C4E;
+  --border: #2C416D; --border2: #3A5184;
+  --text: #F3F5FA; --text2: #C9D2E3; --text3: #A3B0C8;
+  --accent: #7FC4A2; --on-accent: #0F1930;
+  --cta: #B8491A; --on-cta: #FFFFFF;
+  --hero: #1F4A3B; --on-hero: #FFFFFF; --hero-soft: #BFE0CF;
+  --blue: #9DB0D6;
+  --red: #EF7B67; --red-bg: #3A1E24; --red-border: #6A2E33;
+  --green: #7FC4A2; --green-bg: #17332C; --green-border: #2B5A4A;
+  --orange: #E7B64E; --orange-bg: #3A2F16; --orange-border: #6B5520;
+  --purple: #B9A3F5; --purple-bg: #251F45; --purple-border: #463A7A;
+  --blue-bg: #1B2C52; --blue-border: #34508A;
+  --font: Manrope, 'Segoe UI', system-ui, sans-serif;
+  --font-display: Fraunces, Georgia, 'Times New Roman', serif;
+  --mono: Manrope, 'Segoe UI', system-ui, sans-serif;
   --code: 'Consolas', 'SF Mono', monospace;
-  --radius: 12px;
+  --radius: 14px;
   --fs-scale: 1;
 }
 
 :root[data-theme="light"] {
-  --bg: #F3F8F5;
-  --bg2: #FFFFFF;
-  --bg3: #EAF2EC;
-  --border: #D6E4DA;
-  --border2: #BCD1C3;
-  --text: #1A1D27;
-  --text2: #4B5168;
-  --text3: #6B7185;
-  --accent: #2F63D6;
-  --red: #D23F3F;
-  --red-bg: #FDECEC;
-  --red-border: #F3C0C0;
-  --green: #1F9D6F;
-  --green-bg: #E6F7ED;
-  --green-border: #B6E6C9;
-  --orange: #C98A0A;
-  --orange-bg: #FDF1DE;
-  --orange-border: #F0D49E;
-  --purple: #7C5FD9;
-  --purple-bg: #EFEAFC;
-  --purple-border: #D6C9F5;
-  --blue-bg: #E8F0FE;
-  --blue-border: #C4D8FB;
+  /* Açık tema: krem zemin, gracht groen kimlik, oranje eylem */
+  --bg: #F5F1E8; --bg2: #FFFFFF; --bg3: #F8F4EC;
+  --border: #E3DCCC; --border2: #D3CBB9;
+  --text: #16233F; --text2: #3F4A63; --text3: #5A6275;
+  --accent: #2F6B4F; --on-accent: #FFFFFF;
+  --cta: #B8491A; --on-cta: #FFFFFF;
+  --hero: #2F6B4F; --on-hero: #FFFFFF; --hero-soft: #D4E8DC;
+  --blue: #1F3A6B;
+  --red: #B3261E; --red-bg: #FBE9E6; --red-border: #F0C4BD;
+  --green: #2F6B4F; --green-bg: #E4EFE8; --green-border: #BCD6C6;
+  --orange: #8A5A00; --orange-bg: #FBF0DA; --orange-border: #EAD29C;
+  --purple: #6B4FC8; --purple-bg: #EFEAFB; --purple-border: #D6CCF3;
+  --blue-bg: #E6ECF7; --blue-border: #C5D2EA;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -200,8 +183,8 @@ body {
 /* Birincil istatistik: bugün yapılacak iş — tıklanabilir, göze çarpan */
 .stat-primary {
   font-family: var(--font); cursor: pointer;
-  background: rgba(79,142,247,0.10);
-  border-color: rgba(79,142,247,0.40);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
   display: flex; flex-direction: column; justify-content: center;
 }
 .stat-primary:active { opacity: 0.8; }
@@ -314,8 +297,8 @@ body {
   flex-shrink: 0;
   margin-left: auto;
 }
-.date-group.in-progress .dl-progress { background: rgba(79,142,247,0.12); color: var(--accent); border-color: rgba(79,142,247,0.35); }
-.date-group.completed .dl-progress { background: rgba(52,199,89,0.12); color: var(--green); border-color: rgba(52,199,89,0.35); }
+.date-group.in-progress .dl-progress { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+.date-group.completed .dl-progress { background: color-mix(in srgb, var(--green) 12%, transparent); color: var(--green); border-color: color-mix(in srgb, var(--green) 35%, transparent); }
 
 .date-label .dl-meta {
   font-size: 10.5px;
@@ -363,7 +346,7 @@ body {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .card:hover { border-color: var(--border2); box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
-.card.expanded { border-color: var(--accent); box-shadow: 0 2px 16px rgba(79,142,247,0.15); }
+.card.expanded { border-color: var(--accent); box-shadow: 0 2px 16px color-mix(in srgb, var(--accent) 15%, transparent); }
 
 .card-head {
   padding: 14px 14px 10px;
@@ -481,8 +464,8 @@ body {
 
 /* Eenvoudige uitleg — Hollandaca açıklama */
 .uitleg-box {
-  background: rgba(79,142,247,0.08);
-  border: 1px solid rgba(79,142,247,0.25);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
   border-left: 3px solid var(--accent);
   border-radius: 8px;
   padding: 10px 12px;
@@ -493,8 +476,8 @@ body {
 
 /* Türev / Köken — etimoloji */
 .etym-box {
-  background: rgba(167,139,250,0.07);
-  border: 1px solid rgba(167,139,250,0.22);
+  background: color-mix(in srgb, var(--purple) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--purple) 22%, transparent);
   border-left: 3px solid var(--purple);
   border-radius: 8px;
   padding: 10px 12px;
@@ -660,9 +643,9 @@ body {
   font-variant-numeric: tabular-nums;
 }
 .tekrar-daygroup.overdue .td-main { color: var(--red); }
-.tekrar-daygroup.overdue .td-count { color: var(--red); border-color: rgba(224,92,92,0.35); background: rgba(224,92,92,0.10); }
+.tekrar-daygroup.overdue .td-count { color: var(--red); border-color: color-mix(in srgb, var(--red) 35%, transparent); background: color-mix(in srgb, var(--red) 10%, transparent); }
 .tekrar-daygroup.today .td-main { color: var(--orange); }
-.tekrar-daygroup.today .td-count { color: var(--orange); border-color: rgba(240,180,41,0.35); background: rgba(240,180,41,0.10); }
+.tekrar-daygroup.today .td-count { color: var(--orange); border-color: color-mix(in srgb, var(--orange) 35%, transparent); background: color-mix(in srgb, var(--orange) 10%, transparent); }
 .tekrar-daygroup.done .td-main { color: var(--green); }
 
 .tekrar-card {
@@ -1016,7 +999,7 @@ input[type="file"] { display: none; }
 }
 .listen-playlist-item:active { background: var(--bg3); }
 .listen-playlist-item.current {
-  background: rgba(79,142,247,0.12); border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: var(--accent);
 }
 .lp-num {
   flex-shrink: 0; width: 22px; text-align: center;
@@ -1066,8 +1049,8 @@ input[type="file"] { display: none; }
   transition: background 0.1s;
   display: inline;
 }
-.gz-word:hover { background: rgba(79,142,247,0.2); }
-.gz-word.selected { background: rgba(79,142,247,0.35); color: var(--accent); }
+.gz-word:hover { background: color-mix(in srgb, var(--accent) 20%, transparent); }
+.gz-word.selected { background: color-mix(in srgb, var(--accent) 35%, transparent); color: var(--accent); }
 #gazete-reader {
   font-size: 15px; line-height: 1.9; color: var(--text);
   font-family: var(--font); letter-spacing: 0.01em;
@@ -1155,6 +1138,199 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   [v2] DELFTS AİLESİ — GRACHT GROEN (Goed Bezig'in kardeşi)
+   Kimlik: gracht yeşili (--accent, --hero). Eylem: oranje (--cta), ekranda
+   tek birincil düğme. Zemin: açıkta krem, koyuda gece mavisi.
+   Yazı: Manrope (arayüz), Fraunces (başlık, büyük sayı, odaktaki Hollandaca).
+   Bu blok en sondadır ve önceki kuralların üzerine yazar.
+   ════════════════════════════════════════════════════════════════════════ */
+body { -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font-family: var(--font); }
+
+/* Üst çubuk */
+.top-bar { box-shadow: none; padding: 18px 16px 12px; }
+.tb-row { display: flex; align-items: flex-start; gap: 10px; }
+.tb-row > div { flex: 1; min-width: 0; }
+.top-bar h1 { font-family: var(--font-display); font-weight: 700; font-size: 22px; color: var(--accent); letter-spacing: -0.01em; }
+.tb-gear { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg2); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.tb-gear .ic { width: 20px; height: 20px; }
+#search { border-radius: 12px; background: var(--bg3); }
+
+/* Üst istatistik: sol kutu artık birincil eylem */
+.stats-row { grid-template-columns: 1.25fr 1fr; }
+.stat { border-radius: 18px; }
+.stat-primary { background: var(--cta); border-color: var(--cta); color: var(--on-cta); align-items: flex-start; text-align: left; padding: 14px 16px; }
+.stat-primary .stat-lbl { color: var(--on-cta); opacity: .9; font-weight: 600; }
+.stat-cta-top { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 800; }
+.stat-cta-top .ic { width: 18px; height: 18px; }
+.stat-num { font-family: var(--font-display); font-weight: 700; }
+.stat-bar-fill { background: var(--accent); }
+
+/* Filtreler ve gruplama */
+.fbtn { border-radius: 999px; font-weight: 600; background: var(--bg2); }
+.fbtn.active, .fbtn.date-btn.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.chip-n { font-size: 11px; opacity: .75; font-variant-numeric: tabular-nums; margin-left: 2px; }
+.group-toggle { display: flex; align-items: center; gap: 10px; padding: 0 16px 10px; }
+.gt-label { font-size: 12px; font-weight: 700; color: var(--text3); }
+.seg { display: inline-flex; padding: 3px; gap: 3px; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; }
+.seg button { min-height: 36px; padding: 0 14px; border: none; border-radius: 9px; background: transparent; color: var(--text2); font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.seg button .ic { width: 15px; height: 15px; }
+.seg button.on { background: var(--bg2); color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+
+/* Gruplar ve kartlar */
+.date-group { border-radius: 18px; background: var(--bg2); }
+.date-label { font-family: var(--font); font-weight: 700; }
+.date-group.in-progress { border-left-color: var(--accent); }
+.dl-progress-line-fill { background: var(--accent); }
+.card { border-radius: 16px; }
+.card.expanded { border-color: var(--accent); box-shadow: 0 2px 16px color-mix(in srgb, var(--accent) 14%, transparent); }
+.card-dutch { font-weight: 600; }
+.badge { border-radius: 999px; font-weight: 700; }
+.badge-zin { color: var(--blue); }
+.card-footer { gap: 8px; }
+.tema-chip { font-size: 11.5px; font-weight: 600; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+.btn-known { border-radius: 10px; font-weight: 700; color: var(--text2); background: var(--bg2); flex-shrink: 0; }
+.btn-known.known { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.btn-speak { border-radius: 10px; }
+.card-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border); }
+.tema-row { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 200px; }
+.tema-row label { font-size: 12px; font-weight: 700; color: var(--text3); }
+.tema-row select { flex: 1; min-height: 40px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); padding: 0 10px; font-size: 13px; }
+#gp-content .tema-row { margin-bottom: 12px; }
+.btn-link { min-height: 40px; background: none; border: none; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text2); padding: 0 6px; }
+.btn-link.danger { color: var(--red); }
+.btn-link .ic { width: 16px; height: 16px; }
+
+/* Ekran başlıkları */
+.tekrar-header h2 { font-family: var(--font-display); font-weight: 700; font-size: 20px; }
+.tekrar-back { border-radius: 10px; }
+
+/* Çalış ekranı — başlangıç */
+.study-hero { margin: 14px 16px 10px; padding: 18px; border-radius: 22px; background: var(--hero); color: var(--on-hero); display: flex; flex-direction: column; gap: 14px; }
+.sh-nums { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sh-num { font-family: var(--font-display); font-weight: 700; font-size: 40px; line-height: 1; }
+.sh-lbl { font-size: 12.5px; color: var(--hero-soft); margin-top: 4px; font-weight: 600; }
+.btn-cta { min-height: 56px; border-radius: 16px; border: none; background: var(--cta); color: var(--on-cta); font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.btn-cta .ic { width: 18px; height: 18px; }
+.sh-empty { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; line-height: 1.5; background: rgba(255,255,255,.1); border-radius: 12px; padding: 12px; }
+.sh-empty .ic { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
+.sh-how { font-size: 12.5px; color: var(--hero-soft); line-height: 1.5; }
+.study-tema { padding-top: 2px; }
+.tekrar-calendar { border-radius: 18px; }
+
+/* Sesli tekrar ekranı */
+.sesli-intro { margin: 14px 16px 12px; padding: 14px 16px; border-radius: 18px; background: var(--bg2); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+.sesli-intro p { font-size: 13.5px; color: var(--text2); line-height: 1.55; }
+.btn-cta-soft { align-self: flex-start; min-height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--accent); font-size: 14px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.btn-cta-soft .ic { width: 17px; height: 17px; }
+.sesli-sum { padding: 0 16px 8px; font-size: 12.5px; font-weight: 700; color: var(--text3); font-variant-numeric: tabular-nums; }
+.sesli-row { margin: 0 16px 8px; padding: 12px 12px 12px 14px; border-radius: 16px; background: var(--bg2); border: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.sesli-row.said { border-left: 3px solid var(--accent); }
+.sesli-row.bump { animation: sesli-bump .32s ease; }
+@keyframes sesli-bump { 0% { transform: scale(1); } 40% { transform: scale(.985); background: color-mix(in srgb, var(--accent) 12%, var(--bg2)); } 100% { transform: scale(1); } }
+.sesli-txt { flex: 1; min-width: 0; }
+.sesli-nl { font-size: 15px; font-weight: 600; line-height: 1.4; }
+.sesli-tr { font-size: 12.5px; color: var(--text2); margin-top: 2px; line-height: 1.4; }
+.sesli-meta { font-size: 11.5px; color: var(--text3); margin-top: 5px; font-variant-numeric: tabular-nums; }
+.sesli-meta b { color: var(--accent); }
+.btn-said { min-height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); font-size: 13px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; }
+.btn-said .ic { width: 16px; height: 16px; }
+.btn-said:active { transform: scale(.96); }
+.btn-more { display: block; margin: 6px auto 20px; min-height: 44px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text2); font-weight: 700; cursor: pointer; }
+
+/* Alt menü */
+.bottom-nav { background: var(--bg2); border-top: 1px solid var(--border); }
+.nav-btn.active { color: var(--accent); font-weight: 800; }
+.nav-badge { background: var(--cta); }
+
+/* Ayarlar ve genel düğmeler */
+.settings-section-title { letter-spacing: .06em; }
+.btn-settings { border-radius: 12px; font-weight: 700; }
+.btn-settings.primary { background: var(--cta); border-color: var(--cta); color: var(--on-cta); }
+.theme-btn, .fs-btn { border-radius: 10px; }
+.theme-btn.active, .fs-btn.active, .goal-btn.active, .listen-opt-btn.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.listen-setup-start { background: var(--cta); color: var(--on-cta); }
+
+/* İlerleme */
+.streak-card { background: var(--hero); border-color: var(--hero); color: var(--on-hero); border-radius: 20px; }
+.streak-count { font-family: var(--font-display); color: var(--on-hero); }
+.streak-label, .streak-today { color: var(--hero-soft); }
+.streak-today .ic { color: var(--on-hero); }
+.streak-badge { background: rgba(255,255,255,.14); color: var(--on-hero); border-color: rgba(255,255,255,.25); }
+.goal-card { border-radius: 20px; }
+.goal-numbers { font-family: var(--font-display); }
+.goal-bar-fill { background: var(--accent); }
+.quick-repeat-btn { background: var(--cta); border-color: var(--cta); color: var(--on-cta); border-radius: 16px; }
+.quick-repeat-btn .qr-sub { color: var(--on-cta); opacity: .9; }
+.hm-cell.hm-1, [data-theme="light"] .hm-cell.hm-1, .cal-day.worked-1, [data-theme="light"] .cal-day.worked-1 { background: color-mix(in srgb, var(--accent) 25%, var(--bg3)); border-color: color-mix(in srgb, var(--accent) 35%, var(--bg3)); color: var(--text); }
+.hm-cell.hm-2, [data-theme="light"] .hm-cell.hm-2, .cal-day.worked-2, [data-theme="light"] .cal-day.worked-2 { background: color-mix(in srgb, var(--accent) 50%, var(--bg3)); border-color: color-mix(in srgb, var(--accent) 60%, var(--bg3)); color: var(--text); }
+.hm-cell.hm-3, [data-theme="light"] .hm-cell.hm-3, .cal-day.worked-3, [data-theme="light"] .cal-day.worked-3 { background: color-mix(in srgb, var(--accent) 75%, var(--bg3)); border-color: color-mix(in srgb, var(--accent) 85%, var(--bg3)); color: var(--on-accent); }
+.hm-cell.hm-4, [data-theme="light"] .hm-cell.hm-4, .cal-day.worked-4, [data-theme="light"] .cal-day.worked-4 { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+/* ── Çalışma oturumu (tam ekran) ── */
+.st-overlay { position: fixed; inset: 0; z-index: 2100; background: var(--bg); display: none; overflow-y: auto; }
+.st-overlay.show { display: block; }
+.st-wrap { max-width: 560px; min-height: 100%; min-height: 100dvh; margin: 0 auto; padding: calc(14px + env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 14px; }
+.st-session { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+.st-top { display: flex; align-items: center; gap: 12px; }
+.st-close { width: 44px; height: 44px; border-radius: 50%; background: var(--bg2); border: 1px solid var(--border); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.st-bar { flex: 1; height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
+.st-bar-fill { height: 100%; width: 100%; background: var(--cta); transform: scaleX(0); transform-origin: left center; transition: transform .3s ease; }
+.st-count { font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; min-width: 52px; text-align: right; }
+.st-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.st-chip { font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); color: var(--text2); }
+.st-chip.acc { background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: color-mix(in srgb, var(--accent) 35%, transparent); color: var(--accent); }
+.st-card { flex: 1; background: var(--bg2); border: 1px solid var(--border); border-radius: 26px; padding: 22px 20px; display: flex; flex-direction: column; gap: 16px; min-height: 300px; }
+.st-card.out { animation: st-out .18s ease forwards; }
+@keyframes st-out { to { opacity: 0; transform: translateX(-18px); } }
+.st-lbl { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+.st-nl { font-family: var(--font-display); font-weight: 500; font-size: 30px; line-height: 1.25; margin-bottom: 12px; }
+.st-tool { min-height: 44px; padding: 0 14px; border-radius: 22px; border: 1px solid var(--border); background: var(--bg3); color: var(--text); font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.st-tool .ic { width: 16px; height: 16px; }
+.st-tool.speaking, .btn-speak.speaking { color: var(--accent); border-color: var(--accent); }
+.st-hint { font-size: 15px; line-height: 1.6; color: var(--text2); background: var(--bg3); border-radius: 12px; padding: 12px 14px; }
+.st-hint mark, .st-ans mark { background: color-mix(in srgb, var(--cta) 22%, transparent); color: inherit; border-radius: 4px; padding: 0 2px; }
+.st-say { display: flex; gap: 6px; align-items: center; font-size: 13px; color: var(--text3); margin-top: auto; }
+.st-say .ic { width: 16px; height: 16px; }
+.st-ans { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--border); padding-top: 16px; }
+.st-ans.in { animation: st-in .25s ease both; }
+@keyframes st-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.st-tr { font-size: 21px; font-weight: 700; line-height: 1.35; margin-top: -4px; }
+.st-exs { display: flex; flex-direction: column; gap: 8px; }
+.st-ex { background: var(--bg3); border-radius: 12px; padding: 10px 12px; }
+.st-more summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--text2); min-height: 40px; display: flex; align-items: center; }
+.st-more[open] summary { margin-bottom: 8px; }
+.st-actions { display: flex; gap: 8px; }
+.st-btn { min-height: 56px; border-radius: 16px; border: 1px solid var(--border); background: var(--bg2); color: var(--text); font-size: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; }
+.st-btn .ic { width: 18px; height: 18px; }
+.st-btn.primary { flex: 1; background: var(--cta); border-color: var(--cta); color: var(--on-cta); }
+.st-grades { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.st-grade { min-height: 64px; border-radius: 16px; border: 1px solid var(--border); background: var(--bg2); color: var(--text); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 6px; }
+.st-grade b { font-size: 15px; font-weight: 800; }
+.st-grade span { font-size: 11.5px; color: var(--text3); font-weight: 600; min-height: 1.2em; }
+.st-btn, .st-grade, .st-tool, .st-close, .btn-cta, .stat-primary { transition: transform .1s ease, border-color .15s; }
+.st-btn:active, .st-grade:active, .st-tool:active, .st-close:active, .btn-cta:active { transform: scale(.96); }
+.st-finish { flex: 1; display: flex; flex-direction: column; gap: 16px; justify-content: center; }
+.st-fin-title { font-family: var(--font-display); font-weight: 700; font-size: 26px; }
+.st-fin-sub { font-size: 14px; color: var(--text2); line-height: 1.5; margin-top: -8px; }
+.st-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.st-stat { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
+.st-stat-num { font-family: var(--font-display); font-weight: 700; font-size: 28px; line-height: 1.1; }
+.st-stat-lbl { font-size: 12px; color: var(--text3); font-weight: 700; margin-top: 2px; }
+.st-miss { display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text2); }
+.st-miss span:first-child { font-size: 15px; font-weight: 700; color: var(--text); }
+:focus-visible { outline: 2px solid var(--cta); outline-offset: 2px; }
+#search { width: 100%; }
+.tc-day { border-radius: 12px; }
+.tc-day.has-due { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--bg2)); }
+.tc-day-count { font-family: var(--font-display); }
+@media (max-width: 520px) {
+  .sesli-row { flex-wrap: wrap; }
+  .sesli-txt { flex-basis: 100%; }
+  .sesli-row .btn-speak { margin-left: auto; }
+}
 </style>
 </head>
 <body>
@@ -1192,6 +1368,10 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
   <symbol id="i-next" viewBox="0 0 24 24"><path d="M4 5v14l12 -7z"/><path d="M20 5v14"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"/><path d="M9 15l-4.5 4.5"/><path d="M14.5 4l5.5 5.5"/></symbol>
   <symbol id="i-message" viewBox="0 0 24 24"><path d="M8 9h8"/><path d="M8 13h6"/><path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M3 12h1m8 -9v1m8 8h1m-15.4 -6.4l.7 .7m12.1 -.7l-.7 .7"/><path d="M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0 -1 3a2 2 0 0 1 -4 0a3.5 3.5 0 0 0 -1 -3"/><path d="M9.7 17h4.6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"/></symbol>
+  <symbol id="i-microphone" viewBox="0 0 24 24"><path d="M9 5a3 3 0 0 1 3 -3a3 3 0 0 1 3 3v5a3 3 0 0 1 -3 3a3 3 0 0 1 -3 -3z"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M8 21h8"/><path d="M12 17v4"/></symbol>
+  <symbol id="i-school" viewBox="0 0 24 24"><path d="M22 9l-10 -4l-10 4l10 4l10 -4v6"/><path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4"/></symbol>
   <symbol id="i-scale" viewBox="0 0 24 24"><path d="M7 20h10"/><path d="M6 6l6 -1l6 1"/><path d="M12 3v17"/><path d="M9 12l-3 -6l-3 6a3 3 0 0 0 6 0"/><path d="M21 12l-3 -6l-3 6a3 3 0 0 0 6 0"/></symbol>
 </svg>
 
@@ -1199,8 +1379,13 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
 <div class="screen active" id="screen-cards">
 
 <div class="top-bar">
-  <h1>Kantoor Woordenschat</h1>
-  <p>Sociaal raadsman — Hollandaca öğrenme kartları</p>
+  <div class="tb-row">
+    <div>
+      <h1>Kantoor Woordenschat</h1>
+      <p>Sociaal raadsman — Hollandaca öğrenme kartları</p>
+    </div>
+    <button class="tb-gear" onclick="showScreen('settings')" aria-label="Ayarlar" title="Ayarlar"><svg class="ic"><use href="#i-settings"/></svg></button>
+  </div>
   <div class="search-row">
     <div class="search-wrap">
       <span class="search-icon"><svg class="ic"><use href="#i-search"/></svg></span>
@@ -1210,13 +1395,13 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
 </div>
 
 <div class="stats-row">
-  <button class="stat stat-primary" onclick="showScreen('tekrar')">
-    <div class="stat-num" id="s-due">0</div>
-    <div class="stat-lbl">Bugün tekrar</div>
+  <button class="stat stat-primary" onclick="startStudy()">
+    <div class="stat-cta-top"><svg class="ic"><use href="#i-play"/></svg>Çalışmaya başla</div>
+    <div class="stat-lbl"><span id="s-due">0</span> tekrar · <span id="s-new">0</span> yeni</div>
   </button>
   <div class="stat">
     <div class="stat-num"><span id="s-known">0</span><span class="stat-sub">/<span id="s-total">0</span></span></div>
-    <div class="stat-lbl">Öğrenildi</div>
+    <div class="stat-lbl">çalışmada</div>
     <div class="stat-bar"><div class="stat-bar-fill" id="s-bar"></div></div>
   </div>
 </div>
@@ -1227,8 +1412,9 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
   <button class="fbtn" data-filter="woord">Kelimeler</button>
   <button class="fbtn" data-filter="juridisch">Hukuki</button>
   <button class="fbtn" data-filter="uitdrukking">Deyimler</button>
-  <button class="fbtn" data-filter="known"><svg class="ic"><use href="#i-check"/></svg> Öğrendiklerim</button>
+  <button class="fbtn" data-filter="known"><svg class="ic"><use href="#i-school"/></svg> Çalışılanlar</button>
 </div>
+<div class="group-toggle" id="group-toggle"></div>
 <div class="filters" id="date-filters"></div>
 
 <div class="content" id="content"></div>
@@ -1239,9 +1425,10 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
 <div class="screen" id="screen-tekrar">
   <div class="tekrar-header">
     <button class="tekrar-back" onclick="showScreen('cards')"><svg class="ic"><use href="#i-arrow-left"/></svg>Kartlar</button>
-    <h2><svg class="ic"><use href="#i-repeat"/></svg>Tekrar Listesi</h2>
+    <h2><svg class="ic"><use href="#i-school"/></svg>Çalış</h2>
     <span class="tc" id="tekrar-count"></span>
   </div>
+  <div id="study-start"></div>
   <div id="tekrar-calendar"></div>
   <div id="tekrar-content"></div>
 </div><!-- end screen-tekrar -->
@@ -1291,6 +1478,33 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
   </div>
 
   <div class="settings-section">
+    <div class="settings-section-title">Çalışma</div>
+    <div class="settings-row" style="flex-direction:column; align-items:stretch; gap:8px;">
+      <div>
+        <div class="settings-row-label">Günde kaç yeni kart gelsin?</div>
+        <div class="settings-row-desc">Henüz çalışmadığın kartlar, en eskiden başlayarak her gün bu kadar çalışmaya eklenir.</div>
+      </div>
+      <div class="theme-toggle">
+        <button class="theme-btn npd-btn" data-n="0" onclick="setNewPerDay(0)">0</button>
+        <button class="theme-btn npd-btn" data-n="3" onclick="setNewPerDay(3)">3</button>
+        <button class="theme-btn npd-btn" data-n="5" onclick="setNewPerDay(5)">5</button>
+        <button class="theme-btn npd-btn" data-n="10" onclick="setNewPerDay(10)">10</button>
+        <button class="theme-btn npd-btn" data-n="20" onclick="setNewPerDay(20)">20</button>
+      </div>
+    </div>
+    <div class="settings-row">
+      <div>
+        <div class="settings-row-label">Kart açılınca sesi çal</div>
+        <div class="settings-row-desc">Çalışma oturumunda Hollandaca otomatik okunur</div>
+      </div>
+      <div class="theme-toggle">
+        <button class="theme-btn sau-btn" data-on="1" onclick="setStudyAudio(true)">Açık</button>
+        <button class="theme-btn sau-btn" data-on="0" onclick="setStudyAudio(false)">Kapalı</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-section">
     <div class="settings-section-title">Bağlantı durumu</div>
     <div class="settings-row">
       <div>
@@ -1306,25 +1520,15 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
     <div class="settings-row" style="flex-direction:column; align-items:stretch; gap:8px;">
       <div>
         <div class="settings-row-label">Claude'dan aldığın kod bloğunu buraya yapıştır</div>
-        <div class="settings-row-desc">Yeni kelime/cümle setini Claude'a gönder, sana verdiği JSON kodunu aşağıya yapıştır ve yükle.</div>
+        <div class="settings-row-desc">1) Talimatı kopyala ve Claude'a gönder, altına kelimelerini yaz. 2) Verdiği JSON'u aşağıya yapıştırıp yükle. Talimat tema ve kalıp kurallarını içerir.</div>
       </div>
-      <textarea id="new-cards-input" placeholder='[{"date":"...", "type":"woord", "dutch":"...", "turkish":"...", "note":"...", "examples":[...], "legal":null, "is_legal":false}]' style="width:100%; min-height:120px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px; color:var(--text); font-family:var(--mono); font-size:12px; resize:vertical;"></textarea>
+      <button class="btn-settings full" onclick="copyClaudeTemplate(this)"><svg class="ic"><use href="#i-message"/></svg>Claude talimatını kopyala</button>
+      <textarea id="new-cards-input" placeholder='[{"date":"29/09", "type":"woord", "dutch":"...", "turkish":"...", "uitleg":"...", "note":"...", "examples":[...], "legal":null, "is_legal":false, "tema":"gesprek"}]' style="width:100%; min-height:120px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px; color:var(--text); font-family:var(--mono); font-size:12px; resize:vertical;"></textarea>
       <button class="btn-settings primary full" onclick="addNewCards()"><svg class="ic"><use href="#i-plus"/></svg>Kartları Ekle</button>
     </div>
     <div class="settings-status" id="newcards-status"></div>
   </div>
 
-  <div class="settings-section">
-    <div class="settings-section-title">İlk kurulum</div>
-    <div class="settings-row" style="flex-direction:column; align-items:stretch; gap:8px;">
-      <div>
-        <div class="settings-row-label">Mevcut 183 kartı veritabanına yükle</div>
-        <div class="settings-row-desc">Sadece bir kere çalıştır. Veritabanı boşsa kartları gönderir.</div>
-      </div>
-      <button class="btn-settings primary full" onclick="seedDatabase()"><svg class="ic"><use href="#i-upload"/></svg>Kartları Veritabanına Yükle</button>
-    </div>
-    <div class="settings-status" id="seed-status"></div>
-  </div>
 
   <div class="settings-section">
     <div class="settings-section-title">Veri yedekleme</div>
@@ -1379,6 +1583,15 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
   <div id="trash-content"></div>
 </div><!-- end screen-trash -->
 
+<!-- ── SCHERM 8: Sesli tekrar (çalışma takviminden bağımsız) ── -->
+<div class="screen" id="screen-sesli">
+  <div class="tekrar-header">
+    <h2><svg class="ic"><use href="#i-microphone"/></svg>Tekrar</h2>
+    <span class="tc" id="sesli-count"></span>
+  </div>
+  <div id="sesli-content"></div>
+</div><!-- end screen-sesli -->
+
 <!-- ── SCHERM 5: İlerleme ── -->
 <div class="screen" id="screen-progress">
   <div class="tekrar-header">
@@ -1391,6 +1604,7 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
 <!-- ── SCHERM 7: Dinleme Modu ── -->
 <div class="screen" id="screen-listen">
   <div class="tekrar-header">
+    <button class="tekrar-back" onclick="showScreen('sesli')"><svg class="ic"><use href="#i-arrow-left"/></svg>Tekrar</button>
     <h2><svg class="ic"><use href="#i-headphones"/></svg>Dinleme Modu</h2>
     <span class="tc" id="listen-progress-text"></span>
   </div>
@@ -1435,6 +1649,7 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
       <div id="gp-etymology" class="etym-box" style="margin-bottom:8px;display:none;"></div>
       <div id="gp-note" style="font-size:13px;color:var(--text3);background:var(--bg3);border-radius:8px;padding:10px;margin-bottom:10px;line-height:1.6;"></div>
       <div id="gp-examples" style="margin-bottom:12px;"></div>
+      <div class="tema-row"><label for="gp-tema">Tema</label><select id="gp-tema"></select></div>
       <div style="display:flex;gap:8px;">
         <button class="btn-settings primary" style="flex:1" onclick="gazeteAddCard()"><svg class="ic"><use href="#i-plus"/></svg>Karta Ekle</button>
         <button class="btn-settings" onclick="gazeteClosePanel()">Kapat</button>
@@ -1458,27 +1673,70 @@ textarea, #new-cards-input { font-family: var(--code) !important; }
   </button>
   <button class="nav-btn" id="nav-tekrar" onclick="showScreen('tekrar')">
     <span class="nav-icon-wrap">
-      <span class="nav-icon"><svg class="ic"><use href="#i-repeat"/></svg></span>
+      <span class="nav-icon"><svg class="ic"><use href="#i-school"/></svg></span>
       <span class="nav-badge" id="nav-badge" style="display:none">0</span>
     </span>
-    <span>Tekrar</span>
+    <span>Çalış</span>
   </button>
-  <button class="nav-btn" id="nav-progress" onclick="showScreen('progress')">
-    <span class="nav-icon"><svg class="ic"><use href="#i-chart"/></svg></span>
-    <span>İlerleme</span>
+  <button class="nav-btn" id="nav-sesli" onclick="showScreen('sesli')">
+    <span class="nav-icon"><svg class="ic"><use href="#i-microphone"/></svg></span>
+    <span>Tekrar</span>
   </button>
   <button class="nav-btn" id="nav-gazete" onclick="showScreen('gazete')">
     <span class="nav-icon"><svg class="ic"><use href="#i-news"/></svg></span>
     <span>Gazete</span>
   </button>
-  <button class="nav-btn" id="nav-listen" onclick="showScreen('listen')">
-    <span class="nav-icon"><svg class="ic"><use href="#i-headphones"/></svg></span>
-    <span>Dinle</span>
+  <button class="nav-btn" id="nav-progress" onclick="showScreen('progress')">
+    <span class="nav-icon"><svg class="ic"><use href="#i-chart"/></svg></span>
+    <span>İlerleme</span>
   </button>
-  <button class="nav-btn" id="nav-settings" onclick="showScreen('settings')">
-    <span class="nav-icon"><svg class="ic"><use href="#i-settings"/></svg></span>
-    <span>Ayarlar</span>
-  </button>
+</div>
+
+<!-- ── Çalışma oturumu (tam ekran) ── -->
+<div class="st-overlay" id="st-overlay" role="dialog" aria-modal="true" aria-label="Çalışma oturumu">
+  <div class="st-wrap">
+    <div class="st-top">
+      <button class="st-close" onclick="closeStudy()" aria-label="Kapat"><svg class="ic"><use href="#i-x"/></svg></button>
+      <div class="st-bar" aria-hidden="true"><div class="st-bar-fill" id="st-bar"></div></div>
+      <div class="st-count" id="st-count" aria-live="polite">1 / 1</div>
+    </div>
+    <div class="st-session" id="st-session">
+      <div class="st-chips" id="st-chips"></div>
+      <div class="st-card" id="st-card">
+        <div>
+          <div class="st-lbl">Nederlands</div>
+          <div class="st-nl" id="st-nl" lang="nl"></div>
+          <button class="st-tool" id="st-listen" onclick="stSpeak(this)"><svg class="ic"><use href="#i-volume"/></svg>Dinle</button>
+        </div>
+        <div class="st-hint" id="st-hint" lang="nl" style="display:none"></div>
+        <div class="st-say" id="st-say"><svg class="ic"><use href="#i-microphone"/></svg>Anlamını içinden söyle, sonra kontrol et</div>
+        <div class="st-ans" id="st-ans" style="display:none"></div>
+      </div>
+      <div class="st-actions" id="st-q-actions">
+        <button class="st-btn" id="st-hint-btn" onclick="stShowHint()"><svg class="ic"><use href="#i-bulb"/></svg>İpucu</button>
+        <button class="st-btn primary" onclick="stReveal()"><svg class="ic"><use href="#i-eye"/></svg>Cevabı göster</button>
+      </div>
+      <div class="st-grades" id="st-grades" style="display:none">
+        <button class="st-grade" onclick="stGrade('bilmedim')"><b>Bilmedim</b><span id="st-g-bilmedim"></span></button>
+        <button class="st-grade" onclick="stGrade('zor')"><b>Zor</b><span id="st-g-zor"></span></button>
+        <button class="st-grade" onclick="stGrade('bildim')"><b>Bildim</b><span id="st-g-bildim"></span></button>
+      </div>
+    </div>
+    <div class="st-finish" id="st-finish" style="display:none">
+      <div class="st-fin-title">Oturum bitti</div>
+      <div class="st-fin-sub" id="st-fin-sub"></div>
+      <div class="st-stats">
+        <div class="st-stat"><div class="st-stat-num" id="st-fin-bildim">0</div><div class="st-stat-lbl">Bildim</div></div>
+        <div class="st-stat"><div class="st-stat-num" id="st-fin-zor">0</div><div class="st-stat-lbl">Zor</div></div>
+        <div class="st-stat"><div class="st-stat-num" id="st-fin-bilmedim">0</div><div class="st-stat-lbl">Bilmedim</div></div>
+      </div>
+      <div id="st-fin-list"></div>
+      <div class="st-actions">
+        <button class="st-btn" id="st-fin-retry" onclick="stRetryMissed()"><svg class="ic"><use href="#i-repeat"/></svg>Bilmediklerim</button>
+        <button class="st-btn primary" onclick="closeStudy()">Kapat</button>
+      </div>
+    </div>
+  </div>
 </div>
 <script>
 function ic(name, cls) {
@@ -1674,7 +1932,7 @@ function saveTimeLog() {
 async function pullState() {
   try {
     const rows = await sbFetch('app_state?select=key,value') || [];
-    const oa = {}, ot = {};
+    const oa = {}, ot = {}, or = {};
     let goal = null;
     for (const r of rows) {
       const v = r.value || {};
@@ -1684,9 +1942,15 @@ async function pullState() {
         for (const d in v) ot[d] = (ot[d] || 0) + (v[d] || 0);
       } else if (r.key === 'daily_goal') {
         goal = parseInt(v);
+      } else if (r.key === 'tema_map') {
+        TEMA_MAP = Object.assign({}, v, TEMA_MAP_PENDING());
+        try { localStorage.setItem('kv_tema_map', JSON.stringify(TEMA_MAP)); } catch(e) {}
+      } else if (r.key.startsWith('rehearse:') && r.key !== 'rehearse:' + DEVICE_ID) {
+        for (const id in v) { or[id] = or[id] || {}; for (const d in v[id]) or[id][d] = (or[id][d] || 0) + (v[id][d] || 0); }
       }
     }
-    otherActivity = oa; otherTime = ot;
+    otherActivity = oa; otherTime = ot; otherRehearse = or;
+    try { localStorage.setItem('kv_rehearse_others', JSON.stringify(or)); } catch(e) {}
     try {
       localStorage.setItem('kv_activity_others', JSON.stringify(oa));
       localStorage.setItem('kv_timelog_others', JSON.stringify(ot));
@@ -1710,7 +1974,8 @@ async function pushState(keepalive) {
   const now = new Date().toISOString();
   const rows = [
     { key: 'activity:' + DEVICE_ID, value: myActivity, updated_at: now },
-    { key: 'timelog:'  + DEVICE_ID, value: myTime,     updated_at: now }
+    { key: 'timelog:'  + DEVICE_ID, value: myTime,     updated_at: now },
+    { key: 'rehearse:' + DEVICE_ID, value: myRehearse, updated_at: now }
   ];
   try {
     await fetch(SUPABASE_URL + '/rest/v1/app_state?on_conflict=key', {
@@ -1755,6 +2020,7 @@ async function refreshFromServer(force) {
   renderAll();
   if (typeof restoreOpenCardBodies === 'function') restoreOpenCardBodies();
   if (currentScreen === 'tekrar') renderTekrar();
+  if (currentScreen === 'sesli') renderSesli();
   if (currentScreen === 'progress') renderProgress();
 }
 
@@ -1937,9 +2203,9 @@ function renderProgress() {
     </div>
 
     <div class="progress-section">
-      <button class="quick-repeat-btn" onclick="showScreen('tekrar')">
-        ${ic('bolt')} Hızlı Tekrar
-        <div class="qr-sub">${dueNow > 0 ? `${dueNow} kart seni bekliyor` : 'Tekrar listesine git'}</div>
+      <button class="quick-repeat-btn" onclick="startStudy()">
+        ${ic('play')} Çalışmaya başla
+        <div class="qr-sub">${dueNow > 0 ? `${dueNow} kartın zamanı geldi` : 'Yeni kartlarla devam et'}</div>
       </button>
     </div>
 
@@ -2076,9 +2342,9 @@ function renderCalendarView() {
     </div>
     <div class="cal-legend">
       <span class="cal-legend-dot" style="background:var(--bg3);border:1px solid var(--border)"></span>Boş
-      <span class="cal-legend-dot" style="background:#1a3060"></span>1
-      <span class="cal-legend-dot" style="background:#1e4090"></span>2-4
-      <span class="cal-legend-dot" style="background:#2952c8"></span>5-9
+      <span class="cal-legend-dot" style="background:color-mix(in srgb, var(--accent) 25%, var(--bg3))"></span>1
+      <span class="cal-legend-dot" style="background:color-mix(in srgb, var(--accent) 50%, var(--bg3))"></span>2-4
+      <span class="cal-legend-dot" style="background:color-mix(in srgb, var(--accent) 75%, var(--bg3))"></span>5-9
       <span class="cal-legend-dot" style="background:var(--accent)"></span>10+
       <span style="border:2px solid var(--orange);border-radius:3px;width:12px;height:12px;display:inline-block"></span>Bugün
     </div>
@@ -2221,9 +2487,11 @@ function loadAppearancePrefs() {
 }
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  document.querySelectorAll('.theme-btn').forEach(b => {
+  document.querySelectorAll('.theme-btn[data-theme]').forEach(b => {
     b.classList.toggle('active', b.dataset.theme === theme);
   });
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', theme === 'light' ? '#F5F1E8' : '#0F1930');
 }
 function setTheme(theme) {
   applyTheme(theme);
@@ -2391,6 +2659,11 @@ function gazeteTapWord(el, word) {
   // Claude Haiku ile analiz
   analyzeWord(word).then(card => {
     gazetePendingCard = card;
+    const gpTema = document.getElementById('gp-tema');
+    if (gpTema) {
+      gpTema.innerHTML = TEMAS.map(t => `<option value="${t.id}">${t.label}</option>`).join('');
+      gpTema.value = (card.tema && TEMA_BY_ID[card.tema]) ? card.tema : autoTema(card);
+    }
     document.getElementById('gp-turkish').textContent = card.turkish;
     const uEl = document.getElementById('gp-uitleg');
     uEl.textContent = card.uitleg || '';
@@ -2452,7 +2725,8 @@ async function gazeteAddCard() {
   if (btn) { btn.disabled = true; btn.textContent = 'Ekleniyor…'; }
 
   try {
-    await insertCardsRemote([{
+    const chosenTema = (document.getElementById('gp-tema') || {}).value;
+    const ins = await insertCardsRemote([{
       date: gazetePendingCard.date,
       type: gazetePendingCard.type || 'woord',
       uitleg: gazetePendingCard.uitleg || null,
@@ -2464,6 +2738,7 @@ async function gazeteAddCard() {
       legal: gazetePendingCard.legal || null,
       is_legal: gazetePendingCard.is_legal || false
     }]);
+    if (ins && ins[0] && ins[0].id && TEMA_BY_ID[chosenTema]) { TEMA_MAP[ins[0].id] = chosenTema; pushTemaMap(); }
     CARDS = await loadCardsFromDB();
     cacheCards();
     buildDateFilters();
@@ -2475,7 +2750,7 @@ async function gazeteAddCard() {
   } catch (e) {
     if (btn) { btn.disabled = false; btn.innerHTML = ic('plus') + 'Karta Ekle'; }
     statusEl.style.display = 'block';
-    statusEl.style.color = '#f87171';
+    statusEl.style.color = 'var(--red)';
     statusEl.textContent = '❌ Hata: ' + e.message;
   }
 }
@@ -3055,6 +3330,7 @@ async function addExampleAsCard(e, itemId, i) {
       is_legal: false
     }]);
     const newId = result && result[0] && result[0].id;
+    if (newId) { TEMA_MAP[newId] = getTema(item); pushTemaMap(); }
     CARDS = await loadCardsFromDB();
     cacheCards();
     buildDateFilters();
@@ -3077,6 +3353,490 @@ async function addExampleAsCard(e, itemId, i) {
   btn.disabled = false;
 }
 
+
+// ════════════════════════════════════════════════════════════════════════
+// [v2] TEMALAR — tarihe ek olarak "ne zaman kullanacağım"a göre gruplama
+// Kaynak sırası: senin seçtiğin (TEMA_MAP, app_state 'tema_map', cihazlar arası)
+// → ilk 183 kart için hazır eşleme (SEED_TEMA) → anahtar kelime tahmini.
+// ════════════════════════════════════════════════════════════════════════
+const TEMAS = [
+  { id:'gesprek',  label:'Gesprek met cliënt',       tr:'Danışanla konuşma, telefon' },
+  { id:'overleg',  label:'Overleg & collega\'s',     tr:'Toplantı, e-posta, iş bölümü' },
+  { id:'schulden', label:'Schulden & geld',          tr:'Borç, ödeme, icra, bütçe' },
+  { id:'wonen',    label:'Wonen & huur',             tr:'Kira, ev, bakım, komşu' },
+  { id:'inkomen',  label:'Inkomen, werk & toeslagen',tr:'UWV, bijstand, toeslag, iş' },
+  { id:'zorg',     label:'Hulpverlening & zorg',     tr:'Destek, sağlık, Wmo' },
+  { id:'recht',    label:'Recht & procedure',        tr:'İtiraz, karar, vesayet' },
+  { id:'gemeente', label:'Gemeente & instanties',    tr:'Belediye, BRP, DigiD, kurumlar' },
+  { id:'taal',     label:'Algemene taal',            tr:'Bağlaç, sıfat, genel kelime' }
+];
+const TEMA_BY_ID = Object.fromEntries(TEMAS.map(t => [t.id, t]));
+const SEED_TEMA = {"een regeling treffen": "schulden", "mag ik deze naar me mailen?": "overleg", "daarvoor moeten we shv vragen.": "overleg", "ik kan je aanmelden.": "gesprek", "ik zou het aanraden.": "gesprek", "vanuit mijn ervaring...": "overleg", "gunstig voor je.": "gesprek", "dat wil ik voorstellen.": "overleg", "vrij hoog": "taal", "heb je toevallig legitimatiebewijs bij jou?": "gesprek", "ik ben er ook bij.": "overleg", "dit ben jij.": "overleg", "er is geen ruimte om nieuw toe te voegen.": "overleg", "aangenomen": "inkomen", "dit moet ik allemaal hebben.": "gesprek", "wat komt jou uit?": "overleg", "ik had je gemist!": "overleg", "ik heb het gevoel...": "overleg", "dan doe ik dat.": "overleg", "daarin ben je niet de enige!": "overleg", "ik heb de naam nergens gelezen.": "gesprek", "pakken we dat dan verder op!": "overleg", "ovh (beschermd)": "zorg", "aftikken": "overleg", "lastigvallen": "recht", "nazorg": "zorg", "afschalen": "zorg", "ben ik je gelegen?": "gesprek", "dan kunnen we gelijk bespreken.": "overleg", "inpakken": "taal", "benadeeld": "recht", "compenseren": "recht", "hoe sta je tegenover...?": "overleg", "we zijn hier voor jou.": "gesprek", "neerleggen": "recht", "dat lukt gewoon niet!": "overleg", "overnemen": "overleg", "ik zou het niet weten.": "gesprek", "ik ben er wel.": "taal", "stoperig": "zorg", "ingetrokken": "inkomen", "sneu": "taal", "komt u er samen niet uit?": "gesprek", "heeft u hier meer vragen over?": "gesprek", "recht van overpad": "recht", "te goeder trouw": "recht", "erfdienstbaarheid": "recht", "zienswijze": "recht", "voorlopige voorziening": "recht", "dienend erf": "recht", "heersend erf": "recht", "bijhouden": "overleg", "doorpakken": "overleg", "hoe dichtbij de hulp is...": "gesprek", "warme overdracht": "zorg", "dat levert niks op.": "overleg", "moederen / molderen": "zorg", "aanvaardbaar": "recht", "beleven": "taal", "doorbraakmethode": "zorg", "verbreiden": "taal", "kleur aanbrengen": "overleg", "weet jij toevallig...?": "overleg", "ik ga het even navragen.": "gesprek", "ben je geopereerd aan je maag?": "gesprek", "verrekenen": "schulden", "rechtsvordering": "recht", "mulderboete": "schulden", "dikke bankrekening": "schulden", "pro-forma": "recht", "in dit kader": "recht", "reïntegreren": "inkomen", "raad voor rechtsbijstand": "recht", "opbouwen": "taal", "in aanmerking (komen)": "recht", "met betrekking tot": "recht", "overhangende taken": "overleg", "stank": "wonen", "gebreken": "wonen", "achterstallig onderhoud": "wonen", "woonachtig": "wonen", "zitting": "recht", "degene": "taal", "vonnis": "recht", "gerechtsdeurwaarder": "schulden", "afloop": "recht", "beoordelen": "recht", "acceptgiro": "schulden", "trouwens": "taal", "in principe": "taal", "hoe gaan we dit aanpakken?": "overleg", "hoe ver zijn we gevorderd?": "overleg", "omarmen": "taal", "instellingen": "gemeente", "beslaglegging": "schulden", "bevestigen": "overleg", "immers": "taal", "aanleveren": "overleg", "verzorgende ouder": "inkomen", "bekeuring": "schulden", "onterecht": "recht", "omkoping": "recht", "onderhoudsplicht": "recht", "ik heb al afgevraagd.": "overleg", "wat staat daar in?": "gesprek", "voorzien": "taal", "wat dan de juiste route is?": "overleg", "bijdraaien": "overleg", "u had gebeld.": "gesprek", "wat is precies uw vraag?": "gesprek", "terugbelverzoek": "overleg", "meekrijgen": "overleg", "urgentieverklaring": "wonen", "uiteraard": "taal", "doorstaan": "taal", "handelingsbekwaam": "recht", "behartigen": "recht", "verstandelijke beperking": "zorg", "verslavingsproblematiek": "zorg", "onder curatele gesteld": "recht", "uitzoeken": "overleg", "overlast": "wonen", "dwingen": "taal", "seksueel misbruik": "zorg", "seksuele intimidatie": "zorg", "wilsonbekwaamheid": "recht", "schenken": "schulden", "betrokken": "taal", "vandaar": "taal", "omdenken": "zorg", "doorbrengen": "taal", "collegebundel": "gemeente", "potjes": "schulden", "onderbouwing": "recht", "dat is niet het geval.": "overleg", "terugkoppeling": "overleg", "het is jammer dat wij niet meer voor hem kunnen betekenen.": "gesprek", "herkennen": "taal", "keurig": "taal", "broodje": "taal", "voorkeur": "taal", "diarree": "zorg", "heftig": "taal", "kwijtschelding": "schulden", "tegemoetkoming kosten": "schulden", "de maandag erna": "overleg", "curatele": "recht", "bewindvoerder": "schulden", "ben je weleens bij ons geweest?": "gesprek", "daar hebben we inloopuur voor.": "gesprek", "tegenover": "taal", "van stichting zo! ben ik!": "gesprek", "ik ga het met haar over hebben.": "overleg", "iets anders ging niet.": "gesprek", "we kunnen bijhelpen.": "gesprek", "het enige wat ik kan toezeggen is...": "gesprek", "niks af te ronden!": "overleg", "afwegingen": "recht", "omwisselen": "taal", "omarmd": "taal", "lustrum": "taal", "levendig": "taal", "schijf": "schulden", "zijn we zo duidelijk?": "gesprek", "weerbaarder": "zorg", "vermelden": "gemeente", "bemenst": "gemeente", "gaande": "taal", "neem niet op.": "overleg", "ik ga het even uitleggen.": "gesprek", "dat lijkt me een goed idee.": "overleg", "het heeft niet zoveel haast.": "gesprek", "het moet toch worden benaderd.": "overleg", "mag je zelf kiezen wat je wil?": "gesprek", "ik heb het al.": "gesprek", "een zaakje inbrengen": "recht", "ik kijk daar persoonlijk heel erg naar uit.": "overleg", "neerzetten": "overleg", "dan gaan we naar het volgende onderwerp.": "overleg", "en het volgende onderwerp op mijn lijstje is...": "overleg", "heb je daar suggesties voor?": "overleg", "dat daar best wel een gat zit tussen de kenners ervan.": "taal"};
+const TEMA_RULES = [
+  ['schulden', /schuld|betalingsregeling|incasso|deurwaarder|beslag|aanmaning|achterstand|afbetal|wsnp|cjib|boete|aflos|budget|bewind|kwijtschel/i],
+  ['wonen',    /huur|woning|verhuurder|woningcorporatie|ontruim|urgentie|overlast|onderhoud/i],
+  ['inkomen',  /uitkering|uwv|bijstand|participatiewet|\bww\b|\bwia\b|\baow\b|loon|salaris|inkomen|werkloos|sollicit|werkgever|toeslag|belasting|re-?integr/i],
+  ['zorg',     /\bwmo\b|zorg|huisarts|\bggz\b|indicatie|mantelzorg|verslav|beperking|hulpverlen/i],
+  ['gemeente', /gemeente|\bbrp\b|inschrijv|digid|\bbsn\b|\brni\b|paspoort|id-kaart|\bind\b|instantie/i],
+  ['recht',    /bezwaar|beroep|rechter|rechtbank|beschikking|vonnis|advoca|rechtsbijstand|hoorzitting|uitspraak|curatele|zienswijze|machtiging/i],
+  ['overleg',  /mail|afspraak|collega|vergader|overleg|agenda|onderwerp|terugbel/i]
+];
+let TEMA_MAP = {};            // {card_id: tema_id}
+// Sunucudan gelen harita yerelde henüz gönderilmemiş seçimleri ezmesin
+function TEMA_MAP_PENDING() { try { return JSON.parse(localStorage.getItem('kv_tema_map') || '{}'); } catch(e) { return {}; } }
+let groupMode = 'date';       // 'date' | 'tema'
+let currentTema = 'all';
+
+function loadTemaLocal() {
+  try { TEMA_MAP = JSON.parse(localStorage.getItem('kv_tema_map') || '{}'); } catch(e) { TEMA_MAP = {}; }
+  try { groupMode = localStorage.getItem('kv_group_mode') || 'date'; } catch(e) {}
+}
+function autoTema(item) {
+  const seed = SEED_TEMA[String(item.dutch || '').trim().toLowerCase()];
+  if (seed) return seed;
+  const hay = [item.dutch, item.turkish].filter(Boolean).join(' ');
+  for (const [id, re] of TEMA_RULES) if (re.test(hay)) return id;
+  if (item.isLegal || item.is_legal) return 'recht';
+  if (item.type === 'zin' || item.type === 'uitdrukking') return /\b(u|uw)\b/i.test(item.dutch) ? 'gesprek' : 'overleg';
+  return 'taal';
+}
+function getTema(item) {
+  const t = TEMA_MAP[item.id];
+  return (t && TEMA_BY_ID[t]) ? t : autoTema(item);
+}
+async function pushTemaMap() {
+  try { localStorage.setItem('kv_tema_map', JSON.stringify(TEMA_MAP)); } catch(e) {}
+  if (!isOnline) return;
+  try {
+    await sbFetch('app_state?on_conflict=key', {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({ key: 'tema_map', value: TEMA_MAP, updated_at: new Date().toISOString() })
+    });
+  } catch(e) { console.warn('tema_map yazılamadı', e); }
+}
+function setCardTema(e, id, tema) {
+  if (e) e.stopPropagation();
+  if (!TEMA_BY_ID[tema]) return;
+  TEMA_MAP[id] = tema;
+  pushTemaMap();
+  if (groupMode === 'tema') { buildDateFilters(); renderAll(); }
+  else refreshCardTemaChip(id);
+}
+function refreshCardTemaChip(id) {
+  const el = document.getElementById('tchip-' + id);
+  const item = CARDS.find(c => c.id === id);
+  if (el && item) el.textContent = TEMA_BY_ID[getTema(item)].label;
+}
+function temaSelectHtml(item) {
+  const cur = getTema(item);
+  return `<div class="tema-row" onclick="event.stopPropagation()"><label for="tsel-${item.id}">Tema</label>
+    <select id="tsel-${item.id}" onchange="setCardTema(event, ${item.id}, this.value)">
+      ${TEMAS.map(t => `<option value="${t.id}"${t.id === cur ? ' selected' : ''}>${t.label}</option>`).join('')}
+    </select></div>`;
+}
+function setGroupMode(mode) {
+  groupMode = mode;
+  try { localStorage.setItem('kv_group_mode', mode); } catch(e) {}
+  currentDate = 'all'; currentTema = 'all';
+  openGroups = new Set();
+  buildGroupToggle();
+  buildDateFilters();
+  renderAll();
+}
+function buildGroupToggle() {
+  const el = document.getElementById('group-toggle');
+  if (!el) return;
+  el.innerHTML = `<span class="gt-label">Grupla</span>
+    <div class="seg" role="group" aria-label="Gruplama">
+      <button class="${groupMode === 'date' ? 'on' : ''}" onclick="setGroupMode('date')">${ic('calendar')}Tarih</button>
+      <button class="${groupMode === 'tema' ? 'on' : ''}" onclick="setGroupMode('tema')">${ic('stack')}Tema</button>
+    </div>`;
+}
+function buildTemaFilters(container) {
+  const counts = {};
+  CARDS.forEach(c => { const t = getTema(c); counts[t] = (counts[t] || 0) + 1; });
+  const chip = (id, label, n) => `<button class="fbtn date-btn ${currentTema === id ? 'active' : ''}" data-tema="${id}">${label}${n != null ? ` <span class="chip-n">${n}</span>` : ''}</button>`;
+  container.innerHTML = `<div class="date-section date-section-all"><div class="date-section-chips">
+      ${chip('all', 'Tüm temalar')}
+      ${TEMAS.filter(t => counts[t.id]).map(t => chip(t.id, t.label, counts[t.id])).join('')}
+    </div></div>`;
+  container.querySelectorAll('.date-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentTema = btn.dataset.tema;
+      openGroups = currentTema === 'all' ? new Set() : new Set([currentTema]);
+      buildDateFilters();
+      renderAll();
+    });
+  });
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// [v2] SESLİ TEKRAR — "Tekrar ettim" artık çalışma takvimini ilerletmez.
+// Bir cümleyi sesli söylediğin her sefer sayılır. Sayaçlar cihaz başına
+// app_state'e 'rehearse:<cihaz>' olarak yazılır, cihazlar toplanır.
+// ════════════════════════════════════════════════════════════════════════
+let myRehearse = {};     // {card_id: {date: n}}
+let otherRehearse = {};
+let sesliFilter = 'zin';
+let sesliLimit = 40;
+
+function loadRehearseLocal() {
+  try { myRehearse = JSON.parse(localStorage.getItem('kv_rehearse') || '{}'); } catch(e) { myRehearse = {}; }
+  try { otherRehearse = JSON.parse(localStorage.getItem('kv_rehearse_others') || '{}'); } catch(e) { otherRehearse = {}; }
+}
+function saveRehearseLocal() {
+  try { localStorage.setItem('kv_rehearse', JSON.stringify(myRehearse)); } catch(e) {}
+  scheduleStatePush();
+}
+function rehearseCounts(id) {
+  const t = todayStr();
+  let today = 0, total = 0;
+  [myRehearse[id], otherRehearse[id]].forEach(m => {
+    if (!m) return;
+    for (const d in m) { total += m[d] || 0; if (d === t) today += m[d] || 0; }
+  });
+  return { today, total };
+}
+function markSaid(e, id) {
+  if (e) e.stopPropagation();
+  const t = todayStr();
+  if (!myRehearse[id]) myRehearse[id] = {};
+  myRehearse[id][t] = (myRehearse[id][t] || 0) + 1;
+  saveRehearseLocal();
+  recordActivity();
+  const c = rehearseCounts(id);
+  const el = document.getElementById('said-' + id);
+  if (el) el.innerHTML = saidText(c);
+  const row = document.getElementById('srow-' + id);
+  if (row) { row.classList.add('said'); row.classList.remove('bump'); void row.offsetWidth; row.classList.add('bump'); }
+  const sum = document.getElementById('sesli-sum');
+  if (sum && c.today === 1) {
+    const done = Number(sum.dataset.done) + 1; sum.dataset.done = done;
+    sum.textContent = done + ' / ' + sum.dataset.total + ' kart bugün söylendi';
+    const tc = document.getElementById('sesli-count'); if (tc) tc.textContent = 'bugün ' + done;
+  }
+  if (navigator.vibrate) { try { navigator.vibrate(10); } catch(err) {} }
+}
+function saidText(c) {
+  return c.total ? `bugün <b>${c.today}×</b> · toplam ${c.total}×` : 'henüz söylenmedi';
+}
+function setSesliFilter(f) { sesliFilter = f; sesliLimit = 40; renderSesli(); }
+function renderSesli() {
+  const el = document.getElementById('sesli-content');
+  if (!el) return;
+  const pool = CARDS.filter(c => sesliFilter === 'all' ? true
+    : sesliFilter === 'zin' ? (c.type === 'zin' || c.type === 'uitdrukking')
+    : c.type === 'woord');
+  // Bugün hiç söylenmeyenler önce, sonra toplamda en az söylenenler
+  const list = pool.map(c => ({ c, r: rehearseCounts(c.id) }))
+    .sort((a, b) => (a.r.today > 0) - (b.r.today > 0) || a.r.total - b.r.total || a.c.id - b.c.id);
+  const doneToday = list.filter(x => x.r.today > 0).length;
+  const chip = (id, label) => `<button class="fbtn ${sesliFilter === id ? 'active' : ''}" onclick="setSesliFilter('${id}')">${label}</button>`;
+  let h = `<div class="sesli-intro">
+      <p>Cümleyi <b>sesli</b> söyle, her söyleyişte bir kez dokun. Burası çalışma takvimini etkilemez; sadece kaç kez söylediğini sayar.</p>
+      <button class="btn-cta-soft" onclick="showScreen('listen')">${ic('headphones')}Dinle ve tekrar et</button>
+    </div>
+    <div class="filters">${chip('zin', 'Cümleler ve deyimler')}${chip('woord', 'Kelimeler')}${chip('all', 'Tümü')}</div>
+    <div class="sesli-sum" id="sesli-sum" data-done="${doneToday}" data-total="${list.length}">${doneToday} / ${list.length} kart bugün söylendi</div>`;
+  if (!list.length) {
+    h += `<div class="empty">${ic('message')} Bu filtrede kart yok.</div>`;
+  } else {
+    h += list.slice(0, sesliLimit).map(({ c, r }) => `
+      <div class="sesli-row${r.today ? ' said' : ''}" id="srow-${c.id}">
+        <div class="sesli-txt">
+          <div class="sesli-nl" lang="nl">${c.dutch}</div>
+          <div class="sesli-tr">${c.turkish}</div>
+          <div class="sesli-meta" id="said-${c.id}">${saidText(r)}</div>
+        </div>
+        <button class="btn-speak icon-only" onclick="speakDutch(event,'${c.dutch.replace(/'/g, "\\'")}')" title="Dinle" aria-label="Dinle">${ic('volume')}</button>
+        <button class="btn-said" onclick="markSaid(event, ${c.id})">${ic('repeat')}Tekrar ettim</button>
+      </div>`).join('');
+    if (list.length > sesliLimit) h += `<button class="btn-more" onclick="sesliLimit += 40; renderSesli()">Daha fazla göster (${list.length - sesliLimit})</button>`;
+  }
+  el.innerHTML = h;
+  const tc = document.getElementById('sesli-count');
+  if (tc) tc.textContent = doneToday ? `bugün ${doneToday}` : '';
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// [v2] ÇALIŞMA OTURUMU — hatırlamayı gerçekten test eden aralıklı tekrar
+// Ön yüzde yalnızca Hollandaca; "Cevabı göster" ile anlam açılır.
+// Bilmedim: başa (20 dk, bu turda bir daha). Zor: aynı basamak, yarım aralık.
+// Bildim: bir basamak ileri (yeni kart ilk seferde bildiyse 3 gün).
+// Mevcut sr_step / sr_next_due alanlarını kullanır; eski ilerleme aynen devam eder.
+// ════════════════════════════════════════════════════════════════════════
+let studyPrefs = { newPerDay: 5, autoAudio: true };
+let st = null;
+const ST_MAX = 30;
+
+function loadStudyPrefs() {
+  try { const p = JSON.parse(localStorage.getItem('kv_study_prefs') || '{}');
+    if (typeof p.newPerDay === 'number') studyPrefs.newPerDay = p.newPerDay;
+    if (typeof p.autoAudio === 'boolean') studyPrefs.autoAudio = p.autoAudio; } catch(e) {}
+}
+function saveStudyPrefs() { try { localStorage.setItem('kv_study_prefs', JSON.stringify(studyPrefs)); } catch(e) {} }
+function setNewPerDay(n) { studyPrefs.newPerDay = n; saveStudyPrefs(); renderStudySettings(); updateStats(); if (currentScreen === 'tekrar') renderStudyStart(); }
+function setStudyAudio(on) { studyPrefs.autoAudio = on; saveStudyPrefs(); renderStudySettings(); }
+function renderStudySettings() {
+  document.querySelectorAll('.npd-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.n) === studyPrefs.newPerDay));
+  document.querySelectorAll('.sau-btn').forEach(b => b.classList.toggle('active', (b.dataset.on === '1') === studyPrefs.autoAudio));
+}
+function newIntroducedToday() {
+  try { const m = JSON.parse(localStorage.getItem('kv_new_log') || '{}'); return m[todayStr()] || 0; } catch(e) { return 0; }
+}
+function bumpNewIntroduced() {
+  try { const m = JSON.parse(localStorage.getItem('kv_new_log') || '{}'); m[todayStr()] = (m[todayStr()] || 0) + 1; localStorage.setItem('kv_new_log', JSON.stringify(m)); } catch(e) {}
+}
+function studyDueCards(tema) {
+  return CARDS.filter(c => isDue(c.id) && (!tema || tema === 'all' || getTema(c) === tema))
+    .sort((a, b) => new Date(PROGRESS[a.id].sr_next_due) - new Date(PROGRESS[b.id].sr_next_due));
+}
+function studyNewCards(tema) {
+  const left = Math.max(0, studyPrefs.newPerDay - newIntroducedToday());
+  if (!left) return [];
+  return CARDS.filter(c => !(PROGRESS[c.id] && PROGRESS[c.id].is_known) && (!tema || tema === 'all' || getTema(c) === tema))
+    .sort((a, b) => a.id - b.id).slice(0, left);
+}
+function buildStudyQueue(tema) {
+  const due = studyDueCards(tema).slice(0, ST_MAX);
+  const nw = studyNewCards(tema).slice(0, Math.max(0, ST_MAX - due.length));
+  const q = []; let di = 0, ni = 0;
+  while (di < due.length || ni < nw.length) {
+    for (let j = 0; j < 3 && di < due.length; j++) q.push(due[di++]);
+    if (ni < nw.length) q.push(nw[ni++]);
+  }
+  return q;
+}
+function fmtMins(m) {
+  if (m == null) return 'tamam';
+  if (m < 60) return m + ' dk';
+  if (m < 1440) return Math.round(m / 60) + ' saat';
+  const d = Math.round(m / 1440);
+  if (d === 1) return 'yarın';
+  if (d < 7) return d + ' gün';
+  if (d < 30) return Math.round(d / 7) + ' hafta';
+  return Math.round(d / 30) + ' ay';
+}
+function studyNext(p, g) {
+  const known = p && p.is_known;
+  const s = known ? p.sr_step : null;
+  let step, mins;
+  if (g === 'bildim') {
+    step = known ? s + 1 : 2;
+    mins = step >= SR_INTERVALS.length ? null : SR_INTERVALS[step];
+  } else if (g === 'zor') {
+    step = known ? Math.max(s, 1) : 1;
+    mins = Math.max(20, Math.round(SR_INTERVALS[Math.min(step, SR_INTERVALS.length - 1)] / 2));
+  } else {
+    step = 0; mins = SR_INTERVALS[0];
+  }
+  return { step, mins };
+}
+let studyTema = 'all';
+function setStudyTema(t) { studyTema = t; renderStudyStart(); }
+function renderStudyStart() {
+  const el = document.getElementById('study-start');
+  if (!el) return;
+  const due = studyDueCards(studyTema).length, nw = studyNewCards(studyTema).length;
+  const counts = {};
+  CARDS.forEach(c => { if (isDue(c.id)) { const t = getTema(c); counts[t] = (counts[t] || 0) + 1; } });
+  const chip = (id, label, n) => `<button class="fbtn ${studyTema === id ? 'active' : ''}" onclick="setStudyTema('${id}')">${label}${n ? ` <span class="chip-n">${n}</span>` : ''}</button>`;
+  const total = Math.min(ST_MAX, due + nw);
+  el.innerHTML = `<div class="study-hero">
+      <div class="sh-nums">
+        <div><div class="sh-num">${due}</div><div class="sh-lbl">tekrar zamanı gelen</div></div>
+        <div><div class="sh-num">${nw}</div><div class="sh-lbl">yeni kart</div></div>
+      </div>
+      ${total ? `<button class="btn-cta" onclick="startStudy()">${ic('play')}Çalışmaya başla (${total} kart)</button>`
+              : `<div class="sh-empty">${ic('circle-check')}Şimdilik çalışılacak kart yok. Sıradaki tekrar aşağıdaki takvimde.</div>`}
+      <div class="sh-how">Kart önce Hollandaca gelir. Anlamını içinden söyle, sonra kontrol et ve dürüstçe değerlendir.</div>
+    </div>
+    <div class="filters study-tema">${chip('all', 'Tüm temalar')}${TEMAS.filter(t => counts[t.id]).map(t => chip(t.id, t.label, counts[t.id])).join('')}</div>`;
+}
+function startStudy(keys) {
+  const cards = keys ? keys.map(id => CARDS.find(c => c.id === id)).filter(Boolean) : buildStudyQueue(studyTema);
+  if (!cards.length) { showScreen('tekrar'); return; }
+  st = { queue: cards.map(c => ({ id: c.id, again: false })), i: 0, stats: { bilmedim:0, zor:0, bildim:0 },
+         missed: [], requeued: {}, revealed: false, busy: false, fromKeys: !!keys };
+  document.getElementById('st-session').style.display = '';
+  document.getElementById('st-finish').style.display = 'none';
+  document.getElementById('st-overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  stRender();
+}
+function closeStudy() {
+  stopAllAudio();
+  document.getElementById('st-overlay').classList.remove('show');
+  document.body.style.overflow = '';
+  st = null;
+  updateStats();
+  if (currentScreen === 'tekrar') renderTekrar();
+  if (currentScreen === 'cards') renderAll();
+  if (currentScreen === 'progress') renderProgress();
+}
+function stopAllAudio() {
+  try { if (currentAudio) { currentAudio.pause(); currentAudio = null; } window.speechSynthesis.cancel(); } catch(e) {}
+  isSpeaking = false;
+  document.querySelectorAll('.btn-speak.speaking').forEach(b => b.classList.remove('speaking'));
+}
+function stSpeak(btn) {
+  if (!st) return;
+  const item = CARDS.find(c => c.id === st.queue[st.i].id);
+  if (item) speakDutch({ stopPropagation(){}, currentTarget: btn }, item.dutch);
+}
+function highlightWord(sentence, word) {
+  const w = String(word).replace(/[.*+?^${}()|[\]\\]/g, '\\$&').split(/\s+/)[0];
+  if (!w || w.length < 3) return sentence;
+  return sentence.replace(new RegExp('(' + w.slice(0, Math.max(3, w.length - 2)) + '\\S*)', 'i'), '<mark>$1</mark>');
+}
+function stRender() {
+  if (!st) return;
+  if (st.i >= st.queue.length) { stFinish(); return; }
+  const q = st.queue[st.i], item = CARDS.find(c => c.id === q.id);
+  if (!item) { st.i++; stRender(); return; }
+  st.revealed = false; st.busy = false;
+  stopAllAudio();
+  const total = st.queue.length;
+  document.getElementById('st-count').textContent = (st.i + 1) + ' / ' + total;
+  document.getElementById('st-bar').style.transform = 'scaleX(' + (st.i / total) + ')';
+  const p = PROGRESS[item.id];
+  const typeLbl = item.type === 'zin' ? 'Cümle' : item.type === 'uitdrukking' ? 'Deyim' : item.isLegal ? 'Hukuki' : 'Kelime';
+  const state = q.again ? '<span class="st-chip acc">Bir daha</span>' : (!(p && p.is_known) ? '<span class="st-chip acc">Yeni</span>' : `<span class="st-chip">${p.sr_step + 1}. tekrar</span>`);
+  document.getElementById('st-chips').innerHTML = `<span class="st-chip">${typeLbl}</span><span class="st-chip">${TEMA_BY_ID[getTema(item)].label}</span>${state}`;
+  document.getElementById('st-nl').textContent = item.dutch;
+  // İpucu: kelime kartında örnek cümle (kelime işaretli), cümle kartında Hollandaca açıklama
+  const ex = item.examples && item.examples[0];
+  let hint = '';
+  if (item.type === 'woord' && ex) hint = highlightWord(ex.nl, item.dutch);
+  else if (item.uitleg) hint = item.uitleg;
+  st.hint = hint;
+  const hb = document.getElementById('st-hint-btn');
+  hb.style.display = hint ? '' : 'none';
+  const hintEl = document.getElementById('st-hint'); hintEl.style.display = 'none'; hintEl.innerHTML = hint;
+  document.getElementById('st-q-actions').style.display = '';
+  document.getElementById('st-grades').style.display = 'none';
+  const ans = document.getElementById('st-ans'); ans.style.display = 'none'; ans.classList.remove('in');
+  document.getElementById('st-say').style.display = '';
+  if (studyPrefs.autoAudio) stSpeak(document.getElementById('st-listen'));
+}
+function stShowHint() {
+  if (!st || st.revealed || !st.hint) return;
+  document.getElementById('st-hint').style.display = '';
+}
+function stReveal() {
+  if (!st || st.revealed) return;
+  st.revealed = true;
+  const q = st.queue[st.i], item = CARDS.find(c => c.id === q.id), p = PROGRESS[item.id];
+  let h = `<div class="st-lbl">Türkçe</div><div class="st-tr">${item.turkish}</div>`;
+  if (item.uitleg) h += `<div class="uitleg-box" lang="nl">${item.uitleg}</div>`;
+  const exs = (item.examples || []).slice(0, 2);
+  if (exs.length) h += `<div class="st-exs">${exs.map(ex => `<div class="st-ex"><div class="ex-nl" lang="nl">${ex.nl}</div><div class="ex-tr">${ex.tr}</div></div>`).join('')}</div>`;
+  const more = [item.note ? `<div class="section"><div class="sec-title">${ic('pin')}Not</div><div class="note-box">${item.note}</div></div>` : '',
+                item.legal ? `<div class="section"><div class="legal-box"><div class="legal-lbl">${ic('scale')}Türk hukukundaki karşılığı</div><div class="legal-txt">${item.legal}</div></div></div>` : '',
+                item.etymology ? `<div class="section"><div class="sec-title">${ic('search')}Türev / Köken</div><div class="etym-box">${item.etymology}</div></div>` : ''].join('');
+  if (more) h += `<details class="st-more"><summary>Not, köken ve hukuk</summary>${more}</details>`;
+  const ans = document.getElementById('st-ans'); ans.innerHTML = h; ans.style.display = ''; ans.classList.add('in');
+  ['bilmedim','zor','bildim'].forEach(g => {
+    document.getElementById('st-g-' + g).textContent = q.again ? 'bu turda' : (g === 'bilmedim' ? 'birazdan' : fmtMins(studyNext(p, g).mins));
+  });
+  document.getElementById('st-say').style.display = 'none';
+  document.getElementById('st-hint').style.display = 'none';
+  document.getElementById('st-q-actions').style.display = 'none';
+  document.getElementById('st-grades').style.display = '';
+}
+async function stGrade(g) {
+  if (!st || !st.revealed || st.busy) return;
+  st.busy = true;
+  const q = st.queue[st.i], item = CARDS.find(c => c.id === q.id), p = PROGRESS[item.id];
+  const wasNew = !(p && p.is_known);
+  if (!q.again || wasNew) {
+    const nx = studyNext(p, g);
+    const patch = { is_known: true, sr_step: nx.step, sr_next_due: nx.mins == null ? null : new Date(Date.now() + nx.mins * 60000).toISOString(), sr_last_done: new Date().toISOString() };
+    try { await upsertProgress(item.id, patch); }
+    catch (err) { st.busy = false; alert('Kaydetme hatası: ' + err.message + '\n\nBağlantını kontrol edip tekrar dene.'); return; }
+    if (wasNew) bumpNewIntroduced();
+  }
+  if (!q.again) {
+    st.stats[g]++;
+    recordActivity();
+    if (g === 'bilmedim') st.missed.push(item.id);
+  }
+  if (g === 'bilmedim' && !q.again && !st.requeued[item.id]) {
+    st.requeued[item.id] = true;
+    st.queue.splice(Math.min(st.queue.length, st.i + 4), 0, { id: item.id, again: true });
+  }
+  if (navigator.vibrate) { try { navigator.vibrate(12); } catch(e) {} }
+  const card = document.getElementById('st-card');
+  card.classList.add('out');
+  setTimeout(() => { card.classList.remove('out'); if (!st) return; st.i++; stRender(); }, 180);
+}
+function stFinish() {
+  stopAllAudio();
+  document.getElementById('st-bar').style.transform = 'scaleX(1)';
+  document.getElementById('st-count').textContent = st.queue.length + ' / ' + st.queue.length;
+  document.getElementById('st-session').style.display = 'none';
+  document.getElementById('st-finish').style.display = '';
+  document.getElementById('st-fin-bildim').textContent = st.stats.bildim;
+  document.getElementById('st-fin-zor').textContent = st.stats.zor;
+  document.getElementById('st-fin-bilmedim').textContent = st.stats.bilmedim;
+  const n = st.stats.bildim + st.stats.zor + st.stats.bilmedim;
+  const left = studyDueCards('all').length;
+  document.getElementById('st-fin-sub').textContent = n + ' kart çalıştın.' + (left ? ' Şu an ' + left + ' kartın daha zamanı geldi.' : ' Şimdilik zamanı gelen kart kalmadı.');
+  const missed = st.missed.map(id => CARDS.find(c => c.id === id)).filter(Boolean);
+  document.getElementById('st-fin-list').innerHTML = missed.length
+    ? `<div class="st-lbl">Bilmediklerin</div>` + missed.map(c => `<div class="st-miss"><span lang="nl">${c.dutch}</span><span>${c.turkish}</span></div>`).join('')
+    : '';
+  document.getElementById('st-fin-retry').style.display = missed.length ? '' : 'none';
+}
+function stRetryMissed() { if (st && st.missed.length) startStudy(st.missed.slice()); }
+document.addEventListener('keydown', ev => {
+  if (!st || !document.getElementById('st-overlay').classList.contains('show')) return;
+  const tag = (ev.target && ev.target.tagName) || '';
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'SUMMARY') return;
+  if (ev.key === 'Escape') { ev.preventDefault(); closeStudy(); return; }
+  if (document.getElementById('st-finish').style.display !== 'none') return;
+  if (!st.revealed && (ev.key === ' ' || ev.key === 'Enter')) { ev.preventDefault(); stReveal(); return; }
+  if (st.revealed) {
+    if (ev.key === '1') { ev.preventDefault(); stGrade('bilmedim'); }
+    else if (ev.key === '2') { ev.preventDefault(); stGrade('zor'); }
+    else if (ev.key === '3') { ev.preventDefault(); stGrade('bildim'); }
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// [v2] Claude'a gönderilecek kart şablonu — kopyala, kelimeleri ekle, gönder
+// ════════════════════════════════════════════════════════════════════════
+function claudeTemplateText() {
+  return `Aşağıdaki Hollandaca kelime ve cümleler için Kantoor Woordenschat kartları hazırla. Sadece JSON dizisi ver, başka açıklama yazma.
+
+Kurallar:
+- Ofiste duyduklarım için "date": "GG/AA" (örn. "29/09"). Gazeteden olanlar için "date": "GAZETE GG/AA". İkisini karıştırma.
+- "type": "woord" (kelime), "zin" (cümle) veya "uitdrukking" (deyim).
+- Kelime kartında "dutch" alanına tek kelimeyi değil, ofiste gerçekten kullanılan kalıbı yaz (örn. "bezwaar maken tegen", "een regeling treffen"; isimlerde de/het ile: "de beschikking").
+- "uitleg": B1 düzeyinde, kısa ve basit Hollandaca açıklama (1-2 cümle).
+- "examples": sociaal raadsman bağlamında 3 örnek, her biri {"nl": "...", "tr": "..."}.
+- "note": Türkçe kısa kullanım notu. "legal": Türk hukukunda karşılığı varsa yaz, yoksa null. "is_legal": true/false.
+- "tema" şunlardan biri: ${TEMAS.map(t => t.id).join(', ')}.
+  (${TEMAS.map(t => t.id + ' = ' + t.tr).join('; ')})
+
+Şablon:
+[{"date":"29/09","type":"woord","dutch":"...","turkish":"...","uitleg":"...","note":"...","examples":[{"nl":"...","tr":"..."}],"legal":null,"is_legal":false,"tema":"gesprek"}]
+
+Kelimeler / cümleler:
+`;
+}
+async function copyClaudeTemplate(btn) {
+  const txt = claudeTemplateText();
+  try { await navigator.clipboard.writeText(txt); btn.innerHTML = ic('check') + 'Kopyalandı'; }
+  catch (e) {
+    const ta = document.getElementById('new-cards-input');
+    ta.value = txt; ta.focus(); ta.select();
+    btn.innerHTML = ic('check') + 'Kutuya yazıldı, kopyala';
+  }
+  setTimeout(() => { btn.innerHTML = ic('message') + 'Claude talimatını kopyala'; }, 2500);
+}
+
 async function initApp() {
   initTTS();
   initSessionTracking();
@@ -3084,6 +3844,11 @@ async function initApp() {
   loadNlFirstPref();
   loadProgressData();
   loadLocalDeleted();
+  loadTemaLocal();
+  loadRehearseLocal();
+  loadStudyPrefs();
+  renderStudySettings();
+  buildGroupToggle();
   buildTypeFilterListeners();
   document.getElementById('search').addEventListener('input', e => {
     searchQuery = e.target.value;
@@ -3169,12 +3934,18 @@ async function addNewCards() {
       }
     }
     statusEl.textContent = `⏳ ${newCards.length} kart ekleniyor...`;
-    await insertCardsRemote(newCards.map(c => ({
+    const inserted = await insertCardsRemote(newCards.map(c => ({
       date: c.date, type: c.type, dutch: c.dutch, turkish: c.turkish,
       uitleg: c.uitleg || null, etymology: c.etymology || null,
       note: c.note || null, examples: c.examples || [], legal: c.legal || null,
       is_legal: c.is_legal || c.isLegal || false
     })));
+    // JSON'daki "tema" alanını kaydet (veritabanında sütun gerekmez, app_state'te tutulur)
+    if (Array.isArray(inserted)) {
+      let changed = false;
+      inserted.forEach((row, i) => { const t = newCards[i] && newCards[i].tema; if (row && row.id && t && TEMA_BY_ID[t]) { TEMA_MAP[row.id] = t; changed = true; } });
+      if (changed) pushTemaMap();
+    }
     statusEl.className = 'settings-status show ok';
     statusEl.textContent = `✅ ${newCards.length} kart başarıyla eklendi!`;
     input.value = '';
@@ -3388,6 +4159,8 @@ function showScreen(name) {
   if (navBtn) navBtn.classList.add('active');
   if (leavingListen) listenPause();
   if (name === 'tekrar') renderTekrar();
+  if (name === 'sesli') renderSesli();
+  if (name === 'settings') renderStudySettings();
   if (name === 'trash') renderTrash();
   if (name === 'progress') renderProgress();
   if (name === 'listen') { startListenMode(); }
@@ -3404,6 +4177,8 @@ function updateStats() {
   document.getElementById('s-total').textContent = CARDS.length;
   document.getElementById('s-known').textContent = knownCount;
   document.getElementById('s-due').textContent = dueCount;
+  const sNew = document.getElementById('s-new');
+  if (sNew && typeof studyNewCards === 'function') sNew.textContent = studyNewCards('all').length;
   const bar = document.getElementById('s-bar');
   if (bar) bar.style.width = CARDS.length ? Math.round((knownCount / CARDS.length) * 100) + '%' : '0%';
   const badge = document.getElementById('nav-badge');
@@ -3416,6 +4191,7 @@ function updateStats() {
 // TEKRAR EKRANI
 // ════════════════════════════════════════
 function renderTekrar() {
+  renderStudyStart();
   renderTekrarCalendar();
 
   const now = new Date();
@@ -3435,7 +4211,7 @@ function renderTekrar() {
 
   if (!active.length && !completed.length) {
     document.getElementById('tekrar-content').innerHTML =
-      `<div class="tekrar-empty"><div style="font-size:32px;margin-bottom:8px">🎉</div><div>Şu an tekrar edilecek kart yok.</div><div style="font-size:12px;margin-top:6px;color:var(--text3)">Kartlarda "Öğrendim" butonuna bas, program başlar.</div></div>`;
+      `<div class="tekrar-empty"><div>Takvimde bekleyen kart yok.</div><div style="font-size:12px;margin-top:6px;color:var(--text3)">Yukarıdan çalışmaya başla; yeni kartlar her gün kendiliğinden eklenir.</div></div>`;
     const tc0 = document.getElementById('tekrar-count');
     if (tc0) tc0.textContent = '';
     return;
@@ -3572,7 +4348,7 @@ function tekrarCard(item, readonly=false) {
   const n = p ? p.sr_step + 1 : 1;
   const diff = p && p.sr_next_due ? new Date(p.sr_next_due).getTime() - Date.now() : 0;
   let t = diff > 0 ? (diff < 3600000 ? Math.ceil(diff/60000)+' dk sonra' : Math.ceil(diff/3600000)+' saat sonra') : 'şimdi!';
-  return `<div class="tekrar-card"><div class="tekrar-card-head" onclick="toggleTekrarCard(${item.id})"><div class="tekrar-card-dutch" lang="nl">${item.dutch}</div>${(()=>{const p2=previewLine(item);return p2.text?`<div class="${p2.nl?'card-preview':'tekrar-card-tr'}"${p2.nl?' lang="nl"':''}>${p2.text}</div>`:'';})()}<div class="tekrar-card-meta">${n}. tekrar — ${t}</div></div><div class="card-body" id="tbody-${item.id}">${cardBodyHtml(item, 't')}</div><div class="tekrar-card-actions"><button class="btn-speak" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')">${ic('volume')}Dinle</button>${!readonly?`<button class="btn-done" onclick="markRepeat(${item.id})">${ic('check')}Tekrar ettim</button>`:''}</div></div>`;
+  return `<div class="tekrar-card"><div class="tekrar-card-head" onclick="toggleTekrarCard(${item.id})"><div class="tekrar-card-dutch" lang="nl">${item.dutch}</div>${(()=>{const p2=previewLine(item);return p2.text?`<div class="${p2.nl?'card-preview':'tekrar-card-tr'}"${p2.nl?' lang="nl"':''}>${p2.text}</div>`:'';})()}<div class="tekrar-card-meta">${n}. tekrar — ${t}</div></div><div class="card-body" id="tbody-${item.id}">${cardBodyHtml(item, 't')}</div><div class="tekrar-card-actions"><button class="btn-speak" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')">${ic('volume')}Dinle</button></div></div>`;
 }
 let openTekrarBodies = new Set();
 function toggleTekrarCard(id) {
@@ -3631,7 +4407,9 @@ function matchesTypeDateSearch(item) {
     : currentFilter === 'juridisch' ? item.isLegal
     : currentFilter === 'uitdrukking' ? item.type === 'uitdrukking'
     : item.type === currentFilter;
-  const df = currentDate === 'all' ? true : item.date === currentDate;
+  const df = groupMode === 'tema'
+    ? (currentTema === 'all' ? true : getTema(item) === currentTema)
+    : (currentDate === 'all' ? true : item.date === currentDate);
   const q = searchQuery.toLowerCase();
   return mf && df && (!q || item.dutch.toLowerCase().includes(q) || item.turkish.toLowerCase().includes(q));
 }
@@ -3650,6 +4428,10 @@ function getFiltered() {
 
 // Bir tarih grubunun toplam kart / öğrenilen kart sayısı — aktif tip filtresinden
 // bağımsız, dersin genel tamamlanma durumunu gösterir.
+function temaGroupStats(tema) {
+  const all = CARDS.filter(c => getTema(c) === tema);
+  return { total: all.length, learned: all.filter(c => PROGRESS[c.id] && PROGRESS[c.id].is_known).length };
+}
 function dateGroupStats(date) {
   const all = CARDS.filter(c => c.date === date);
   const total = all.length;
@@ -3701,6 +4483,7 @@ const DATE_COLLAPSE_LIMIT = 4; // katlanmışken grup başına gösterilecek eti
 
 function buildDateFilters() {
   const container = document.getElementById('date-filters');
+  if (groupMode === 'tema') { buildTemaFilters(container); return; }
   const dates = [...new Set(CARDS.map(i => i.date))];
   const { gazete, ders, diger } = groupDateLabels(dates);
 
@@ -3759,29 +4542,33 @@ function renderAll() {
   const content = document.getElementById('content');
   const filtered = getFiltered();
   const grouped = {};
-  filtered.forEach(item => { if (!grouped[item.date]) grouped[item.date] = []; grouped[item.date].push(item); });
+  const gkey = item => groupMode === 'tema' ? getTema(item) : item.date;
+  filtered.forEach(item => { const k = gkey(item); if (!grouped[k]) grouped[k] = []; grouped[k].push(item); });
 
   // Tarih listesi tip/tarih/arama filtresine göre belirlenir — "öğrenildi" durumu
   // bir dersi listeden düşürmez, sadece içindeki kart say fısını etkiler.
   const dateSource = CARDS.filter(matchesTypeDateSearch);
-  const sortedDates = sortDates([...new Set(dateSource.map(c => c.date))]);
+  const sortedDates = groupMode === 'tema'
+    ? TEMAS.map(t => t.id).filter(id => dateSource.some(c => getTema(c) === id))
+    : sortDates([...new Set(dateSource.map(c => c.date))]);
 
   if (!sortedDates.length) { content.innerHTML = '<div class="empty">Sonuç bulunamadı</div>'; return; }
 
   content.innerHTML = sortedDates.map(date => {
     const isOpen = openGroups.has(date);
-    const key = date.replace('/', '_');
-    const label = date === 'STAJ' ? 'STAJ — Genel Kelimeler'
+    const key = String(date).replace(/[^a-zA-Z0-9]/g, '_');
+    const label = groupMode === 'tema' ? TEMA_BY_ID[date].label
+      : date === 'STAJ' ? 'STAJ — Genel Kelimeler'
       : /^GAZETE/i.test(date) ? 'Gazete · ' + formatDateLabel(date)
       : formatDateLabel(date);
-    const stats = dateGroupStats(date);
+    const stats = groupMode === 'tema' ? temaGroupStats(date) : dateGroupStats(date);
     const items = grouped[date] || [];
     let stateClass = 'not-started';
     if (stats.learned > 0 && stats.learned < stats.total) stateClass = 'in-progress';
     else if (stats.total > 0 && stats.learned === stats.total) stateClass = 'completed';
     const bodyHtml = items.length
       ? items.map(renderCard).join('')
-      : `<div class="date-empty">${ic('check','c-green')} Bu derste görüntülenecek kart kalmadı — hepsi öğrenildi.</div>`;
+      : `<div class="date-empty">${ic('check','c-green')} Bu gruptaki kartların hepsi çalışmada. "Çalışılanlar" filtresiyle görebilirsin.</div>`;
     return `<div class="date-group ${isOpen ? 'open' : ''} ${stateClass}" id="dg-${key}" data-date="${date}">
       <div class="date-label" onclick="toggleGroup('${date}')">
         <span>${label}</span>
@@ -3800,7 +4587,7 @@ function toggleGroup(date) {
   if (openGroups.has(date)) openGroups.delete(date);
   else openGroups.add(date);
   // Sadece DOM'u güncelle, renderAll'ı tekrar çağırma — böylece diğer açık gruplar da korunur
-  const key = date.replace('/', '_');
+  const key = String(date).replace(/[^a-zA-Z0-9]/g, '_');
   const group = document.getElementById('dg-' + key);
   if (group) group.classList.toggle('open');
 }
@@ -3819,16 +4606,16 @@ function renderCard(item) {
     </div>
     ${sr ? `<div class="sr-status ${sr.cls}"><span class="sr-dot"></span>${sr.text}</div>` : ''}
     <div class="card-footer">
-      <button class="btn-detail" onclick="toggleCard(${item.id})">Detay</button>
-      <button class="btn-speak icon-only" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')" title="Hollandaca dinle">${ic('volume')}</button>
-      ${known && due ? `<button class="btn-repeat" onclick="quickRepeat(event,${item.id})">${ic('repeat')}Tekrar ettim</button>` : ''}
-      <button class="btn-known ${known?'known':''}" onclick="toggleKnown(event,${item.id})">
-        ${known ? ic('check') + 'Öğrenildi' : ic('book') + 'Öğrendim'}
+      <button class="btn-speak icon-only" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')" title="Hollandaca dinle" aria-label="Hollandaca dinle">${ic('volume')}</button>
+      <span class="tema-chip" id="tchip-${item.id}">${TEMA_BY_ID[getTema(item)].label}</span>
+      <button class="btn-known ${known?'known':''}" onclick="toggleKnown(event,${item.id})" title="${known ? 'Çalışmadan çıkarmak için dokun' : 'Bugünkü çalışmaya hemen ekle'}">
+        ${known ? ic('check') + 'Çalışmada' : ic('plus') + 'Çalışmaya ekle'}
       </button>
-      <button class="btn-detail danger icon-only" onclick="confirmDelete(event,${item.id})" title="Sil">${ic('trash')}</button>
     </div>
     <div class="card-body" id="body-${item.id}">
       ${cardBodyHtml(item, 'c')}
+      <div class="card-tools">${temaSelectHtml(item)}
+        <button class="btn-link danger" onclick="confirmDelete(event,${item.id})">${ic('trash')}Kartı sil</button></div>
     </div>
   </div>`;
 }
@@ -3863,7 +4650,8 @@ async function toggleKnown(e, id) {
     if (known) {
       await unmarkKnown(id);
     } else {
-      await startSR(id);
+      // Hemen çalışmaya girer: ilk tekrar şimdi (Çalış ekranında görünür)
+      await upsertProgress(id, { is_known: true, sr_step: 0, sr_next_due: new Date().toISOString(), sr_last_done: null });
       recordActivity();
     }
   } catch (err) {
@@ -3915,13 +4703,11 @@ function refreshCard(id) {
   const footer = cardEl.querySelector('.card-footer');
   if (footer) {
     footer.innerHTML = `
-      <button class="btn-detail" onclick="toggleCard(${id})">Detay</button>
-      <button class="btn-speak icon-only" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')" title="Hollandaca dinle">${ic('volume')}</button>
-      ${known && due ? `<button class="btn-repeat" onclick="quickRepeat(event,${id})">${ic('repeat')}Tekrar ettim</button>` : ''}
+      <button class="btn-speak icon-only" onclick="speakDutch(event,'${item.dutch.replace(/'/g,"\\'")}')" title="Hollandaca dinle" aria-label="Hollandaca dinle">${ic('volume')}</button>
+      <span class="tema-chip" id="tchip-${id}">${TEMA_BY_ID[getTema(item)].label}</span>
       <button class="btn-known ${known?'known':''}" onclick="toggleKnown(event,${id})">
-        ${known ? ic('check') + 'Öğrenildi' : ic('book') + 'Öğrendim'}
+        ${known ? ic('check') + 'Çalışmada' : ic('plus') + 'Çalışmaya ekle'}
       </button>
-      <button class="btn-detail danger icon-only" onclick="confirmDelete(event,${id})" title="Sil">${ic('trash')}</button>
     `;
   }
 
