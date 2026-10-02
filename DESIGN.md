@@ -21,25 +21,27 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 - `[lang="nl"]{hyphens:auto;overflow-wrap:anywhere}` sabittir.
 - Bayrak emojileri kullanılmaz.
 
-## 2b. Öğrenme yöntemi (v2)
+## 2b. Öğrenme yöntemi (v28)
 
-- **Çalış** = aralıklı tekrar, hatırlamayı test ederek. Kart önce yalnızca Hollandaca gelir; "Cevabı göster" ile anlam, açıklama ve örnekler açılır. Not: **Bilmedim** (başa, 20 dk; aynı turda 4 kart sonra bir daha), **Zor** (aynı basamak, yarım aralık), **Bildim** (bir basamak ileri; yeni kart ilk seferde bilindiyse 3 gün). Mevcut `sr_step` / `sr_next_due` alanları kullanılır.
-- Yeni kartlar her gün kendiliğinden gelir (varsayılan 5, Ayarlar'dan 0–20), en eski karttan başlayarak. "Çalışmaya ekle" bir kartı hemen o günün çalışmasına sokar.
-- İpucu: kelime kartında ilk örnek cümle (kelime işaretli), cümle kartında Hollandaca açıklama.
-- **Tekrar** = sesli tekrar, çalışma takviminden bağımsız. "Tekrar ettim" yalnızca o cümleyi kaç kez sesli söylediğini sayar (`rehearse:<cihaz>`, app_state). Dinleme modu bu ekrandan açılır.
-- **Tema**: tarihe ek gruplama. Kaynak sırası: elle seçilen (`tema_map`, app_state) → JSON'daki `tema` → ilk 183 kart için hazır eşleme → anahtar kelime tahmini. Temalar: gesprek, overleg, schulden, wonen, inkomen, zorg, recht, gemeente, taal.
-- Yeni kart JSON'u Ayarlar'daki "Claude talimatını kopyala" ile istenir: kelime kartının ön yüzü tek kelime değil kalıp (`bezwaar maken tegen`, `de beschikking`).
+- **Hatırla** = aralıklı tekrar. Uygun kartlarda anlam, boşluk, dinleme ve bağlam soruları dönüşümlü gelir. Yeni kart ilk kez anlam sorusuyla başlar. Ayrıntılar `README-v28.md` içindedir.
+- **Hatırlamadım:** basamak 0, 20 dakika; aynı turda en çok bir ek alıştırma. **İpucuyla:** 1 gün, basamak en fazla 2. **Kendim:** bir basamak ileri, ilk başarı 1 gün. Sonraki aralıklar 3/7/14/30/90 gün; tamamlananlarda isteğe bağlı 90 günlük koruma.
+- İpucu açılırsa bağımsız hatırlama puanı verilemez. Aynı turdaki ek alıştırma takvimi ve ilk deneme ölçümünü tekrar ilerletmez.
+- Yeni kartlar her gün kendiliğinden gelir (varsayılan 5). “Çalışmaya ekle” kartı hemen çalışmaya alır. Kontrol bekleyen veya anlamı eksik kartlar öğrenme kuyruğuna girmez.
+- **Sesli tekrar** ve Dinle işaretlemeleri yalnızca söyleme sayacını artırır; SRS'yi değiştirmez.
+- **Önce Hollandaca** açıkken eksik açıklama Türkçe ile doldurulmaz. Anlam ve notlar isteğe bağlı açılır.
+- Ölçümler kart/gün başına ilk denemeden hesaplanır. 7+ gün sonra hatırlama, en az iki ayrı günde zorlanılan kalıplar ve alışkanlıklar ayrılır.
+- Kart editörü ilk duyulan ifadeyi doğru kalıptan ayırır. Hızlı notlar taslak olarak kalır. Temalar ve JSON toplu ekleme korunur.
 
 ## 3. Yoğunluk ve düzen
 
 - Yoğunluk kadranı 5–6. Kart listesi sıkı, ilerleme kartları nefes alır.
-- Alt navigasyon 4 öğe: Kartlar, Çalış, Tekrar, İlerleme (Gazete modu v27'de kaldırıldı; "GAZETE dd/mm" tarihli kartlar tarih grubu olarak durur). Ayarlar üst çubuktaki dişli düğmesinde, Dinle Tekrar ekranında. Aktif öğe `--accent`.
-- Tarih grupları akordeon; ilk render'da en yeni grup açık, diğerleri kapalı.
-- Kart düzeni: rozet + Hollandaca + Türkçe üstte; altta tek satır: ses, tema, "Çalışmaya ekle". Tema seçimi ve "Kartı sil" kart detayının en altında.
+- Alt navigasyon 4 öğe: Kartlar, Hatırla, Sesli tekrar, İlerleme (Gazete modu v27'de kaldırıldı; "GAZETE dd/mm" tarihli kartlar tarih grubu olarak durur). Ayarlar üst çubuktaki dişli düğmesinde, Dinle Sesli tekrar ekranında. Aktif öğe `--accent`.
+- Tarih grupları akordeon; ilk açılışta en yeni grup açık, diğerleri kapalı. Sonraki açılışlarda kullanıcının grup tercihi korunur.
+- Kart düzeni: rozet + Hollandaca + tercih edilen açıklama üstte; altta ses, tema, "Çalışmaya ekle". Düzenleme, kopyalama, tema seçimi ve silme detayda. Filtreler açılır bölümde. Arama çalışmadaki kartları da kapsar.
 
 ## 4. Dokunma ve erişilebilirlik
 
-- Her tıklanabilir öğe en az 36 px yüksek; yalnız ikonlu düğmeler (`.icon-only`) 40 px geniş.
+- Ana etkileşimlerde 44 px dokunma alanı hedeflenir; kompakt ikincil bağlantılar en az 40 px. Büyük yazı, gövde zoom yerine `--read-scale` ile uygulanır. Çalışma düğmeleri ekranın altında görünür kalır.
 - `:focus-visible` her öğede görünür; `outline:none` yasak.
 - `prefers-reduced-motion` ve `prefers-color-scheme` desteklenir (kayıtlı tercih yoksa sistem teması).
 - Yıkıcı işlemler (`confirmDelete`, `resetProgress`) onay ister; çöp kutusu kayıt tutar.
@@ -70,15 +72,22 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 
 ## 8. Metin (Türkçe arayüz)
 
-- Kısa, eylem odaklı etiketler: "Öğrendim", "Tekrar ettim", "Dinle". Aynı niyet için tek etiket.
+- Kısa, eylem odaklı etiketler: "Çalışmaya ekle", "Tekrar ettim", "Dinle". Aynı niyet için tek etiket.
 - Geçici durum mesajlarında (✅ ❌ ⏳) emoji kalabilir; kalıcı arayüz öğelerinde kalamaz.
 - Marka/ürün adı `Kantoor Woordenschat`; alt başlıkta "Hollandaca" (Hollandıca değil).
 
 ## 9. Değişiklik öncesi kontrol listesi
 
 1. Yeni renk → token'a bağla.
-2. Yeni düğme ≥ 36 px mi? `:focus-visible` çalışıyor mu?
+2. Yeni ana düğme ≥ 44 px mi? `:focus-visible` çalışıyor mu?
 3. Yeni animasyonun gerekçesi var mı?
 4. Hollandaca metin öğesi `lang="nl"` taşıyor mu?
 5. İki temada, 375 px genişlikte bakıldı mı?
 6. `sw.js` içindeki `CACHE_NAME` artırıldı mı?
+
+## 10. Veri ve doğrulama (v28)
+
+- Mevcut kart kimlikleri ve ilerleme alanları korunur; ek bilgiler `app_state` anahtarlarıyla saklanır.
+- Düzenlenebilir içerik HTML olarak çalıştırılmaz; ekrana metin olarak yerleştirilir.
+- Bekleyen yazmalar kalıcı yerel kuyrukta tutulur. Yedek, temaları, taslakları, sesli sayaçları ve hatırlama olaylarını da içerir.
+- Değişiklikten sonra mobil/masaüstü, iki tema, büyük yazı ve klavye odağı kontrol edilir. Zamanlama veya yedek değişirse veri koruma akışları ayrıca doğrulanır.
