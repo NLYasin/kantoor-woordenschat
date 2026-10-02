@@ -101,3 +101,9 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 - **Tek isim:** başlatma eylemi her yerde "Hatırlamaya başla".
 - **Günlük hatırlatma:** Ayarlar → Günlük hatırlatma (saat, "sadece o gün çalışmadıysam / her gün", test). Uygulama açıkken zamanlayıcı; kapalıyken Periodic Background Sync (yalnızca ana ekrana kurulu Android/Chrome). iPhone'da uygulama kapalıyken bildirim için sunucu tabanlı Web Push gerekir; panel bunu dürüstçe yazar. Ayarlar Service Worker'a `kv-reminder` cache'i üzerinden aktarılır; `sw.js` bu cache'i silmez.
 - **Eşitleme sağlamlığı:** sunucunun 4xx ile reddettiği kayıt kuyruğu tıkamaz, `kv_v29_failed` listesine alınır. Çalışma geçmişi (`v28review:<cihaz>`) 45 günle sınırlı ve sunucuya 8 sn gecikmeyle toplu gönderilir.
+
+## 12. Yazı boyutu (v30)
+
+- Ayarlar → Yazı boyutu (Küçük 0,875 / Normal 1 / Büyük 1,15 / Çok Büyük 1,3) **bütün arayüzü** ölçekler. CSS'teki her yazı boyutu `calc(Npx * var(--ui-scale))` biçiminde yazılır; kart okuma metinleri `--read-scale` kullanır, ikisi aynı değeri alır (`applyFontScale`, v30 sürümü v29 bloğunda).
+- **Yeni CSS yazarken yazı boyutu düz `px` olarak yazılmaz**, `calc(Npx * var(--ui-scale))` olarak yazılır; yoksa o metin yazı boyutu ayarına uymaz.
+- `body` üzerinde `zoom` kullanılmaz (sabit alt menü ve tam ekran oturumda kayma yapar).
