@@ -4,7 +4,8 @@
 // güncellemeleri PWA'da her zaman en güncel haliyle gelir, eski cache
 // asılı kalmaz.
 
-const CACHE_NAME = 'woordenschat-v28'; // her güncellemede bu numarayı artır
+const CACHE_NAME = 'woordenschat-v29'; // her güncellemede bu numarayı artır
+const REMINDER_CACHE = 'kv-reminder'; // hatırlatma ayarları — silinmez
 const ASSETS = [
   './index.html',
   './manifest.json',
@@ -30,7 +31,7 @@ self.addEventListener('activate', function(event) {
   event.waitUntil(
     caches.keys().then(function(keys) {
       return Promise.all(
-        keys.filter(function(key) { return key !== CACHE_NAME; })
+        keys.filter(function(key) { return key !== CACHE_NAME && key !== REMINDER_CACHE; })
             .map(function(key) { return caches.delete(key); })
       );
     })
@@ -81,4 +82,54 @@ self.addEventListener('fetch', function(event) {
       })
     );
   }
+});
+
+// ── Günlük hatırlatma (v29) ─────────────────────────────────────────────
+// Uygulama ayarları ve "hangi günler çalışıldı" bilgisini kv-reminder
+// cache'ine yazar (Service Worker localStorage okuyamaz). Periodic Background
+// Sync yalnızca ana ekrana kurulu Android/Chrome'da çalışır; saati tarayıcı seçer.
+function readReminder(name) {
+  return caches.open(REMINDER_CACHE).then(function(cache) {
+    return cache.match(name).then(function(res) { return res ? res.json() : null; });
+  }).catch(function() { return null; });
+}
+function writeReminderState(obj) {
+  return caches.open(REMINDER_CACHE).then(function(cache) {
+    return cache.put('reminder-state', new Response(JSON.stringify(obj), { headers: { 'Content-Type': 'application/json' } }));
+  });
+}
+function localDay() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function maybeSendReminder() {
+  return Promise.all([readReminder('reminder-prefs'), readReminder('reminder-state')]).then(function(r) {
+    var prefs = r[0], state = r[1] || {};
+    if (!prefs || !prefs.enabled) return;
+    var today = localDay();
+    if (state.lastNotified === today) return;
+    var parts = String(prefs.time || '19:00').split(':');
+    var target = new Date(); target.setHours(parseInt(parts[0], 10) || 0, parseInt(parts[1], 10) || 0, 0, 0);
+    if (Date.now() < target.getTime()) return;
+    var studied = Array.isArray(prefs.activeDates) && prefs.activeDates.indexOf(today) !== -1;
+    if (prefs.mode === 'idle' && studied) return;
+    var due = prefs.dueCount || 0;
+    var body = studied
+      ? (due ? due + ' kartın tekrar zamanı geldi. Birkaç dakika ayır.' : 'Bugün çalıştın. Birkaç cümleyi sesli tekrar etmeye ne dersin?')
+      : (due ? 'Bugün henüz çalışmadın. ' + due + ' kart hatırlanmayı bekliyor.' : 'Bugün henüz çalışmadın. Birkaç kartla seriyi koru.');
+    return self.registration.showNotification('Kantoor Woordenschat', {
+      body: body, icon: 'icon-192.png', tag: 'kv-daily-reminder', renotify: true, lang: 'tr', data: { url: './index.html' }
+    }).then(function() { return writeReminderState({ lastNotified: today }); });
+  });
+}
+self.addEventListener('periodicsync', function(event) {
+  if (event.tag === 'kv-daily-reminder') event.waitUntil(maybeSendReminder());
+});
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+  var url = (event.notification.data && event.notification.data.url) || './index.html';
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(list) {
+    for (var i = 0; i < list.length; i++) { if ('focus' in list[i]) return list[i].focus(); }
+    if (self.clients.openWindow) return self.clients.openWindow(url);
+  }));
 });

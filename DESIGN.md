@@ -84,6 +84,8 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 4. Hollandaca metin öğesi `lang="nl"` taşıyor mu?
 5. İki temada, 375 px genişlikte bakıldı mı?
 6. `sw.js` içindeki `CACHE_NAME` artırıldı mı?
+7. Yazı tipi korunuyor mu? Arayüz **Manrope** (`--font`), başlık ve büyük sayı **Fraunces** (`--font-display`). Fraunces yalnızca 500 ve 700 kalınlıkta yüklenir; başka kalınlık (600 gibi) kullanılmaz.
+8. Fonksiyonu değiştirmeden önce dosyanın sonundaki v29 ve v28 bloklarında aynı adla yeniden atanmış bir sürüm var mı diye bakıldı mı?
 
 ## 10. Veri ve doğrulama (v28)
 
@@ -91,3 +93,11 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 - Düzenlenebilir içerik HTML olarak çalıştırılmaz; ekrana metin olarak yerleştirilir.
 - Bekleyen yazmalar kalıcı yerel kuyrukta tutulur. Yedek, temaları, taslakları, sesli sayaçları ve hatırlama olaylarını da içerir.
 - Değişiklikten sonra mobil/masaüstü, iki tema, büyük yazı ve klavye odağı kontrol edilir. Zamanlama veya yedek değişirse veri koruma akışları ayrıca doğrulanır.
+
+## 11. v29 eklemeleri
+
+- **Çöp kutusu gerçek:** silinen kart veritabanından hemen silinmez; 30 gün çöp kutusunda bekler, "Geri al" ile döner. "Kalıcı sil" veya 30 günün dolması veritabanından siler (önce ilerleme, sonra kart). Durum `app_state` → `trash` anahtarıyla cihazlar arasında eşitlenir. Çöp kutusuna Kartlar ekranındaki "Çöp kutusu" düğmesinden ulaşılır (sayaç rozetli); Ayarlar'daki bağlantı da durur.
+- **İlerleme açık:** seri, günlük hedef, süre ve takvim katlanmadan en üstte görünür; "Ne kadarını hatırlıyorum?" ölçümleri altında. Ekranda tek oranje eylem ("Hatırlamaya başla").
+- **Tek isim:** başlatma eylemi her yerde "Hatırlamaya başla".
+- **Günlük hatırlatma:** Ayarlar → Günlük hatırlatma (saat, "sadece o gün çalışmadıysam / her gün", test). Uygulama açıkken zamanlayıcı; kapalıyken Periodic Background Sync (yalnızca ana ekrana kurulu Android/Chrome). iPhone'da uygulama kapalıyken bildirim için sunucu tabanlı Web Push gerekir; panel bunu dürüstçe yazar. Ayarlar Service Worker'a `kv-reminder` cache'i üzerinden aktarılır; `sw.js` bu cache'i silmez.
+- **Eşitleme sağlamlığı:** sunucunun 4xx ile reddettiği kayıt kuyruğu tıkamaz, `kv_v29_failed` listesine alınır. Çalışma geçmişi (`v28review:<cihaz>`) 45 günle sınırlı ve sunucuya 8 sn gecikmeyle toplu gönderilir.
