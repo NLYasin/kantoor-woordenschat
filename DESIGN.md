@@ -114,3 +114,14 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 - **Soru türleri:** "Bağlamı anla" yalnızca kelime ve deyim kartlarında sorulur. Dinleme sorusunda ses her zaman otomatik çalar.
 - **Dinleme modu:** cümlelerle birlikte deyimler de dinlenir; "Vazgeç" Sesli tekrar ekranına döner.
 - **Toplu düzeltme:** Ayarlar → Veri yedekleme → "Düzeltme Dosyası Yükle". Dosya biçimi: `{"kind":"kantoor-card-corrections","version":1,"cards":[{"id":12,"type":"woord","dutch":"…","turkish":"…","uitleg":"…","examples":[…],"note":"…","legal":null,"is_legal":false,"tema":"gesprek"}]}`. Yalnızca verilen alanlar değişir; uygulamadan önce özet gösterilir. v32: kartta `"persist": true` (ya da dosyada `"persistAll": true`) varsa, ekranda zaten aynı görünen değerler de veritabanına yazılır (v28'in yalnızca ekranda uyguladığı düzeltmeleri kalıcı yapmak için). `needsReview` alanı verilmezse kartın mevcut "kontrol bekliyor" durumu korunur. İlerleme ve takvim korunur; Hollandaca ifade değişirse eski hali "ilk duyulan" olarak saklanır (`cardmeta`, `custom:true`).
+
+## 14. v33
+
+- **Grup ilerlemesi:** Kartlar ekranında her grup başlığında "X/Y çalışmada" ve ince bir çubuk: koyu accent = oturdu (tekrar aralığı 7+ gün, `sr_step >= 3`), açık accent = öğreniliyor, boş = başlanmadı. Sayım filtreden bağımsız, gruptaki bütün kartlar üzerinden. Listenin başında genel özet kartı ve renk açıklaması.
+- **Eşitleme bitişi:** bekleyen kayıtlar sıfıra inince "Eşitleme tamamlandı" bildirimi; toplu düzeltme mesajı kalan kayıt sayısını gösterir ve bitince "Tamamlandı" olur.
+
+## 15. Tekrar listesi (v34)
+
+- Hatırla ekranının altındaki liste katlanır bir bölüm ("Tekrar listesi", açık/kapalı durumu hatırlanır). Kartlar zamana göre gruplanır: Şimdi / Bugün içinde / Yarın / Bu hafta / Daha sonra.
+- Her kart: Hollandaca (Fraunces 500, `--read-scale`), Türkçe anlam, tür rozeti, **7 basamaklı nokta göstergesi** (dolu = geçilen tekrar, halka = sıradaki), "N. tekrar · aralık" yazısı, sağda zaman hapı. Zamanı gelen kart oranje sol kenar + "Şimdi hatırla" hapı; diğerleri açık yeşil sol kenar.
+- Kart zemini `--bg3` (krem), kutu `--bg2`; düz beyaz liste görünümü kullanılmaz. 60'ar kart gösterilir, "Daha fazla göster".

@@ -1464,6 +1464,54 @@ body { zoom:1 !important; }
 .st-meaning29 { display:flex; flex-direction:column; gap:4px; }
 .st-meaning29 .st-tr { font-size:calc(20px * var(--read-scale)); font-weight:700; line-height:1.35; }
 .st-heard29 { font-size:calc(15px * var(--read-scale)); color:var(--text2); margin-top:4px; }
+
+/* ── v33: grup ilerlemesi ── */
+.date-label { flex-wrap: wrap; row-gap: 8px; }
+.date-label .dl-meta { font-variant-numeric: tabular-nums; }
+.date-label .dl-meta b { color: var(--accent); font-weight: 800; }
+.gp33-bar { order: 10; flex-basis: 100%; display: flex; height: 6px; border-radius: 3px; overflow: hidden; background: var(--tag, var(--bg3)); border: 1px solid var(--border); }
+.gp33-bar i { display: block; height: 100%; }
+.gp33-s { background: var(--accent); }
+.gp33-l { background: color-mix(in srgb, var(--accent) 40%, transparent); }
+.gp33-sum { margin: 0 0 12px; padding: 14px 16px; border-radius: 18px; background: var(--bg2); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+.gp33-sum-top { display: flex; justify-content: space-between; align-items: baseline; font-size: calc(14px * var(--ui-scale)); color: var(--text2); font-variant-numeric: tabular-nums; }
+.gp33-sum-top b { font-family: var(--font-display); font-weight: 700; font-size: calc(22px * var(--ui-scale)); color: var(--text); }
+.gp33-sum .gp33-bar { height: 10px; border-radius: 5px; }
+.gp33-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: calc(12px * var(--ui-scale)); color: var(--text3); font-variant-numeric: tabular-nums; }
+.gp33-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.gp33-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.gp33-legend i.gp33-n { background: var(--tag, var(--bg3)); border: 1px solid var(--border2); }
+
+/* ── v34: tekrar listesi ── */
+.tk34 { margin: 4px 16px 24px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg2); overflow: hidden; }
+.tk34 > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 16px 18px; min-height: 56px; }
+.tk34 > summary::-webkit-details-marker { display: none; }
+.tk34 > summary::after { content: ""; width: 9px; height: 9px; border-right: 2px solid var(--text3); border-bottom: 2px solid var(--text3); transform: rotate(45deg); margin-left: 6px; transition: transform .2s; }
+.tk34[open] > summary::after { transform: rotate(-135deg); }
+.tk34-title { font-family: var(--font-display); font-weight: 700; font-size: calc(19px * var(--ui-scale)); flex: 1; }
+.tk34-count { font-size: calc(13px * var(--ui-scale)); font-weight: 700; color: var(--text3); font-variant-numeric: tabular-nums; }
+.tk34-legend { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 0 18px 12px; font-size: calc(12px * var(--ui-scale)); color: var(--text3); }
+.tk34-group { padding: 0 12px 10px; }
+.tk34-gh { display: flex; align-items: center; justify-content: space-between; padding: 12px 6px 8px; font-size: calc(12px * var(--ui-scale)); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); border-top: 1px solid var(--border); }
+.tk34-group:first-of-type .tk34-gh { border-top: none; }
+.tk34-gn { font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.tk34-card { display: flex; gap: 12px; align-items: flex-start; padding: 14px 14px 13px 16px; margin-bottom: 8px; border-radius: 14px; background: var(--bg3); border: 1px solid var(--border); border-left: 4px solid color-mix(in srgb, var(--accent) 35%, var(--border)); }
+.tk34-card.due { border-left-color: var(--cta); background: color-mix(in srgb, var(--cta) 5%, var(--bg3)); }
+.tk34-main { flex: 1; min-width: 0; }
+.tk34-nl { font-family: var(--font-display); font-weight: 500; font-size: calc(18px * var(--read-scale)); line-height: 1.3; color: var(--text); }
+.tk34-tr { font-size: calc(13px * var(--ui-scale)); color: var(--text2); margin-top: 3px; line-height: 1.45; }
+.tk34-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin-top: 9px; font-size: calc(12px * var(--ui-scale)); color: var(--text3); font-weight: 600; }
+.tk34-type { padding: 2px 8px; border-radius: 999px; background: var(--bg2); border: 1px solid var(--border); font-weight: 700; }
+.tk34-steps { display: inline-flex; gap: 3px; align-items: center; }
+.tk34-steps i { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); display: inline-block; }
+.tk34-steps i.on { background: var(--accent); }
+.tk34-steps i.next { background: transparent; border: 2px solid var(--accent); width: 9px; height: 9px; box-sizing: border-box; }
+.tk34-card.due .tk34-steps i.next { border-color: var(--cta); }
+.tk34-when { flex-shrink: 0; font-size: calc(12px * var(--ui-scale)); font-weight: 700; color: var(--text3); padding: 4px 9px; border-radius: 999px; background: var(--bg2); border: 1px solid var(--border); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.tk34-when.now { color: #FFFFFF; background: var(--cta); border-color: var(--cta); }
+.tk34-more { display: block; margin: 4px auto 16px; min-height: 44px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text2); font-weight: 700; cursor: pointer; }
+.tk34-empty { margin: 4px 16px 24px; padding: 22px; text-align: center; color: var(--text3); border: 1px dashed var(--border2); border-radius: 18px; }
+@media (max-width: 520px) { .tk34-card { flex-wrap: wrap; } .tk34-when { order: -1; margin-left: auto; } .tk34-main { flex-basis: 100%; } }
 </style>
 </head>
 <body>
@@ -5567,6 +5615,136 @@ async function importCorrections31(event) {
     el.className = 'settings-status show err'; el.textContent = e.message;
   } finally { event.target.value = ''; }
 }
+
+// ── 5f. Grup ilerlemesi (v33) ────────────────────────────────────────────
+// Kartlar ekranındaki her grup başlığında (tema veya tarih) kaç kartın
+// çalışmada olduğu ve ince bir ilerleme çubuğu görünür. Sayım, filtreden
+// bağımsız olarak o gruptaki bütün kartlar üzerinden yapılır.
+//   oturdu     = tekrar aralığı en az 7 güne ulaşmış (sr_step >= 3) ya da tamamlanmış
+//   çalışmada  = programda ama henüz oturmamış
+//   başlanmadı = hiç çalışılmamış
+function groupStats33(key) {
+  const keyOf = c => groupMode === 'tema' ? getTema(c) : c.date;
+  const s = { total: 0, settled: 0, learning: 0 };
+  for (const c of CARDS) {
+    if (keyOf(c) !== key) continue;
+    s.total++;
+    const p = PROGRESS[c.id];
+    if (!p?.is_known) continue;
+    if ((Number(p.sr_step) || 0) >= 3) s.settled++; else s.learning++;
+  }
+  return s;
+}
+function progressBar33(s) {
+  const pct = n => s.total ? (n / s.total * 100).toFixed(1) : 0;
+  return `<span class="gp33-bar" aria-hidden="true"><i class="gp33-s" style="width:${pct(s.settled)}%"></i><i class="gp33-l" style="width:${pct(s.learning)}%"></i></span>`;
+}
+const baseRenderAll33 = renderAll;
+renderAll = function() {
+  baseRenderAll33();
+  const el = document.getElementById('content'); if (!el) return;
+  el.querySelectorAll('section.date-group').forEach(sec => {
+    const key = sec.dataset.date, s = groupStats33(key), btn = sec.querySelector('.date-label'), meta = btn?.querySelector('.dl-meta');
+    if (!btn || !meta) return;
+    const inStudy = s.settled + s.learning;
+    meta.innerHTML = `<b>${inStudy}</b>/${s.total} çalışmada`;
+    meta.title = `${s.settled} oturdu, ${s.learning} öğreniliyor, ${s.total - inStudy} başlanmadı`;
+    btn.setAttribute('aria-label', btn.querySelector('span')?.textContent + ': ' + s.total + ' karttan ' + inStudy + ' çalışmada, ' + s.settled + ' oturdu');
+    btn.insertAdjacentHTML('beforeend', progressBar33(s));
+  });
+  // Liste başında genel durum ve renklerin anlamı
+  const all = { total: 0, settled: 0, learning: 0 };
+  for (const c of CARDS) { all.total++; const p = PROGRESS[c.id]; if (p?.is_known) { if ((Number(p.sr_step) || 0) >= 3) all.settled++; else all.learning++; } }
+  if (el.querySelector('section.date-group')) {
+    el.insertAdjacentHTML('afterbegin', `<div class="gp33-sum">
+      <div class="gp33-sum-top"><span><b>${all.settled + all.learning}</b> / ${all.total} kart çalışmada</span><span>${all.total ? Math.round((all.settled + all.learning) / all.total * 100) : 0}%</span></div>
+      ${progressBar33(all)}
+      <div class="gp33-legend"><span><i class="gp33-s"></i>Oturdu (7+ gün) ${all.settled}</span><span><i class="gp33-l"></i>Öğreniliyor ${all.learning}</span><span><i class="gp33-n"></i>Başlanmadı ${all.total - all.settled - all.learning}</span></div>
+    </div>`);
+  }
+};
+
+// ── 5g. Eşitleme bitince haber ver (v33) ─────────────────────────────────
+// Bekleyen kayıtlar sıfıra inince kısa bir bildirim çıkar; toplu düzeltme
+// mesajı "gönderiliyor"dan "kaydedildi"ye döner.
+let lastPending33 = Object.keys(outbox28).length;
+const basePending33 = pendingStatus28;
+pendingStatus28 = function() {
+  basePending33();
+  const n = Object.keys(outbox28).length;
+  if (lastPending33 > 0 && n === 0) {
+    toast28('Eşitleme tamamlandı. Bütün kayıtlar sunucuda.');
+    const io = document.getElementById('io-status');
+    if (io && /Sunucuya gönderiliyor|Bağlantı gelince/.test(io.textContent)) {
+      io.className = 'settings-status show ok';
+      io.textContent = io.textContent.replace(/ ?(Sunucuya gönderiliyor.*$|Bağlantı gelince sunucuya gönderilecek\.?)/, ' Tamamlandı: hepsi sunucuya kaydedildi.');
+    }
+  } else if (n > 0) {
+    const io = document.getElementById('io-status');
+    if (io && /Sunucuya gönderiliyor/.test(io.textContent)) io.textContent = io.textContent.replace(/Sunucuya gönderiliyor.*$/, 'Sunucuya gönderiliyor (' + n + ' kayıt kaldı).');
+  }
+  lastPending33 = n;
+};
+
+// ── 5h. Tekrar listesi yeniden tasarım (v34) ────────────────────────────
+// Hatırla ekranının altındaki liste: zamana göre gruplanır (Şimdi / Bugün /
+// Yarın / Bu hafta / Daha sonra), her kartta kaçıncı tekrarda olduğu
+// (7 basamaklı nokta göstergesi), şu anki aralık, tür ve Türkçe anlam görünür.
+let tekrarLimit34 = 60;
+let tekrarOpen34 = (() => { try { return localStorage.getItem('kv_tekrar_open') === '1'; } catch (e) { return false; } })();
+const SR_LABELS34 = ['20 dk', '1 gün', '3 gün', '1 hafta', '2 hafta', '1 ay', '3 ay'];
+function tekrarBucket34(due) {
+  const now = new Date(), t = new Date(due);
+  if (t <= now) return 'now';
+  const d0 = new Date(now); d0.setHours(0, 0, 0, 0);
+  const days = Math.floor((t - d0) / 86400000);
+  if (days === 0) return 'today';
+  if (days === 1) return 'tomorrow';
+  if (days < 7) return 'week';
+  return 'later';
+}
+function tekrarItem34(c) {
+  const p = PROGRESS[c.id] || {}, step = Math.max(0, Math.min(7, Number(p.sr_step) || 0)), due = dueAt28(c.id);
+  const isNow = due && new Date(due) <= new Date(), maint = step >= 7;
+  const dots = Array.from({ length: 7 }, (_, i) => `<i class="${i < step ? 'on' : ''}${i === step && !maint ? ' next' : ''}"></i>`).join('');
+  const nth = maint ? 'Koruma tekrarı' : (step + 1) + '. tekrar';
+  const interval = maint ? '3 ayda bir' : SR_LABELS34[step] + ' aralık';
+  const typeLbl = c.type === 'zin' ? 'Cümle' : c.type === 'uitdrukking' ? 'Deyim' : (c.isLegal ? 'Hukuki' : 'Kelime');
+  const mins = due ? Math.ceil((new Date(due) - Date.now()) / 60000) : null;
+  const when = isNow ? 'Şimdi hatırla' : (mins != null ? fmtMins(mins) + ' sonra' : '');
+  return `<div class="tk34-card${isNow ? ' due' : ''}">
+    <div class="tk34-main">
+      <div class="tk34-nl" lang="nl">${esc28(c.dutch)}</div>
+      <div class="tk34-tr">${esc28(c.turkish || '')}</div>
+      <div class="tk34-meta"><span class="tk34-type">${typeLbl}</span><span class="tk34-steps" aria-label="${step} / 7 basamak">${dots}</span><span>${nth} · ${interval}</span></div>
+    </div>
+    <div class="tk34-when${isNow ? ' now' : ''}">${when}</div>
+  </div>`;
+}
+function setTekrarOpen34(open) { tekrarOpen34 = open; try { localStorage.setItem('kv_tekrar_open', open ? '1' : '0'); } catch (e) {} }
+const baseRenderTekrar34 = renderTekrar;
+renderTekrar = function() {
+  baseRenderTekrar34();
+  const el = document.getElementById('tekrar-content'); if (!el) return;
+  const list = CARDS.filter(c => ready28(c) && dueAt28(c.id) && (!studyTema || studyTema === 'all' || getTema(c) === studyTema))
+    .sort((a, b) => new Date(dueAt28(a.id)) - new Date(dueAt28(b.id)));
+  if (!list.length) { el.innerHTML = '<div class="tk34-empty">İlk hatırlama oturumundan sonra tekrar takvimin burada oluşur.</div>'; return; }
+  const names = { now: 'Şimdi', today: 'Bugün içinde', tomorrow: 'Yarın', week: 'Bu hafta', later: 'Daha sonra' };
+  const groups = {}; list.forEach(c => (groups[tekrarBucket34(dueAt28(c.id))] ||= []).push(c));
+  let shown = 0, body = '';
+  for (const k of ['now', 'today', 'tomorrow', 'week', 'later']) {
+    const g = groups[k]; if (!g || shown >= tekrarLimit34) continue;
+    const part = g.slice(0, tekrarLimit34 - shown); shown += part.length;
+    body += `<div class="tk34-group"><div class="tk34-gh"><span>${names[k]}</span><span class="tk34-gn">${g.length}</span></div>${part.map(tekrarItem34).join('')}</div>`;
+  }
+  if (list.length > shown) body += `<button class="tk34-more" onclick="tekrarLimit34+=60;renderTekrar()">Daha fazla göster (${list.length - shown})</button>`;
+  // Özet: kaç kart hangi basamakta
+  const byStep = Array(8).fill(0); list.forEach(c => byStep[Math.min(7, Number(PROGRESS[c.id]?.sr_step) || 0)]++);
+  const legend = `<div class="tk34-legend"><span class="tk34-steps"><i class="on"></i><i class="on"></i><i class="next"></i><i></i></span> Dolu nokta: geçtiğin tekrar · halka: sıradaki tekrar · toplam 7 basamak</div>`;
+  el.innerHTML = `<details class="tk34" ${tekrarOpen34 ? 'open' : ''} ontoggle="setTekrarOpen34(this.open)">
+    <summary><span class="tk34-title">Tekrar listesi</span><span class="tk34-count">${list.length} kart</span></summary>
+    ${legend}${body}</details>`;
+};
 
 // ── 6. Başlatma ──────────────────────────────────────────────────────────
 async function initV29() {
