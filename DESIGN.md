@@ -107,3 +107,10 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 - Ayarlar → Yazı boyutu (Küçük 0,875 / Normal 1 / Büyük 1,15 / Çok Büyük 1,3) **bütün arayüzü** ölçekler. CSS'teki her yazı boyutu `calc(Npx * var(--ui-scale))` biçiminde yazılır; kart okuma metinleri `--read-scale` kullanır, ikisi aynı değeri alır (`applyFontScale`, v30 sürümü v29 bloğunda).
 - **Yeni CSS yazarken yazı boyutu düz `px` olarak yazılmaz**, `calc(Npx * var(--ui-scale))` olarak yazılır; yoksa o metin yazı boyutu ayarına uymaz.
 - `body` üzerinde `zoom` kullanılmaz (sabit alt menü ve tam ekran oturumda kayma yapar).
+
+## 13. v31 düzeltmeleri
+
+- **Hatırla cevabı:** "Anlamını hatırla" ve "Dinleyerek anla" sorularında cevap anlamdır. Kartta Hollandaca açıklama yoksa ya da "Önce Hollandaca" kapalıysa Türkçe anlam "Anlamı" başlığıyla açık ve büyük gösterilir; kapalı kutuya gizlenmez.
+- **Soru türleri:** "Bağlamı anla" yalnızca kelime ve deyim kartlarında sorulur. Dinleme sorusunda ses her zaman otomatik çalar.
+- **Dinleme modu:** cümlelerle birlikte deyimler de dinlenir; "Vazgeç" Sesli tekrar ekranına döner.
+- **Toplu düzeltme:** Ayarlar → Veri yedekleme → "Düzeltme Dosyası Yükle". Dosya biçimi: `{"kind":"kantoor-card-corrections","version":1,"cards":[{"id":12,"type":"woord","dutch":"…","turkish":"…","uitleg":"…","examples":[…],"note":"…","legal":null,"is_legal":false,"tema":"gesprek"}]}`. Yalnızca verilen alanlar değişir; uygulamadan önce özet gösterilir. v32: kartta `"persist": true` (ya da dosyada `"persistAll": true`) varsa, ekranda zaten aynı görünen değerler de veritabanına yazılır (v28'in yalnızca ekranda uyguladığı düzeltmeleri kalıcı yapmak için). `needsReview` alanı verilmezse kartın mevcut "kontrol bekliyor" durumu korunur. İlerleme ve takvim korunur; Hollandaca ifade değişirse eski hali "ilk duyulan" olarak saklanır (`cardmeta`, `custom:true`).

@@ -1459,6 +1459,11 @@ body { zoom:1 !important; }
 .rem-status:empty { display: none; }
 .rem-status.err { color: var(--red); }
 #reminder-section .theme-toggle { flex-wrap: wrap; }
+
+/* ── v31: Hatırla cevabında anlam ── */
+.st-meaning29 { display:flex; flex-direction:column; gap:4px; }
+.st-meaning29 .st-tr { font-size:calc(20px * var(--read-scale)); font-weight:700; line-height:1.35; }
+.st-heard29 { font-size:calc(15px * var(--read-scale)); color:var(--text2); margin-top:4px; }
 </style>
 </head>
 <body>
@@ -1707,6 +1712,14 @@ body { zoom:1 !important; }
       </div>
       <button class="btn-settings full" onclick="document.getElementById('import-file').click()"><svg class="ic"><use href="#i-upload"/></svg>Dosyadan Yükle</button>
       <input type="file" id="import-file" accept=".json" onchange="importData(event)">
+    </div>
+    <div class="settings-row" style="flex-direction:column; align-items:stretch; gap:8px; margin-top:10px;">
+      <div>
+        <div class="settings-row-label">Toplu düzeltme yükle</div>
+        <div class="settings-row-desc">Claude'un hazırladığı düzeltme dosyasını mevcut kartlara uygular (tür, açıklama, örnekler, tema…). İlerlemen değişmez.</div>
+      </div>
+      <button class="btn-settings full" onclick="document.getElementById('corr-file').click()"><svg class="ic"><use href="#i-upload"/></svg>Düzeltme Dosyası Yükle</button>
+      <input type="file" id="corr-file" accept=".json" style="display:none" onchange="importCorrections31(event)">
     </div>
     <div class="settings-status" id="io-status"></div>
   </div>
@@ -2913,7 +2926,7 @@ function renderListenSetup(el) {
       </div>
 
       <div class="listen-setup-actions">
-        <button class="listen-setup-cancel" onclick="showScreen('cards')">Vazgeç</button>
+        <button class="listen-setup-cancel" onclick="showScreen('sesli')">Vazgeç</button>
         <button class="listen-setup-start" onclick="listenStartPlayback()">${ic('play')} Başlat</button>
       </div>
     </div>
@@ -5436,6 +5449,124 @@ applyFontScale = function(scale) {
   document.documentElement.style.setProperty('--read-scale', scale);
   document.querySelectorAll('.fs-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.scale) === scale));
 };
+
+// ── 5c. Hatırla düzeltmeleri (v31) ──────────────────────────────────────
+// a) "Anlamını hatırla" ve "Dinleyerek anla" sorularında cevap anlamdır. Kartın
+//    Hollandaca açıklaması yoksa (183 dışındaki kartların çoğu) Türkçe anlam
+//    kapalı kutuda kalıyordu → "Cevabı göster" fiilen boş görünüyordu. Artık
+//    açıklama yoksa Türkçe anlam açık ve büyük gösterilir.
+// b) "Bağlamı anla" (açıklamadan kalıbı bul) yalnızca kelime ve deyimlerde
+//    sorulur; bütün bir cümleyi açıklamadan üretmek beklenmez.
+// c) Dinleme sorusunda ses, ayar kapalı olsa da otomatik çalar (soru sestir).
+const baseQuestion29 = question28;
+question28 = function(c) {
+  const q = baseQuestion29(c);
+  if (q.mode === 'context' && c.type === 'zin') {
+    const p = PROGRESS[c.id], cloze = cloze28(c);
+    const modes = ['meaning', ...(cloze ? ['cloze'] : []), 'listen'];
+    const history = events28().filter(e => e.cardId === c.id);
+    const mode = modes[(history.length || p?.sr_step || 0) % modes.length];
+    return mode === 'cloze' ? { mode, prompt: cloze.prompt, hint: 'İlk harf: ' + cloze.answer[0] + '…', answer: cloze.answer, audio: cloze.prompt.replace(/___/g, '…') }
+         : mode === 'listen' ? { mode, prompt: 'Dinle ve anlamını hatırla.', hint: c.dutch, answer: c.dutch, audio: c.dutch }
+         : { mode: 'meaning', prompt: c.dutch, hint: c.examples?.[0]?.nl || c.uitleg || c.dutch, answer: c.dutch, audio: c.dutch };
+  }
+  return q;
+};
+const baseStRender29 = stRender;
+stRender = function() {
+  baseStRender29();
+  if (st && st.question && st.question.mode === 'listen' && !studyPrefs.autoAudio) stSpeak(document.getElementById('st-listen'));
+};
+const baseStReveal29 = stReveal;
+stReveal = function() {
+  if (!st || st.revealed) return;
+  baseStReveal29();
+  const c = CARDS.find(x => x.id === st.queue[st.i].id); if (!c) return;
+  const meaningAsked = ['meaning', 'listen'].includes(st.question.mode);
+  if (meaningAsked && (!String(c.uitleg || '').trim() || !nlFirst)) {
+    const ans = document.getElementById('st-ans');
+    const det = ans.querySelector('details.st-more'); if (det) det.open = true;
+    if (!ans.querySelector('.st-meaning29')) {
+      const div = document.createElement('div');
+      div.className = 'st-meaning29';
+      div.innerHTML = `<div class="st-lbl">Anlamı</div><div class="st-tr">${esc28(c.turkish)}</div>` + (st.question.mode === 'listen' ? `<div class="st-heard29" lang="nl">${esc28(c.dutch)}</div>` : '');
+      ans.prepend(div);
+      // Kapalı kutudaki aynı Türkçe satırı tekrar etmesin
+      det?.querySelector('.st-tr')?.remove();
+    }
+  }
+};
+
+// ── 5d. Dinleme modu düzeltmeleri (v31) ─────────────────────────────────
+// Deyimler de dinlenir (önceden sadece "cümle" türü), "Vazgeç" Sesli tekrar'a döner.
+getListenScopeCards = function() {
+  const sentences = CARDS.filter(c => c.type === 'zin' || c.type === 'uitdrukking');
+  if (listenScope === 'today') return dedupeByDutch(sentences.filter(c => isDue(c.id)));
+  if (listenScope === 'lesson') return listenLessonDate ? dedupeByDutch(sentences.filter(c => c.date === listenLessonDate)) : [];
+  return dedupeByDutch(sentences);
+};
+
+// ── 5e. Toplu düzeltme yükleme (v31) ────────────────────────────────────
+// Claude'un hazırladığı düzeltme dosyasını (kind: "kantoor-card-corrections")
+// mevcut kartlara id ile uygular: tür, Hollandaca, Türkçe, açıklama, örnekler,
+// not, hukuk, tema. İlerleme ve tekrar takvimi değişmez. İlk duyulan ifade
+// değişirse eski hali "ilk duyulan" olarak saklanır.
+async function importCorrections31(event) {
+  const f = event.target.files[0]; if (!f) return;
+  const el = document.getElementById('io-status');
+  el.className = 'settings-status show loading'; el.textContent = 'Düzeltme dosyası okunuyor…';
+  try {
+    const data = JSON.parse(await f.text());
+    if (data.kind !== 'kantoor-card-corrections' || !Array.isArray(data.cards)) throw new Error('Bu bir düzeltme dosyası değil. Claude\'un hazırladığı "düzeltmeler" dosyasını seç.');
+    const FIELDS = ['type', 'dutch', 'turkish', 'uitleg', 'examples', 'note', 'legal', 'is_legal', 'etymology'];
+    const plan = [], stats = { type: 0, dutch: 0, turkish: 0, uitleg: 0, examples: 0, tema: 0, other: 0, persist: 0 };
+    let missing = 0;
+    for (const fix of data.cards) {
+      const c = CARDS.find(x => x.id === Number(fix.id));
+      if (!c) { missing++; continue; }
+      const changed = {};
+      for (const k of FIELDS) {
+        if (!(k in fix)) continue;
+        const cur = k === 'is_legal' ? !!(c.is_legal || c.isLegal) : c[k];
+        if (JSON.stringify(cur ?? null) !== JSON.stringify(fix[k] ?? null)) changed[k] = fix[k];
+      }
+      if (changed.type && !['woord', 'zin', 'uitdrukking'].includes(changed.type)) delete changed.type;
+      const temaChange = fix.tema && TEMA_BY_ID[fix.tema] && getTema(c) !== fix.tema;
+      // v32: "persist" = ekranda zaten görünen (v28'in yalnızca ekranda uyguladığı)
+      // değerleri de veritabanına kalıcı yaz.
+      const force = !!(fix.persist || data.persistAll);
+      if (!Object.keys(changed).length && !temaChange && !force) continue;
+      Object.keys(changed).forEach(k => { if (stats[k] !== undefined) stats[k]++; else stats.other++; });
+      if (temaChange) stats.tema++;
+      if (force && !Object.keys(changed).length) stats.persist++;
+      const full = {}; if (force) for (const k of FIELDS) if (k in fix) full[k] = fix[k];
+      plan.push({ c, changed, tema: temaChange ? fix.tema : null, force, full, nr: ('needsReview' in fix) ? !!fix.needsReview : !!c._needsReview });
+    }
+    if (!plan.length) { el.className = 'settings-status show ok'; el.textContent = 'Uygulanacak değişiklik yok; kartlar zaten güncel.' + (missing ? ` (${missing} kart bu cihazda bulunamadı.)` : ''); return; }
+    const summary = `${plan.length} kart güncellenecek:\n• Tür: ${stats.type}\n• Hollandaca ifade: ${stats.dutch}\n• Türkçe: ${stats.turkish}\n• Açıklama: ${stats.uitleg}\n• Örnekler: ${stats.examples}\n• Tema: ${stats.tema}\n• Diğer: ${stats.other}` + (stats.persist ? `\n• Ekranda zaten doğru görünen, veritabanına kalıcı yazılacak: ${stats.persist}` : '') + (missing ? `\n(${missing} kart bulunamadı, atlanacak)` : '') + '\n\nİlerlemen ve tekrar takvimin değişmez. Devam edilsin mi?';
+    if (!confirm(summary)) { el.className = 'settings-status show'; el.textContent = 'Vazgeçildi.'; return; }
+    let temaChanged = false;
+    for (const { c, changed, tema, force, full, nr } of plan) {
+      if (Object.keys(changed).length || force) {
+        const upd = { ...(full || {}), ...changed };
+        const merged = { ...c, ...upd, isLegal: 'is_legal' in upd ? !!upd.is_legal : c.isLegal };
+        const payload = cardPayload28(merged);
+        queue28('card:' + c.id, 'cards?id=eq.' + c.id, 'PATCH', payload);
+        const m = meta28(c);
+        const raw = upd.dutch && norm28(upd.dutch) !== norm28(c.dutch) ? (m.raw || c._raw || c.dutch) : (m.raw || c._raw || null);
+        state28('cardmeta:' + c.id, { ...m, raw: raw && norm28(raw) !== norm28(merged.dutch) ? raw : null, needsReview: nr, custom: true });
+        CARDS = CARDS.map(x => x.id === c.id ? { ...x, ...payload, isLegal: payload.is_legal, _raw: raw && norm28(raw) !== norm28(merged.dutch) ? raw : null, _needsReview: nr } : x);
+      }
+      if (tema) { TEMA_MAP[c.id] = tema; temaChanged = true; }
+    }
+    if (temaChanged) pushTemaMap();
+    cacheCards(); renderAll(); updateStats();
+    el.className = 'settings-status show ok';
+    el.textContent = `${plan.length} kart güncellendi.` + (isOnline ? ' Sunucuya gönderiliyor.' : ' Bağlantı gelince sunucuya gönderilecek.');
+  } catch (e) {
+    el.className = 'settings-status show err'; el.textContent = e.message;
+  } finally { event.target.value = ''; }
+}
 
 // ── 6. Başlatma ──────────────────────────────────────────────────────────
 async function initV29() {
