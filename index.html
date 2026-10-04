@@ -1512,6 +1512,30 @@ body { zoom:1 !important; }
 .tk34-more { display: block; margin: 4px auto 16px; min-height: 44px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text2); font-weight: 700; cursor: pointer; }
 .tk34-empty { margin: 4px 16px 24px; padding: 22px; text-align: center; color: var(--text3); border: 1px dashed var(--border2); border-radius: 18px; }
 @media (max-width: 520px) { .tk34-card { flex-wrap: wrap; } .tk34-when { order: -1; margin-left: auto; } .tk34-main { flex-basis: 100%; } }
+
+/* ── v35: Bugün çalıştıklarım ── */
+.td35-title { font-family: var(--font-display); font-weight: 700; font-size: calc(22px * var(--ui-scale)); }
+.td35-seg { display: flex; gap: 4px; padding: 4px; background: var(--bg3); border: 1px solid var(--border); border-radius: 14px; margin: 6px 0 12px; }
+.td35-seg button { flex: 1; min-height: 40px; border: none; border-radius: 10px; background: transparent; color: var(--text3); font-weight: 800; font-size: calc(14px * var(--ui-scale)); cursor: pointer; }
+.td35-seg button.on { background: var(--bg2); color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.td35-sum { font-size: calc(14px * var(--ui-scale)); color: var(--text2); margin-bottom: 10px; }
+.td35-sum b { font-family: var(--font-display); font-size: calc(26px * var(--ui-scale)); color: var(--text); margin-right: 4px; }
+.td35-tip { display: flex; gap: 8px; align-items: flex-start; font-size: calc(13px * var(--ui-scale)); background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; line-height: 1.45; }
+.td35-tip .ic { width: 17px; height: 17px; flex-shrink: 0; margin-top: 1px; color: var(--cta); }
+.td35-sec { margin-top: 16px; }
+.td35-sh { font-size: calc(12px * var(--ui-scale)); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; display: flex; justify-content: space-between; }
+.td35-row { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; width: 100%; text-align: left; padding: 12px 14px; margin-bottom: 8px; border-radius: 14px; border: 1px solid var(--border); border-left: 4px solid color-mix(in srgb, var(--accent) 35%, var(--border)); background: var(--bg3); color: var(--text); cursor: pointer; font: inherit; }
+.td35-row.open { border-left-color: var(--accent); }
+.td35-tr { font-size: calc(15px * var(--ui-scale)); font-weight: 600; line-height: 1.4; }
+.td35-nl { display: none; font-family: var(--font-display); font-weight: 500; font-size: calc(18px * var(--read-scale)); line-height: 1.3; color: var(--accent); }
+.td35-hint { font-size: calc(14px * var(--ui-scale)); letter-spacing: .08em; color: var(--text3); }
+.td35-row.open .td35-nl { display: block; }
+.td35-row.open .td35-hint { display: none; }
+.td35-meta { font-size: calc(11.5px * var(--ui-scale)); color: var(--text3); margin-top: 2px; }
+.td35-g.g { color: var(--green); } .td35-g.o { color: var(--orange); } .td35-g.r { color: var(--red); }
+.td35-entry { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 52px; padding: 0 16px; margin: 12px 0 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg2); color: var(--text); font-weight: 800; font-size: calc(14.5px * var(--ui-scale)); cursor: pointer; }
+.td35-entry .ic { width: 18px; height: 18px; color: var(--accent); }
+.td35-entry span { margin-left: auto; font-weight: 600; color: var(--text3); font-size: calc(12.5px * var(--ui-scale)); }
 </style>
 </head>
 <body>
@@ -1896,6 +1920,17 @@ body { zoom:1 !important; }
 </dialog>
 <div id="v28-toast" class="v28-toast" role="status" hidden></div>
 
+
+<!-- Bugün çalıştıklarım (v35) -->
+<div class="st-overlay" id="td35-overlay" role="dialog" aria-modal="true" aria-label="Bugün çalıştıklarım">
+  <div class="st-wrap">
+    <div class="st-top">
+      <button class="st-close" onclick="closeToday35()" aria-label="Kapat"><svg class="ic"><use href="#i-x"/></svg></button>
+      <div class="td35-title">Bugün çalıştıklarım</div>
+    </div>
+    <div id="td35-body"></div>
+  </div>
+</div>
 <!-- ── Çalışma oturumu (tam ekran) ── -->
 <div class="st-overlay" id="st-overlay" role="dialog" aria-modal="true" aria-label="Çalışma oturumu">
   <div class="st-wrap">
@@ -5744,6 +5779,66 @@ renderTekrar = function() {
   el.innerHTML = `<details class="tk34" ${tekrarOpen34 ? 'open' : ''} ontoggle="setTekrarOpen34(this.open)">
     <summary><span class="tk34-title">Tekrar listesi</span><span class="tk34-count">${list.length} kart</span></summary>
     ${legend}${body}</details>`;
+};
+
+// ── 5i. Bugün çalıştıklarım (v35) ───────────────────────────────────────
+// Deftere aklından yazdıktan sonra kontrol için: seçilen günlerde Hatırla'da
+// çalışılan kartlar (çalışma geçmişi, son 45 gün) ve sesli tekrar edilenler.
+// Varsayılan: Türkçe görünür, Hollandaca gizli; satıra dokununca açılır.
+let tdRange35 = 'today', tdShow35 = false;
+// Uygulamanın geri kalanı gibi todayStr() biçimi (UTC tarih) kullanılır, yoksa kayıtlarla eşleşmez
+function dayStr35(offset) { return new Date(Date.now() - offset * 86400000).toISOString().slice(0, 10); }
+function tdDays35(r) { const out = new Set(); const n = r === 'week' ? 7 : 1, s = r === 'yesterday' ? 1 : 0; for (let i = 0; i < n; i++) out.add(dayStr35(s + i)); return out; }
+function tdCollect35(r) {
+  const days = tdDays35(r), studied = new Map(), said = new Map();
+  for (const e of events28()) {
+    if (!days.has(e.day)) continue;
+    const prev = studied.get(e.cardId);
+    if (!prev || e.at > prev.at) studied.set(e.cardId, e);
+  }
+  for (const src of [myRehearse, otherRehearse]) for (const [id, m] of Object.entries(src || {})) for (const [d, n] of Object.entries(m || {})) if (days.has(d) && n) said.set(Number(id), (said.get(Number(id)) || 0) + n);
+  const card = id => CARDS.find(c => c.id === Number(id));
+  return {
+    studied: [...studied.entries()].map(([id, e]) => ({ c: card(id), e })).filter(x => x.c),
+    said: [...said.entries()].filter(([id]) => !studied.has(id)).map(([id, n]) => ({ c: card(id), n })).filter(x => x.c)
+  };
+}
+function openToday35() { document.getElementById('td35-overlay').classList.add('show'); document.body.style.overflow = 'hidden'; renderToday35(); }
+function closeToday35() { document.getElementById('td35-overlay').classList.remove('show'); document.body.style.overflow = ''; }
+function setTdRange35(r) { tdRange35 = r; renderToday35(); }
+function setTdShow35(v) { tdShow35 = v; renderToday35(); }
+function firstLetters35(s) { return String(s).replace(/[\p{L}\p{N}]+/gu, w => { const a = Array.from(w); return a[0] + a.slice(1).map(() => '_').join(''); }); }
+function renderToday35() {
+  const el = document.getElementById('td35-body'); if (!el) return;
+  const d = tdCollect35(tdRange35), total = d.studied.length + d.said.length;
+  const gl = { bilmedim: ['Hatırlamadım', 'r'], zor: ['İpucuyla', 'o'], bildim: ['Kendim', 'g'] };
+  const seg = (id, l) => `<button class="${tdRange35 === id ? 'on' : ''}" onclick="setTdRange35('${id}')">${l}</button>`;
+  const row = (c, extra) => `<button class="td35-row${tdShow35 ? ' open' : ''}" onclick="this.classList.toggle('open')">
+      <span class="td35-tr">${esc28(c.turkish || '')}</span>
+      <span class="td35-nl" lang="nl">${esc28(c.dutch)}</span>
+      <span class="td35-hint" lang="nl">${esc28(firstLetters35(c.dutch))}</span>
+      <span class="td35-meta">${c.type === 'zin' ? 'Cümle' : c.type === 'uitdrukking' ? 'Deyim' : 'Kelime'}${extra}</span></button>`;
+  let h = `<div class="td35-seg" role="group" aria-label="Gün">${seg('today', 'Bugün')}${seg('yesterday', 'Dün')}${seg('week', 'Son 7 gün')}</div>
+    <div class="td35-sum"><b>${total}</b> farklı kart${tdRange35 === 'week' ? ' bu hafta' : tdRange35 === 'yesterday' ? ' dün' : ' bugün'}</div>
+    <div class="td35-tip">${ic('pin')}<span>Önce deftere aklından yaz. Sonra satıra dokunup Hollandacasını aç ve kontrol et.</span></div>
+    <div class="theme-toggle td35-toggle"><button class="theme-btn${!tdShow35 ? ' active' : ''}" onclick="setTdShow35(false)">Hollandaca gizli</button><button class="theme-btn${tdShow35 ? ' active' : ''}" onclick="setTdShow35(true)">Hepsini göster</button></div>`;
+  if (d.studied.length) h += `<div class="td35-sec"><div class="td35-sh">Hatırla'da çalıştıkların <span>${d.studied.length}</span></div>${d.studied.map(x => row(x.c, ` · <b class="td35-g ${gl[x.e.grade]?.[1] || ''}">${gl[x.e.grade]?.[0] || ''}</b>`)).join('')}</div>`;
+  if (d.said.length) h += `<div class="td35-sec"><div class="td35-sh">Sesli tekrar ettiklerin <span>${d.said.length}</span></div>${d.said.map(x => row(x.c, ` · ${x.n}× söylendi`)).join('')}</div>`;
+  if (!total) h += `<div class="tk34-empty" style="margin:16px 0">Bu aralıkta çalışılan kart yok.</div>`;
+  el.innerHTML = h;
+}
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && document.getElementById('td35-overlay')?.classList.contains('show')) closeToday35(); });
+const baseRenderProgress35 = renderProgress;
+renderProgress = function() {
+  baseRenderProgress35();
+  const el = document.getElementById('progress-content');
+  if (el && !el.querySelector('.td35-entry')) el.insertAdjacentHTML('afterbegin', `<button class="td35-entry" onclick="openToday35()">${ic('book')}Bugün çalıştıklarım<span>defter kontrolü</span></button>`);
+};
+const baseRenderTekrar35 = renderTekrar;
+renderTekrar = function() {
+  baseRenderTekrar35();
+  const el = document.getElementById('study-start');
+  if (el && !el.querySelector('.td35-entry')) el.insertAdjacentHTML('beforeend', `<button class="td35-entry" style="margin:4px 16px 12px; width:calc(100% - 32px)" onclick="openToday35()">${ic('book')}Bugün çalıştıklarım<span>defter kontrolü</span></button>`);
 };
 
 // ── 6. Başlatma ──────────────────────────────────────────────────────────

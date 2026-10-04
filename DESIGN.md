@@ -125,3 +125,9 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 - Hatırla ekranının altındaki liste katlanır bir bölüm ("Tekrar listesi", açık/kapalı durumu hatırlanır). Kartlar zamana göre gruplanır: Şimdi / Bugün içinde / Yarın / Bu hafta / Daha sonra.
 - Her kart: Hollandaca (Fraunces 500, `--read-scale`), Türkçe anlam, tür rozeti, **7 basamaklı nokta göstergesi** (dolu = geçilen tekrar, halka = sıradaki), "N. tekrar · aralık" yazısı, sağda zaman hapı. Zamanı gelen kart oranje sol kenar + "Şimdi hatırla" hapı; diğerleri açık yeşil sol kenar.
 - Kart zemini `--bg3` (krem), kutu `--bg2`; düz beyaz liste görünümü kullanılmaz. 60'ar kart gösterilir, "Daha fazla göster".
+
+## 16. Bugün çalıştıklarım (v35)
+
+- Deftere aklından yazdıktan sonra kontrol ekranı. Hatırla ekranında ve İlerleme'nin en üstünde "Bugün çalıştıklarım · defter kontrolü" düğmesi; tam ekran açılır.
+- Bugün / Dün / Son 7 gün. Türkçe görünür, Hollandaca gizli (yerine ilk harf ipucu); satıra dokununca Hollandaca açılır. "Hepsini göster" ile hepsi açılır.
+- Bölümler: Hatırla'da çalıştıkların (son not: Kendim / İpucuyla / Hatırlamadım) ve sesli tekrar ettiklerin (kaç kez). Kaynak: `v28review:*` çalışma geçmişi ve `rehearse:*` sayaçları; tarihler `todayStr()` (UTC) biçiminde.
