@@ -1536,6 +1536,14 @@ body { zoom:1 !important; }
 .td35-entry { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 52px; padding: 0 16px; margin: 12px 0 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg2); color: var(--text); font-weight: 800; font-size: calc(14.5px * var(--ui-scale)); cursor: pointer; }
 .td35-entry .ic { width: 18px; height: 18px; color: var(--accent); }
 .td35-entry span { margin-left: auto; font-weight: 600; color: var(--text3); font-size: calc(12.5px * var(--ui-scale)); }
+
+/* v36: üç adımlı gösterim (gizli → ilk harfler → tamamı) */
+.td35-row .td35-hint, .td35-row .td35-nl { display: none; }
+.td35-row[data-st="1"] .td35-hint { display: block; }
+.td35-row[data-st="2"] .td35-nl { display: block; }
+.td35-tap { font-size: calc(12px * var(--ui-scale)); color: var(--text3); font-style: italic; }
+.td35-row[data-st="1"] .td35-tap, .td35-row[data-st="2"] .td35-tap { display: none; }
+.td35-row[data-st="1"] { border-left-color: color-mix(in srgb, var(--accent) 65%, var(--border)); }
 </style>
 </head>
 <body>
@@ -5803,6 +5811,8 @@ function tdCollect35(r) {
     said: [...said.entries()].filter(([id]) => !studied.has(id)).map(([id, n]) => ({ c: card(id), n })).filter(x => x.c)
   };
 }
+// v36: 1. dokunuş ilk harfler, 2. dokunuş tam Hollandaca, 3. dokunuş yeniden gizler
+function tdStep35(el) { const st = ((parseInt(el.dataset.st, 10) || 0) + 1) % 3; el.dataset.st = st; el.classList.toggle('open', st === 2); }
 function openToday35() { document.getElementById('td35-overlay').classList.add('show'); document.body.style.overflow = 'hidden'; renderToday35(); }
 function closeToday35() { document.getElementById('td35-overlay').classList.remove('show'); document.body.style.overflow = ''; }
 function setTdRange35(r) { tdRange35 = r; renderToday35(); }
@@ -5813,14 +5823,15 @@ function renderToday35() {
   const d = tdCollect35(tdRange35), total = d.studied.length + d.said.length;
   const gl = { bilmedim: ['Hatırlamadım', 'r'], zor: ['İpucuyla', 'o'], bildim: ['Kendim', 'g'] };
   const seg = (id, l) => `<button class="${tdRange35 === id ? 'on' : ''}" onclick="setTdRange35('${id}')">${l}</button>`;
-  const row = (c, extra) => `<button class="td35-row${tdShow35 ? ' open' : ''}" onclick="this.classList.toggle('open')">
+  const row = (c, extra) => `<button class="td35-row${tdShow35 ? ' open' : ''}" data-st="${tdShow35 ? 2 : 0}" onclick="tdStep35(this)">
       <span class="td35-tr">${esc28(c.turkish || '')}</span>
       <span class="td35-nl" lang="nl">${esc28(c.dutch)}</span>
       <span class="td35-hint" lang="nl">${esc28(firstLetters35(c.dutch))}</span>
+      <span class="td35-tap">Hollandacası gizli · ipucu için dokun</span>
       <span class="td35-meta">${c.type === 'zin' ? 'Cümle' : c.type === 'uitdrukking' ? 'Deyim' : 'Kelime'}${extra}</span></button>`;
   let h = `<div class="td35-seg" role="group" aria-label="Gün">${seg('today', 'Bugün')}${seg('yesterday', 'Dün')}${seg('week', 'Son 7 gün')}</div>
     <div class="td35-sum"><b>${total}</b> farklı kart${tdRange35 === 'week' ? ' bu hafta' : tdRange35 === 'yesterday' ? ' dün' : ' bugün'}</div>
-    <div class="td35-tip">${ic('pin')}<span>Önce deftere aklından yaz. Sonra satıra dokunup Hollandacasını aç ve kontrol et.</span></div>
+    <div class="td35-tip">${ic('pin')}<span>Önce deftere aklından yaz. Sonra kontrol et: bir dokunuş ilk harfleri, ikinci dokunuş Hollandacanın tamamını gösterir.</span></div>
     <div class="theme-toggle td35-toggle"><button class="theme-btn${!tdShow35 ? ' active' : ''}" onclick="setTdShow35(false)">Hollandaca gizli</button><button class="theme-btn${tdShow35 ? ' active' : ''}" onclick="setTdShow35(true)">Hepsini göster</button></div>`;
   if (d.studied.length) h += `<div class="td35-sec"><div class="td35-sh">Hatırla'da çalıştıkların <span>${d.studied.length}</span></div>${d.studied.map(x => row(x.c, ` · <b class="td35-g ${gl[x.e.grade]?.[1] || ''}">${gl[x.e.grade]?.[0] || ''}</b>`)).join('')}</div>`;
   if (d.said.length) h += `<div class="td35-sec"><div class="td35-sh">Sesli tekrar ettiklerin <span>${d.said.length}</span></div>${d.said.map(x => row(x.c, ` · ${x.n}× söylendi`)).join('')}</div>`;

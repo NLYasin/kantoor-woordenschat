@@ -4,7 +4,7 @@
 // güncellemeleri PWA'da her zaman en güncel haliyle gelir, eski cache
 // asılı kalmaz.
 
-const CACHE_NAME = 'woordenschat-v35'; // her güncellemede bu numarayı artır
+const CACHE_NAME = 'woordenschat-v36'; // her güncellemede bu numarayı artır
 const REMINDER_CACHE = 'kv-reminder'; // hatırlatma ayarları — silinmez
 const ASSETS = [
   './index.html',
