@@ -2976,7 +2976,7 @@ function renderListenScreen() {
 
 function renderListenSetup(el) {
   const count = getListenScopeCards().length;
-  const sentenceDates = sortDates([...new Set(CARDS.filter(c => c.type === 'zin').map(c => c.date))]);
+  const sentenceDates = sortDates([...new Set(CARDS.filter(listenable37).map(c => c.date))]);
 
   el.innerHTML = `
     <div class="listen-setup">
@@ -2996,7 +2996,13 @@ function renderListenSetup(el) {
       </div>
       ${listenScope==='lesson' ? `<div class="listen-lesson-chips">${sentenceDates.map(d => `<button class="listen-opt-btn ${d===listenLessonDate?'active':''}" data-date="${esc28(d)}" onclick="selectListenLesson(this.dataset.date)">${esc28(d)}</button>`).join('')}</div>` : ''}
 
-      <div class="listen-setup-count">${count} cümle dinlenecek</div>
+      <div class="listen-setup-label">Neler dinlensin?</div>
+      <div class="listen-setup-row">
+        <button class="listen-setup-opt ${!listenIdioms37 ? 'active' : ''}" onclick="setListenIdioms37(false)">Sadece cümleler</button>
+        <button class="listen-setup-opt ${listenIdioms37 ? 'active' : ''}" onclick="setListenIdioms37(true)">Cümle + deyimler</button>
+      </div>
+
+      <div class="listen-setup-count">${count} ${listenIdioms37 ? 'cümle ve deyim' : 'cümle'} dinlenecek</div>
 
       <div class="listen-setup-label">Her cümle</div>
       <div class="listen-setup-row">
@@ -5590,8 +5596,19 @@ stReveal = function() {
 
 // ── 5d. Dinleme modu düzeltmeleri (v31) ─────────────────────────────────
 // Deyimler de dinlenir (önceden sadece "cümle" türü), "Vazgeç" Sesli tekrar'a döner.
+// v37: Dinleme kuyruğu yalnızca gerçek cümleleri içerir. Noktalama işareti olmayan
+// 1–2 kelimelik "cümle" kayıtları (aslında kelime/kalıp) dinlemeye alınmaz.
+// Deyimler isteğe bağlıdır (varsayılan kapalı; kurulum ekranındaki seçimle açılır).
+let listenIdioms37 = !!v28Read('kv_listen_idioms', false);
+function setListenIdioms37(on) { listenIdioms37 = !!on; v28Store('kv_listen_idioms', listenIdioms37); renderListenScreen(); }
+function listenable37(c) {
+  const s = String(c.dutch || '').trim(); if (!s) return false;
+  if (c.type === 'uitdrukking') return listenIdioms37;
+  if (c.type !== 'zin') return false;
+  return s.split(/\s+/).length >= 3 || /[.?!…]$/.test(s);
+}
 getListenScopeCards = function() {
-  const sentences = CARDS.filter(c => c.type === 'zin' || c.type === 'uitdrukking');
+  const sentences = CARDS.filter(listenable37);
   if (listenScope === 'today') return dedupeByDutch(sentences.filter(c => isDue(c.id)));
   if (listenScope === 'lesson') return listenLessonDate ? dedupeByDutch(sentences.filter(c => c.date === listenLessonDate)) : [];
   return dedupeByDutch(sentences);
@@ -5626,25 +5643,26 @@ async function importCorrections31(event) {
       // v32: "persist" = ekranda zaten görünen (v28'in yalnızca ekranda uyguladığı)
       // değerleri de veritabanına kalıcı yaz.
       const force = !!(fix.persist || data.persistAll);
-      if (!Object.keys(changed).length && !temaChange && !force) continue;
+      if (!Object.keys(changed).length && !temaChange && !force && !('raw' in fix)) continue;
       Object.keys(changed).forEach(k => { if (stats[k] !== undefined) stats[k]++; else stats.other++; });
       if (temaChange) stats.tema++;
       if (force && !Object.keys(changed).length) stats.persist++;
       const full = {}; if (force) for (const k of FIELDS) if (k in fix) full[k] = fix[k];
-      plan.push({ c, changed, tema: temaChange ? fix.tema : null, force, full, nr: ('needsReview' in fix) ? !!fix.needsReview : !!c._needsReview });
+      plan.push({ c, changed, tema: temaChange ? fix.tema : null, force, full, nr: ('needsReview' in fix) ? !!fix.needsReview : !!c._needsReview, rawSet: ('raw' in fix), rawVal: fix.raw });
     }
     if (!plan.length) { el.className = 'settings-status show ok'; el.textContent = 'Uygulanacak değişiklik yok; kartlar zaten güncel.' + (missing ? ` (${missing} kart bu cihazda bulunamadı.)` : ''); return; }
     const summary = `${plan.length} kart güncellenecek:\n• Tür: ${stats.type}\n• Hollandaca ifade: ${stats.dutch}\n• Türkçe: ${stats.turkish}\n• Açıklama: ${stats.uitleg}\n• Örnekler: ${stats.examples}\n• Tema: ${stats.tema}\n• Diğer: ${stats.other}` + (stats.persist ? `\n• Ekranda zaten doğru görünen, veritabanına kalıcı yazılacak: ${stats.persist}` : '') + (missing ? `\n(${missing} kart bulunamadı, atlanacak)` : '') + '\n\nİlerlemen ve tekrar takvimin değişmez. Devam edilsin mi?';
     if (!confirm(summary)) { el.className = 'settings-status show'; el.textContent = 'Vazgeçildi.'; return; }
     let temaChanged = false;
-    for (const { c, changed, tema, force, full, nr } of plan) {
-      if (Object.keys(changed).length || force) {
+    for (const { c, changed, tema, force, full, nr, rawSet, rawVal } of plan) {
+      if (Object.keys(changed).length || force || rawSet) {
         const upd = { ...(full || {}), ...changed };
         const merged = { ...c, ...upd, isLegal: 'is_legal' in upd ? !!upd.is_legal : c.isLegal };
         const payload = cardPayload28(merged);
         queue28('card:' + c.id, 'cards?id=eq.' + c.id, 'PATCH', payload);
         const m = meta28(c);
-        const raw = upd.dutch && norm28(upd.dutch) !== norm28(c.dutch) ? (m.raw || c._raw || c.dutch) : (m.raw || c._raw || null);
+        // v38: düzeltme dosyasında "raw" varsa (null dahil) "ilk duyulan" kaydı aynen o olur
+        const raw = rawSet ? rawVal : (upd.dutch && norm28(upd.dutch) !== norm28(c.dutch) ? (m.raw || c._raw || c.dutch) : (m.raw || c._raw || null));
         state28('cardmeta:' + c.id, { ...m, raw: raw && norm28(raw) !== norm28(merged.dutch) ? raw : null, needsReview: nr, custom: true });
         CARDS = CARDS.map(x => x.id === c.id ? { ...x, ...payload, isLegal: payload.is_legal, _raw: raw && norm28(raw) !== norm28(merged.dutch) ? raw : null, _needsReview: nr } : x);
       }
@@ -5710,13 +5728,17 @@ renderAll = function() {
 // ── 5g. Eşitleme bitince haber ver (v33) ─────────────────────────────────
 // Bekleyen kayıtlar sıfıra inince kısa bir bildirim çıkar; toplu düzeltme
 // mesajı "gönderiliyor"dan "kaydedildi"ye döner.
-let lastPending33 = Object.keys(outbox28).length;
+let lastPending33 = Object.keys(outbox28).length, peakPending37 = lastPending33;
 const basePending33 = pendingStatus28;
 pendingStatus28 = function() {
   basePending33();
   const n = Object.keys(outbox28).length;
+  peakPending37 = Math.max(peakPending37, n);
   if (lastPending33 > 0 && n === 0) {
-    toast28('Eşitleme tamamlandı. Bütün kayıtlar sunucuda.');
+    // v37: Her kartta çıkmasın. "Eşitleme tamamlandı" yalnızca 8+ kayıtlık toplu
+    // eşitlemede (düzeltme yükleme, çevrimdışı birikim) ve çalışma oturumu açık değilken görünür.
+    if (peakPending37 >= 8 && !(typeof st !== 'undefined' && st)) toast28('Eşitleme tamamlandı. Bütün kayıtlar sunucuda.');
+    peakPending37 = 0;
     const io = document.getElementById('io-status');
     if (io && /Sunucuya gönderiliyor|Bağlantı gelince/.test(io.textContent)) {
       io.className = 'settings-status show ok';

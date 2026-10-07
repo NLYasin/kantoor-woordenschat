@@ -131,3 +131,14 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 - Deftere aklından yazdıktan sonra kontrol ekranı. Hatırla ekranında ve İlerleme'nin en üstünde "Bugün çalıştıklarım · defter kontrolü" düğmesi; tam ekran açılır.
 - Bugün / Dün / Son 7 gün. Türkçe görünür, Hollandaca tamamen gizli. v36: 1. dokunuş ilk harfleri, 2. dokunuş Hollandacanın tamamını gösterir, 3. dokunuş yeniden gizler (`tdStep35`, `data-st` 0/1/2). "Hepsini göster" ile hepsi açılır.
 - Bölümler: Hatırla'da çalıştıkların (son not: Kendim / İpucuyla / Hatırlamadım) ve sesli tekrar ettiklerin (kaç kez). Kaynak: `v28review:*` çalışma geçmişi ve `rehearse:*` sayaçları; tarihler `todayStr()` (UTC) biçiminde.
+
+## 17. v37
+
+- **Eşitleme bildirimi:** "Eşitleme tamamlandı" yalnızca 8 veya daha fazla kayıtlık toplu eşitlemeden sonra ve çalışma oturumu açık değilken görünür. Tek tek kart notlarında bildirim çıkmaz.
+- **Dinleme modu:** Varsayılan kuyruk yalnızca gerçek cümlelerdir (`listenable37`): tür "cümle" ve (3+ kelime ya da noktalama ile biten). Deyimler kurulum ekranındaki "Neler dinlensin?" seçimiyle eklenir (`kv_listen_idioms`, varsayılan kapalı).
+- Kılavuz: "Kantoor Woordenschat — Nasıl Çalışılır?" belgesi (Claude Docs) bütün sayfaları sırayla anlatır.
+
+## 18. v38
+
+- Düzeltme dosyasındaki karta `"raw"` eklenirse (`null` dahil) kartın "ilk duyulan" kaydı aynen o değer olur; `null` kaydı temizler. Yazım hatasıyla girilmiş bir ifadeyi düzeltirken hatalı halin "ilk duyulan" diye saklanmaması için kullanılır.
+- Düzeltme yaparken ifadenin yazım hatası olabileceği düşünülmeli: önce "duyduğun asıl ifade ne?" diye sor, doğal bir Hollandaca kalıba çevirmeden önce yazım hatasını (ör. Ben → Bel) dene.
