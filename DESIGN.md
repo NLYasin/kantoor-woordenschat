@@ -146,3 +146,7 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 ## v39 (2026-10-31)
 - Hız: −/+ yuvarlak düğmeler, Fraunces değer, `--cta` kaydırıcı; oynatıcıda küçük −/+ satırı.
 - Sonra bak: iğne ikonu (`i-pin`), kayıtlıyken `--cta`. Liste tam ekran (`.later-ov`), segment kontrolü `--bg3` zemin, ana eylem `--cta`.
+
+## v40 (2026-10-31)
+- "Çöpe at": Hatırla kartında "Dinle"nin yanında, sesli tekrar oynatıcısında "Sonra bak"ın yanında; çöp ikonu `--red`, yazı normal renk (göze batmasın).
+- Onay penceresi yok; yerine altta koyu "Geri al" bildirimi (`.undo40`, 6 sn, `--cta` düğme). Kart 30 günlük çöp kutusuna gider.

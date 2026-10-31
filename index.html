@@ -1598,6 +1598,17 @@ body { zoom:1 !important; }
 .later-mini { width:100%; border:1px solid var(--border); border-radius:12px; padding:0 12px; background:var(--bg3); }
 .later-mini .ic { width:15px; height:15px; }
 .later-mini div { white-space:pre-wrap; font-size:calc(13.5px * var(--ui-scale)); line-height:1.5; padding-bottom:10px; }
+
+/* v40: Çöpe at + Geri al bildirimi */
+.st-trash40 { color: var(--text2); }
+.st-trash40 .ic { color: var(--red); }
+.later-row.center { flex-direction: row; justify-content: center; flex-wrap: wrap; }
+.later-btn.trash40 .ic { color: var(--red); }
+.undo40 { position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px); opacity: 0; pointer-events: none; z-index: 4000; display: flex; align-items: center; gap: 12px; width: min(440px, calc(100vw - 32px)); box-sizing: border-box; padding: 10px 10px 10px 16px; border-radius: 16px; background: #16233F; color: #F3F5FA; border: 1px solid #2C416D; box-shadow: 0 10px 30px rgba(0,0,0,.3); font-size: calc(13.5px * var(--ui-scale)); line-height: 1.35; transition: opacity .2s, transform .2s; }
+.undo40.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.undo40 span { flex: 1; min-width: 0; }
+.undo40 button { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 12px; border: none; background: var(--cta); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+.undo40 .ic { width: 15px; height: 15px; }
 </style>
 </head>
 <body>
@@ -2008,6 +2019,7 @@ body { zoom:1 !important; }
           <div class="st-lbl">Nederlands</div>
           <div class="st-nl" id="st-nl" lang="nl"></div><div class="st-feedback" id="st-feedback" role="status"></div>
           <button class="st-tool" id="st-listen" onclick="stSpeak(this)"><svg class="ic"><use href="#i-volume"/></svg>Dinle</button>
+          <button class="st-tool st-trash40" id="st-trash" onclick="stTrash40()" title="Bu kartı çöp kutusuna taşı"><svg class="ic"><use href="#i-trash"/></svg>Çöpe at</button>
         </div>
         <div class="st-hint" id="st-hint" lang="nl" style="display:none"></div>
         <div class="st-say" id="st-say"><svg class="ic"><use href="#i-microphone"/></svg>Anlamını içinden söyle, sonra kontrol et</div>
@@ -6125,6 +6137,80 @@ const baseRenderDrafts39 = renderDrafts28;
 renderDrafts28 = function(){ baseRenderDrafts39.apply(this, arguments); renderLaterEntry39(); };
 document.addEventListener('keydown', e => { const ov = document.getElementById('later-ov'); if (ov && ov.classList.contains('show') && e.key === 'Escape') closeLater39(); });
 setTimeout(renderLaterEntry39, 0);
+
+
+// ══════════════════════════════════════════════════════════════════════
+// v40: HATIRLA ve DİNLEME'de "Çöpe at" (30 gün çöp kutusu, Geri al ile)
+// ══════════════════════════════════════════════════════════════════════
+let undo40Timer = null;
+function undoToast40(text, onUndo) {
+  let el = document.getElementById('undo40');
+  if (!el) { el = document.createElement('div'); el.id = 'undo40'; el.className = 'undo40'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
+  el.innerHTML = `<span>${esc28(text)}</span><button type="button">${ic('repeat')}Geri al</button>`;
+  el.querySelector('button').onclick = () => { clearTimeout(undo40Timer); el.classList.remove('show'); onUndo(); };
+  const t = document.getElementById('v28-toast'); if (t) t.hidden = true;
+  el.classList.add('show');
+  clearTimeout(undo40Timer); undo40Timer = setTimeout(() => el.classList.remove('show'), 6000);
+}
+async function trash40(id) {
+  await deleteCard(id);
+  const t = document.getElementById('v28-toast'); if (t) t.hidden = true;
+}
+function restore40(id) {
+  if (typeof restoreCard29 === 'function') restoreCard29(String(id));
+  const t = document.getElementById('v28-toast'); if (t) t.hidden = true;
+}
+// Hatırla
+async function stTrash40() {
+  if (!st || st.busy) return;
+  const q = st.queue[st.i]; if (!q) return;
+  const id = q.id, c = CARDS.find(x => x.id === id), label = c ? c.dutch : '';
+  st.busy = true;
+  stopAllAudio();
+  await trash40(id);
+  st.queue = st.queue.filter((x, j) => j < st.i || x.id !== id);
+  st.busy = false;
+  stRender();
+  undoToast40(`"${label.length > 40 ? label.slice(0, 40) + '…' : label}" çöp kutusuna taşındı.`, () => {
+    restore40(id);
+    if (st) { st.queue.splice(st.i, 0, { id, again: false }); if (document.getElementById('st-finish').style.display !== 'none') { document.getElementById('st-finish').style.display = 'none'; document.getElementById('st-session').style.display = ''; } stRender(); }
+    toast28('Kart geri alındı.');
+  });
+}
+// Sesli tekrar oynatıcısı
+async function listenTrash40() {
+  const card = listenQueue[listenIndex]; if (!card) return;
+  const at = listenIndex, wasPlaying = listenPlaying;
+  listenAbortToken++;
+  if (currentAudio) { try { currentAudio.pause(); } catch (e) {} }
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  await trash40(card.id);
+  listenQueue.splice(at, 1);
+  if (!listenQueue.length) { listenPlaying = false; listenIndex = 0; }
+  else if (listenIndex >= listenQueue.length) listenIndex = listenQueue.length - 1;
+  renderListenScreen();
+  if (wasPlaying && listenQueue.length) listenPlayCurrent();
+  undoToast40(`"${card.dutch.length > 40 ? card.dutch.slice(0, 40) + '…' : card.dutch}" çöp kutusuna taşındı.`, () => {
+    restore40(card.id);
+    listenQueue.splice(Math.min(at, listenQueue.length), 0, card);
+    listenIndex = Math.min(at, listenQueue.length - 1);
+    listenAbortToken++;
+    renderListenScreen();
+    if (listenPlaying) listenPlayCurrent();
+    toast28('Kart geri alındı.');
+  });
+}
+const baseListenPatch40 = listenPatchPlayback;
+listenPatchPlayback = function() {
+  baseListenPatch40.apply(this, arguments);
+  const row = document.querySelector('#screen-listen .later-row.center') || (document.getElementById('listen-later') && document.getElementById('listen-later').parentNode);
+  if (row && !document.getElementById('listen-trash')) {
+    const b = document.createElement('button');
+    b.id = 'listen-trash'; b.type = 'button'; b.className = 'later-btn trash40';
+    b.title = 'Bu kartı çöp kutusuna taşı'; b.innerHTML = ic('trash') + '<span>Çöpe at</span>';
+    b.onclick = listenTrash40; row.appendChild(b);
+  }
+};
 
 </script>
 </body>
