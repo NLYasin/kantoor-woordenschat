@@ -142,3 +142,7 @@ Bu dosya, Woordenschat (sociaal raadsman ofisi için Hollandaca kelime kartları
 
 - Düzeltme dosyasındaki karta `"raw"` eklenirse (`null` dahil) kartın "ilk duyulan" kaydı aynen o değer olur; `null` kaydı temizler. Yazım hatasıyla girilmiş bir ifadeyi düzeltirken hatalı halin "ilk duyulan" diye saklanmaması için kullanılır.
 - Düzeltme yaparken ifadenin yazım hatası olabileceği düşünülmeli: önce "duyduğun asıl ifade ne?" diye sor, doğal bir Hollandaca kalıba çevirmeden önce yazım hatasını (ör. Ben → Bel) dene.
+
+## v39 (2026-10-31)
+- Hız: −/+ yuvarlak düğmeler, Fraunces değer, `--cta` kaydırıcı; oynatıcıda küçük −/+ satırı.
+- Sonra bak: iğne ikonu (`i-pin`), kayıtlıyken `--cta`. Liste tam ekran (`.later-ov`), segment kontrolü `--bg3` zemin, ana eylem `--cta`.

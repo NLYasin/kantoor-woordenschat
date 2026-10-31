@@ -1544,6 +1544,60 @@ body { zoom:1 !important; }
 .td35-tap { font-size: calc(12px * var(--ui-scale)); color: var(--text3); font-style: italic; }
 .td35-row[data-st="1"] .td35-tap, .td35-row[data-st="2"] .td35-tap { display: none; }
 .td35-row[data-st="1"] { border-left-color: color-mix(in srgb, var(--accent) 65%, var(--border)); }
+
+/* v39: ince hız + Sonra bak */
+.kv-spd { display:flex; flex-direction:column; gap:10px; margin-bottom:6px; }
+.kv-spd-row { display:flex; align-items:center; justify-content:center; gap:14px; }
+.kv-spd-step { width:48px; height:48px; border-radius:50%; border:1px solid var(--border); background:var(--bg3); color:var(--text); font-size:calc(24px * var(--ui-scale)); font-weight:700; line-height:1; cursor:pointer; }
+.kv-spd-val { min-width:96px; text-align:center; font-family:var(--font-display); font-weight:600; font-size:calc(30px * var(--ui-scale)); }
+.kv-spd-range { width:100%; accent-color:var(--cta); height:28px; }
+.kv-spd-note { text-align:center; color:var(--text3); font-size:calc(12px * var(--ui-scale)); }
+.kv-spd-mini { display:flex; align-items:center; justify-content:center; gap:12px; margin:8px 0 2px; }
+.kv-spd-mini button { width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--bg3); color:var(--text); font-size:calc(20px * var(--ui-scale)); font-weight:700; line-height:1; cursor:pointer; }
+.kv-spd-mini span { display:inline-flex; align-items:center; gap:6px; min-width:76px; justify-content:center; color:var(--text3); }
+.kv-spd-mini b { color:var(--text); font-size:calc(16px * var(--ui-scale)); }
+.kv-spd-mini .ic { width:16px; height:16px; }
+.later-btn { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 14px; border-radius:20px; border:1px solid var(--border); background:var(--bg3); color:var(--text); font:inherit; font-weight:700; font-size:calc(13px * var(--ui-scale)); cursor:pointer; }
+.later-btn .ic { width:15px; height:15px; }
+.later-btn.on { color:var(--cta); border-color:color-mix(in srgb, var(--cta) 50%, var(--border)); background:color-mix(in srgb, var(--cta) 10%, var(--bg3)); }
+.later-btn.later-link { min-height:34px; padding:0 10px; background:transparent; border-color:transparent; color:var(--text2); }
+.later-btn.later-link.on { color:var(--cta); }
+.later-row { display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+.later-row.center { align-items:center; margin:8px 0; }
+.later-entry { display:flex; align-items:center; gap:10px; width:calc(100% - 32px); margin:4px 16px 10px; min-height:50px; padding:0 16px; border-radius:var(--radius); border:1px solid var(--border); background:var(--bg2); color:var(--text); font:inherit; font-weight:800; font-size:calc(14.5px * var(--ui-scale)); cursor:pointer; }
+.later-entry .ic { width:18px; height:18px; color:var(--cta); }
+.later-entry span { margin-left:auto; font-weight:600; color:var(--text3); font-size:calc(12.5px * var(--ui-scale)); }
+.later-ov { position:fixed; inset:0; z-index:3000; background:var(--bg); display:none; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.later-ov.show { display:block; }
+.later-wrap { max-width:620px; margin:0 auto; padding:calc(14px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom)); }
+.later-top { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.later-top h2 { font-family:var(--font-display); font-weight:700; font-size:calc(22px * var(--ui-scale)); margin:0; }
+.later-close { width:44px; height:44px; border-radius:50%; border:1px solid var(--border); background:var(--bg2); color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.later-tip { display:flex; gap:8px; align-items:flex-start; background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:calc(13px * var(--ui-scale)); line-height:1.45; margin:0 0 10px; }
+.later-tip .ic { width:17px; height:17px; flex-shrink:0; color:var(--cta); margin-top:1px; }
+.later-seg { display:flex; gap:4px; padding:4px; background:var(--bg3); border:1px solid var(--border); border-radius:14px; margin-bottom:12px; }
+.later-seg button { flex:1; min-height:40px; border:none; border-radius:10px; background:transparent; color:var(--text3); font:inherit; font-weight:800; font-size:calc(13.5px * var(--ui-scale)); cursor:pointer; }
+.later-seg button.on { background:var(--bg2); color:var(--accent); box-shadow:0 1px 3px rgba(0,0,0,.15); }
+.later-empty { text-align:center; color:var(--text3); padding:24px 8px; line-height:1.5; }
+.later-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:12px; }
+.later-actions .btn-secondary29 { display:inline-flex; align-items:center; gap:6px; min-height:44px; border-radius:12px; padding:0 14px; }
+.later-ask { flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:44px; border:none; border-radius:12px; background:var(--cta); color:var(--on-cta); font:inherit; font-weight:800; cursor:pointer; }
+.later-actions .ic, .later-ask .ic { width:16px; height:16px; }
+.later-item { background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:12px; margin-bottom:10px; display:flex; flex-direction:column; gap:8px; }
+.later-head { display:flex; gap:10px; align-items:flex-start; }
+.later-sel { width:20px; height:20px; margin-top:3px; accent-color:var(--cta); }
+.later-txt { flex:1; min-width:0; }
+.later-nl { font-family:var(--font-display); font-weight:500; font-size:calc(18px * var(--ui-scale)); line-height:1.3; }
+.later-tr { color:var(--text3); font-size:calc(13.5px * var(--ui-scale)); margin-top:3px; }
+.later-type { margin-top:4px; font-size:calc(11px * var(--ui-scale)); font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); }
+.later-ico { width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--bg3); color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+.later-ico .ic { width:17px; height:17px; }
+.later-note, .later-ans textarea { width:100%; box-sizing:border-box; padding:9px 12px; border-radius:12px; border:1px solid var(--border); background:var(--bg); color:var(--text); font:inherit; font-size:calc(14px * var(--ui-scale)); }
+.later-ans summary, .later-mini summary { cursor:pointer; font-weight:700; color:var(--accent); font-size:calc(13px * var(--ui-scale)); padding:4px 0; display:flex; align-items:center; gap:6px; }
+.later-ans textarea { margin-top:6px; line-height:1.5; resize:vertical; }
+.later-mini { width:100%; border:1px solid var(--border); border-radius:12px; padding:0 12px; background:var(--bg3); }
+.later-mini .ic { width:15px; height:15px; }
+.later-mini div { white-space:pre-wrap; font-size:calc(13.5px * var(--ui-scale)); line-height:1.5; padding-bottom:10px; }
 </style>
 </head>
 <body>
@@ -3018,9 +3072,7 @@ function renderListenSetup(el) {
       </div>
 
       <div class="listen-setup-label">${ic('bolt')}Hız</div>
-      <div class="listen-setup-row">
-        ${[0.75,1,1.25,1.5,2].map(s => `<button class="listen-setup-opt ${s===listenSpeed?'active':''}" onclick="setListenSpeed(${s})">${s}×</button>`).join('')}
-      </div>
+      ${speedSetupHtml39()}
 
       <div class="listen-setup-actions">
         <button class="listen-setup-cancel" onclick="showScreen('sesli')">Vazgeç</button>
@@ -3067,6 +3119,7 @@ function renderListenPlayback(el, progressText) {
       <button class="listen-ctrl-btn play" id="listen-play-btn" onclick="listenTogglePlay()"></button>
       <button class="listen-ctrl-btn small" onclick="listenNextManual()" title="Sonraki">${ic('next')}</button>
     </div>
+    <div class="kv-spd-mini"><button onclick="nudgeSpeed39(-0.05)" aria-label="Yavaşlat">−</button><span>${ic('bolt')}<b class="kv-spd-val">${fmtSpd39(listenSpeed)}</b></span><button onclick="nudgeSpeed39(0.05)" aria-label="Hızlandır">+</button></div>
 
     <div class="listen-playback-meta" id="listen-meta"></div>
 
@@ -5046,7 +5099,7 @@ renderCard=function(c){
  return `<article class="card${on?' expanded':''}" id="card-${c.id}"><button class="card-head" onclick="toggleCard(${c.id})" aria-expanded="${on}" aria-controls="body-${c.id}"><span class="badge badge-${cls}">${label}</span><div style="flex:1;min-width:0"><div class="card-dutch" lang="nl">${esc28(c.dutch)}</div>${preview.text?`<div class="${preview.nl?'card-preview':'card-tr'}" ${preview.nl?'lang="nl"':''}>${esc28(preview.text)}</div>`:''}</div><span id="arr-${c.id}">›</span></button>
  ${c._needsReview?'<div class="quality-label">İfade kontrol bekliyor</div>':''}${sr?`<div class="sr-status ${sr.cls}">${sr.text}</div>`:''}
  <div class="card-footer"><button class="btn-speak icon-only" aria-label="Hollandaca dinle" onclick="speakCard28(event,${c.id})">${ic('volume')}</button><span class="tema-chip" id="tchip-${c.id}">${esc28(TEMA_BY_ID[getTema(c)].label)}</span><button class="btn-known ${known?'known':''}" onclick="toggleKnown(event,${c.id})" ${!known&&!ready28(c)?'disabled':''}>${known?'Çalışmada':c._needsReview?'Önce kontrol et':'Çalışmaya ekle'}</button></div>
- <div class="card-body${on?' open':''}" id="body-${c.id}">${cardBodyHtml(c,'c')}<div class="card-tools">${temaSelectHtml(c)}<button class="btn-link" onclick="openEditor(${c.id})">Düzenle</button><button class="btn-link" onclick="copyPhrase28(${c.id})">Konuşma için kopyala</button><button class="btn-link danger" onclick="confirmDelete(event,${c.id})">Kartı sil</button></div></div></article>`;
+ <div class="card-body${on?' open':''}" id="body-${c.id}">${cardBodyHtml(c,'c')}<div class="card-tools">${temaSelectHtml(c)}${laterBtn39(c.id,'later-link')}<button class="btn-link" onclick="openEditor(${c.id})">Düzenle</button><button class="btn-link" onclick="copyPhrase28(${c.id})">Konuşma için kopyala</button><button class="btn-link danger" onclick="confirmDelete(event,${c.id})">Kartı sil</button></div></div></article>`;
 };
 const baseToggleCard28=toggleCard;
 toggleCard=function(id){baseToggleCard28(id);document.querySelector('#card-'+id+' .card-head')?.setAttribute('aria-expanded',String(openCardBodies.has(id)));};
@@ -5916,6 +5969,163 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+
+// ══════════════════════════════════════════════════════════════════════
+// v39: İNCE HIZ AYARI + SONRA BAK (Claude'a sor)
+// ══════════════════════════════════════════════════════════════════════
+const SPD39_MIN = 0.6, SPD39_MAX = 1.6;
+function fmtSpd39(v){ return String(parseFloat((Math.round(v * 100) / 100).toFixed(2))) + '×'; }
+function setSpeed39(v){
+  v = Math.round(Math.min(SPD39_MAX, Math.max(SPD39_MIN, v)) * 100) / 100;
+  listenSpeed = v; saveListenPrefs();
+  document.querySelectorAll('.kv-spd-val').forEach(el => el.textContent = fmtSpd39(v));
+  document.querySelectorAll('.kv-spd-range').forEach(el => { if (parseFloat(el.value) !== v) el.value = v; });
+  document.querySelectorAll('.kv-spd-preset').forEach(b => b.classList.toggle('active', Math.abs(parseFloat(b.dataset.speed) - v) < 0.001));
+  const meta = document.getElementById('listen-meta'); if (meta && typeof listenPatchPlayback === 'function') listenPatchPlayback();
+}
+function nudgeSpeed39(d){ setSpeed39(listenSpeed + d); }
+setListenSpeed = function(v){ setSpeed39(v); };
+function speedSetupHtml39(){
+  return `<div class="kv-spd">
+    <div class="kv-spd-row"><button class="kv-spd-step" onclick="nudgeSpeed39(-0.05)" aria-label="Yavaşlat">−</button>
+      <div class="kv-spd-val">${fmtSpd39(listenSpeed)}</div>
+      <button class="kv-spd-step" onclick="nudgeSpeed39(0.05)" aria-label="Hızlandır">+</button></div>
+    <input type="range" class="kv-spd-range" min="0.6" max="1.6" step="0.05" value="${listenSpeed}" oninput="setSpeed39(parseFloat(this.value))" aria-label="Konuşma hızı">
+    <div class="listen-setup-row">${[0.8,0.9,1,1.1,1.25].map(s => `<button class="listen-setup-opt kv-spd-preset ${Math.abs(s-listenSpeed)<0.001?'active':''}" data-speed="${s}" onclick="setSpeed39(${s})">${s}×</button>`).join('')}</div>
+    <div class="kv-spd-note">0.05'lik adımlarla 0.6× – 1.6×. Dinlerken de değiştirebilirsin; seçtiğin hız hatırlanır.</div>
+  </div>`;
+}
+
+// ── Sonra bak ─────────────────────────────────────────────────────────
+// app_state 'later' anahtarında tutulur: { kartId: { at, u, note, ans, d } }. d=1 silinmiş.
+let later39Local = v28Read('kv_later', {});
+function later39Merge(){
+  const srv = rows28['later'] || {}, out = Object.assign({}, srv); let localNewer = false;
+  Object.entries(later39Local).forEach(([k, v]) => { const s = srv[k]; if (!s || (v.u || 0) > (s.u || 0)) { out[k] = v; localNewer = true; } });
+  return { out, localNewer };
+}
+function later39Get(){ return later39Merge().out; }
+function later39Save(map){ later39Local = map; v28Store('kv_later', map); state28('later', map); }
+function isLater39(id){ const e = later39Get()[id]; return !!(e && !e.d); }
+function later39Card(id){ return CARDS.find(c => String(c.id) === String(id)); }
+function later39List(){
+  const m = later39Get();
+  return Object.keys(m).filter(k => !m[k].d && later39Card(k)).sort((a, b) => (m[b].at || 0) - (m[a].at || 0));
+}
+function toggleLater39(id){
+  const m = later39Get(), now = Date.now(), e = m[id];
+  if (e && !e.d) { m[id] = Object.assign({}, e, { d:1, u:now }); }
+  else m[id] = { at:now, u:now, note:(e && e.note) || '', ans:(e && e.ans) || '', d:0 };
+  later39Save(m); updateLater39();
+  toast28(isLater39(id) ? 'Sonra bak listesine eklendi.' : 'Listeden çıkarıldı.');
+}
+function laterBtn39(id, cls){
+  const on = isLater39(id);
+  return `<button class="later-btn${on ? ' on' : ''}${cls ? ' ' + cls : ''}" data-later="${esc28(id)}" onclick="toggleLater39('${esc28(id)}')">${ic('pin')}<span>${on ? 'Kaydedildi' : 'Sonra bak'}</span></button>`;
+}
+function updateLater39(){
+  document.querySelectorAll('[data-later]').forEach(b => { const on = isLater39(b.dataset.later); b.classList.toggle('on', on); const s = b.querySelector('span'); if (s) s.textContent = on ? 'Kaydedildi' : 'Sonra bak'; });
+  renderLaterEntry39();
+}
+function renderLaterEntry39(){
+  let el = document.getElementById('later-entry');
+  if (!el) { const d = document.getElementById('draft-list'); if (!d) return; el = document.createElement('div'); el.id = 'later-entry'; d.parentNode.insertBefore(el, d); }
+  const list = later39List(), m = later39Get(), open = list.filter(k => !(m[k].ans || '').trim()).length;
+  el.innerHTML = list.length ? `<button class="later-entry" onclick="openLater39()">${ic('pin')}Sonra bak<span>${list.length} kayıt${open ? ' · ' + open + ' cevapsız' : ''}</span></button>` : '';
+}
+let later39Filter = 'open';
+function openLater39(){
+  let ov = document.getElementById('later-ov');
+  if (!ov) {
+    ov = document.createElement('div'); ov.id = 'later-ov'; ov.className = 'later-ov'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-label','Sonra bak');
+    ov.innerHTML = `<div class="later-wrap"><div class="later-top"><button class="later-close" onclick="closeLater39()" aria-label="Kapat">${ic('x')}</button><h2>Sonra bak</h2></div><div id="later-body"></div></div>`;
+    document.body.appendChild(ov);
+  }
+  ov.classList.add('show'); document.body.style.overflow = 'hidden'; renderLater39();
+}
+function closeLater39(){ const ov = document.getElementById('later-ov'); if (ov) ov.classList.remove('show'); document.body.style.overflow = ''; renderLaterEntry39(); }
+function setLater39Filter(f){ later39Filter = f; renderLater39(); }
+function later39Field(id, f, v){ const m = later39Get(); if (!m[id]) return; m[id] = Object.assign({}, m[id], { [f]:v, u:Date.now() }); later39Save(m); }
+function later39Remove(id){ const m = later39Get(); if (!m[id]) return; m[id] = Object.assign({}, m[id], { d:1, u:Date.now() }); later39Save(m); renderLater39(); updateLater39(); }
+const LATER39_TYPE = { woord:'kelime', zin:'cümle', uitdrukking:'deyim' };
+function renderLater39(){
+  const el = document.getElementById('later-body'); if (!el) return;
+  const m = later39Get(), all = later39List();
+  const open = all.filter(k => !(m[k].ans || '').trim()), done = all.filter(k => (m[k].ans || '').trim());
+  const list = later39Filter === 'open' ? open : later39Filter === 'done' ? done : all;
+  const seg = (f, l, n) => `<button class="${later39Filter === f ? 'on' : ''}" onclick="setLater39Filter('${f}')">${l} (${n})</button>`;
+  let h = `<p class="later-tip">${ic('bulb')}<span>Anlamını, kullanım yerini ya da benzer kelimelerle farkını sormak istediğin kartları burada topla. "Claude'a sor" seçtiklerini hazır bir soruyla kopyalar; cevabı ilgili kartın altına yapıştırıp saklayabilirsin.</span></p>`;
+  h += `<div class="later-seg">${seg('open','Cevapsız',open.length)}${seg('done','Cevaplı',done.length)}${seg('all','Tümü',all.length)}</div>`;
+  if (!list.length) h += `<p class="later-empty">${all.length ? 'Bu grupta kayıt yok.' : 'Henüz kayıt yok. Hatırla\'da, sesli tekrarda ya da kart ayrıntısında "Sonra bak"a dokunarak ekleyebilirsin.'}</p>`;
+  else {
+    h += `<div class="later-actions"><button class="btn-secondary29" onclick="later39SelAll()">${ic('check')}<span id="later-selall">Tümünü seç</span></button><button class="later-ask" onclick="later39Ask(false)">${ic('message')}Claude'a sor <span id="later-selcount"></span></button>${navigator.share ? `<button class="btn-secondary29" onclick="later39Ask(true)" title="Paylaş">${ic('upload')}</button>` : ''}</div>`;
+    list.forEach(k => {
+      const c = later39Card(k), e = m[k], ans = (e.ans || '').trim();
+      h += `<div class="later-item" data-k="${esc28(k)}"><div class="later-head"><input type="checkbox" class="later-sel" value="${esc28(k)}" onchange="later39UpdSel()"${ans ? '' : ' checked'}>
+        <div class="later-txt"><div class="later-nl" lang="nl">${esc28(c.dutch)}</div><div class="later-tr">${esc28(c.turkish || '')}</div><div class="later-type">${LATER39_TYPE[c.type] || c.type || ''}</div></div>
+        <button class="later-ico" onclick="later39Remove('${esc28(k)}')" title="Listeden çıkar">${ic('trash')}</button></div>
+        <input class="later-note" type="text" placeholder="Ne soracaksın? (ör. merken ile farkı?)" value="${esc28(e.note || '')}" onchange="later39Field('${esc28(k)}','note',this.value)">
+        <details class="later-ans"${ans ? ' open' : ''}><summary>${ans ? 'Cevap / notlarım' : 'Cevabı yapıştır'}</summary><textarea rows="${ans ? 6 : 3}" placeholder="Claude'un cevabını buraya yapıştır" onchange="later39Field('${esc28(k)}','ans',this.value)">${esc28(e.ans || '')}</textarea></details></div>`;
+    });
+  }
+  el.innerHTML = h; later39UpdSel();
+}
+function later39Sel(){ return [...document.querySelectorAll('.later-sel:checked')].map(c => c.value); }
+function later39UpdSel(){ const n = later39Sel().length, all = document.querySelectorAll('.later-sel').length; const c = document.getElementById('later-selcount'); if (c) c.textContent = n ? '(' + n + ')' : ''; const t = document.getElementById('later-selall'); if (t) t.textContent = (n === all && all) ? 'Seçimi kaldır' : 'Tümünü seç'; }
+function later39SelAll(){ const bs = document.querySelectorAll('.later-sel'), all = later39Sel().length === bs.length; bs.forEach(b => b.checked = !all); later39UpdSel(); }
+function later39Prompt(ids){
+  const m = later39Get();
+  const lines = ids.map((k, i) => { const c = later39Card(k), note = (m[k].note || '').trim(); return `${i + 1}. ${c.dutch} (${LATER39_TYPE[c.type] || 'kart'})${note ? '\n   Sorum: ' + note : ''}`; });
+  return 'Türkçe konuşuyorum ve Hollandaca öğreniyorum (B2 seviyesi, Hollanda\'da sosyal danışman olarak çalışıyorum). ' +
+    'Aşağıdaki Hollandaca kelime, deyim ve cümlelerin her biri için ayrı başlık altında, sade ve kısa şekilde açıkla:\n' +
+    '1) Türkçe anlamı ve günlük hayatta / iş yerinde hangi durumda kullanıldığı\n' +
+    '2) Nüansı ve benzer kelimelerle farkı (varsa sorumu cevapla)\n' +
+    '3) 2 doğal örnek cümle (Türkçesiyle)\n\n' + lines.join('\n');
+}
+function later39Ask(share){
+  const ids = later39Sel(); if (!ids.length) { toast28('Önce en az bir kart seç.'); return; }
+  const text = later39Prompt(ids);
+  if (share && navigator.share) { navigator.share({ text }).catch(() => {}); return; }
+  const done = ok => toast28(ok ? ids.length + ' kart kopyalandı. Claude\'a yapıştır.' : 'Kopyalanamadı.');
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => done(true)).catch(() => done(later39CopyFb(text)));
+  else done(later39CopyFb(text));
+}
+function later39CopyFb(text){ try { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); const ok = document.execCommand('copy'); ta.remove(); return ok; } catch (e) { return false; } }
+function laterAnsHtml39(id){ const e = later39Get()[id]; if (!e || e.d || !(e.ans || '').trim()) return ''; return `<details class="later-mini"><summary>${ic('pin')}Kayıtlı açıklaman</summary><div>${esc28(e.ans)}</div></details>`; }
+
+// Hatırla: cevap açılınca "Sonra bak"
+const baseStReveal39 = stReveal;
+stReveal = function(){
+  baseStReveal39.apply(this, arguments);
+  const ans = document.getElementById('st-ans'); if (!ans || !st) return;
+  const id = st.queue[st.i] && st.queue[st.i].id; if (id === undefined) return;
+  const d = document.createElement('div'); d.className = 'later-row'; d.innerHTML = laterBtn39(id) + laterAnsHtml39(id); ans.appendChild(d);
+};
+// Sesli tekrar oynatıcısı: o an çalan kart
+const baseListenPatch39 = listenPatchPlayback;
+listenPatchPlayback = function(){
+  baseListenPatch39.apply(this, arguments);
+  const card = listenQueue && listenQueue[listenIndex]; const counted = document.getElementById('listen-counted');
+  if (!card || !counted) return;
+  let b = document.getElementById('listen-later');
+  if (!b) { const w = document.createElement('div'); w.className = 'later-row center'; w.innerHTML = laterBtn39(card.id); counted.parentNode.insertBefore(w, counted.nextSibling); b = w.querySelector('.later-btn'); b.id = 'listen-later'; }
+  if (b.dataset.later !== String(card.id)) { b.dataset.later = String(card.id); b.setAttribute('onclick', `toggleLater39('${card.id}')`); }
+  const on = isLater39(card.id); b.classList.toggle('on', on); const s = b.querySelector('span'); if (s) s.textContent = on ? 'Kaydedildi' : 'Sonra bak';
+};
+// Sunucudan gelen durumla birleştir; yerelde daha yenisi varsa geri yaz
+const baseApplyRows39 = applyRows28;
+applyRows28 = function(){
+  baseApplyRows39.apply(this, arguments);
+  const r = later39Merge();
+  later39Local = r.out; v28Store('kv_later', r.out);
+  if (r.localNewer && JSON.stringify(r.out) !== JSON.stringify(rows28['later'] || {})) state28('later', r.out);
+  renderLaterEntry39();
+};
+const baseRenderDrafts39 = renderDrafts28;
+renderDrafts28 = function(){ baseRenderDrafts39.apply(this, arguments); renderLaterEntry39(); };
+document.addEventListener('keydown', e => { const ov = document.getElementById('later-ov'); if (ov && ov.classList.contains('show') && e.key === 'Escape') closeLater39(); });
+setTimeout(renderLaterEntry39, 0);
+
 </script>
 </body>
 </html>
