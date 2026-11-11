@@ -1609,6 +1609,19 @@ body { zoom:1 !important; }
 .undo40 span { flex: 1; min-width: 0; }
 .undo40 button { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 12px; border: none; background: var(--cta); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
 .undo40 .ic { width: 15px; height: 15px; }
+/* v41 — Delfts stiline uygun yeni bileşenler; tüm metinler --ui-scale kullanır. */
+.smart-plan41{margin:14px 16px;padding:16px;border:1px solid var(--border);border-radius:18px;background:var(--bg2);display:flex;flex-direction:column;gap:10px}
+.smart-head41{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:calc(14px * var(--ui-scale))}.smart-head41 b{display:flex;align-items:center;gap:6px}.smart-head41 .ic{height:18px;width:18px;color:var(--accent)}.smart-head41 span{color:var(--text2);font-variant-numeric:tabular-nums}
+.smart-minutes41,.smart-breakdown41,.listen-chips41{display:flex;gap:6px;flex-wrap:wrap}
+.smart-minute41{border:1px solid var(--border);background:var(--bg3);color:var(--text);border-radius:10px;padding:8px 10px;font:inherit;font-size:calc(12px * var(--ui-scale));font-weight:700;cursor:pointer;min-height:36px}
+.smart-minute41.active{background:var(--accent);color:var(--on-accent,#fff);border-color:var(--accent)}
+.smart-meter41{height:8px;border-radius:8px;background:var(--bg3);overflow:hidden}.smart-meter41>div{height:100%;background:var(--accent);border-radius:8px;transition:width .2s}
+.smart-breakdown41 span{font-size:calc(12px * var(--ui-scale));font-weight:700;color:var(--accent);border:1px solid var(--border);padding:5px 8px;border-radius:20px}
+.smart-plan41 p{font-size:calc(13px * var(--ui-scale));line-height:1.5;color:var(--text2);margin:0}.smart-main41{width:100%;display:flex;justify-content:center}.smart-main41:disabled{opacity:.5;cursor:not-allowed}.smart-secondary41{font-size:calc(11px * var(--ui-scale));color:var(--text3);text-align:center}
+.listen-scope-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.listen-choose41{margin:12px 0;padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--bg2);display:flex;flex-direction:column;gap:10px}.listen-choose41>b,.listen-subhead41 b{font-size:calc(13px * var(--ui-scale))}.listen-subhead41{display:flex;justify-content:space-between;align-items:center;gap:8px}.listen-subhead41 button{border:0;background:transparent;color:var(--accent);font:inherit;font-weight:800;font-size:calc(12px * var(--ui-scale));cursor:pointer;min-height:38px}.listen-chips41{max-height:150px;overflow:auto}.listen-chips41 .listen-opt-btn{font-size:calc(12px * var(--ui-scale));padding:8px 10px;min-height:38px}.listen-search41{min-height:44px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);padding:10px;font:inherit;font-size:calc(14px * var(--ui-scale));width:100%}.listen-found41{max-height:230px;overflow-y:auto}.listen-one41{display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--border);padding:9px 3px;font-size:calc(13px * var(--ui-scale));line-height:1.4;cursor:pointer}.listen-one41 input{accent-color:var(--accent);width:18px;height:18px}.listen-hint41{font-size:calc(12px * var(--ui-scale));color:var(--text3);line-height:1.5}.listen-savedrow41{display:flex;align-items:center;gap:6px}.listen-saved41{flex:1;text-align:left;min-height:40px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font:inherit;font-size:calc(13px * var(--ui-scale));padding:7px 10px;cursor:pointer}.listen-del41{width:42px;min-height:42px;border:1px solid var(--border);background:var(--bg3);color:var(--red);border-radius:10px;cursor:pointer}.listen-del41 .ic{width:16px;height:16px}
+.practice41{border:1px solid var(--border);border-radius:14px;background:var(--bg2);margin-top:12px;padding:10px}.practice-toggle41{min-height:40px;width:100%;font:inherit;font-size:calc(14px * var(--ui-scale));font-weight:800;color:var(--accent);background:transparent;border:0;cursor:pointer;text-align:left}.practice-body41{display:flex;flex-direction:column;gap:10px;font-size:calc(13px * var(--ui-scale));line-height:1.5}.practice-body41[hidden],.practice-samples41[hidden],.practice-rating41[hidden]{display:none}.practice-body41 p{margin:0;color:var(--text2)}.practice-body41 textarea{width:100%;min-height:95px;box-sizing:border-box;border-radius:10px;padding:10px;background:var(--bg);border:1px solid var(--border);color:var(--text);font:inherit;font-size:calc(14px * var(--ui-scale))}.practice-samples41{padding:10px;border-radius:10px;background:var(--bg3)}.practice-samples41 div{margin:6px 0 2px;font-weight:700}.practice-samples41 small{color:var(--text2);font-size:calc(12px * var(--ui-scale))}.practice-rating41>div{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}.practice-rating41 button{min-height:42px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font:inherit;font-size:calc(13px * var(--ui-scale));padding:8px;cursor:pointer}
+.auth41{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}.auth41[hidden]{display:none}.auth-card41{max-width:390px;width:100%;border:1px solid var(--border);background:var(--bg2);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px}.auth-card41 h2{font-family:var(--font-display);margin:0;font-size:calc(25px * var(--ui-scale))}.auth-card41 p{margin:0;color:var(--text2)}.auth-card41 label{font-size:calc(13px * var(--ui-scale));font-weight:700;display:flex;flex-direction:column;gap:6px}.auth-card41 input{font:inherit;padding:12px;border-radius:10px;background:var(--bg);border:1px solid var(--border);color:var(--text)}#auth-error41{font-size:calc(13px * var(--ui-scale));color:var(--red)}
+
 </style>
 </head>
 <body>
@@ -2387,7 +2400,9 @@ function getTotalSeconds() {
 }
 
 function todayStr() {
-  return new Date().toISOString().slice(0,10); // "2026-07-08"
+  // Hollanda/cihaz yerel takvimi. UTC, gece yarısından sonra yanlış gün verebilir.
+  const d = new Date();
+  return [d.getFullYear(), String(d.getMonth()+1).padStart(2,'0'), String(d.getDate()).padStart(2,'0')].join('-');
 }
 
 function recordActivity() {
@@ -5881,7 +5896,7 @@ renderTekrar = function() {
 // çalışılan kartlar (çalışma geçmişi, son 45 gün) ve sesli tekrar edilenler.
 // Varsayılan: Türkçe görünür, Hollandaca gizli; satıra dokununca açılır.
 let tdRange35 = 'today', tdShow35 = false;
-// Uygulamanın geri kalanı gibi todayStr() biçimi (UTC tarih) kullanılır, yoksa kayıtlarla eşleşmez
+// Tüm uygulamada todayStr() yerel takvim gününü kullanır; kayıtlarla aynı formatta kalır
 function dayStr35(offset) { return new Date(Date.now() - offset * 86400000).toISOString().slice(0, 10); }
 function tdDays35(r) { const out = new Set(); const n = r === 'week' ? 7 : 1, s = r === 'yesterday' ? 1 : 0; for (let i = 0; i < n; i++) out.add(dayStr35(s + i)); return out; }
 function tdCollect35(r) {
@@ -5953,7 +5968,526 @@ async function initV29() {
   setTimeout(inAppNudge29, 1500);
 }
 
-initV29();
+// ══════════════════════════════════════════════════════════════════════
+// v41 — Akıllı günlük çalışma, kişisel dinleme listeleri, üretim alıştırması,
+//       taşınabilir tam yedek, tek-kullanıcılı Supabase Auth hazırlığı.
+// Kart ve progress şemasını değiştirmez. Eski SR aralıkları korunur.
+// ══════════════════════════════════════════════════════════════════════
+
+// 1) Akıllı günlük çalışma: günlük zaman hedefi cihaz bazlı ölçülür ve
+//    diğer cihazlarla app_state üzerinden toplanır. Yeni kart sınırı eskisi gibi.
+let smartMinutes41 = Math.max(5, Math.min(60, Number(v28Read('kv_smart_minutes41', 20)) || 20));
+let smartOwn41 = v28Read('kv_smart_time41', {});
+let smartOther41 = {};
+let smartClock41 = 0, smartClockTimer41 = null;
+function smartSpent41(){
+  const day=todayStr();
+  return (Number(smartOwn41[day])||0)+(Number(smartOther41[day])||0);
+}
+function smartRemaining41(){return Math.max(0,smartMinutes41*60-smartSpent41());}
+function setSmartMinutes41(n){
+  smartMinutes41 = [10,15,20,30,45,60].includes(Number(n)) ? Number(n) : 20;
+  v28Store('kv_smart_minutes41',smartMinutes41);
+  state28('smart_minutes41',smartMinutes41);
+  renderStudyStart();
+}
+function smartHard41(tema){
+  // Bir kart için her takvim gününün ilk denemesi, zorluk hesaplamasında tek kez sayılır.
+  const byCard=new Map(), first=new Set();
+  const cutoff=Date.now()-30*86400000;
+  for(const e of events28().sort((a,b)=>String(a.at).localeCompare(String(b.at)))){
+    if(!e || !e.cardId || new Date(e.at).getTime()<cutoff)continue;
+    const key=e.day+':'+e.cardId;
+    if(first.has(key))continue;
+    first.add(key);
+    const r=byCard.get(e.cardId)||{bad:0,attempts:0,latest:'',today:false};
+    r.attempts++;
+    if(e.grade==='bilmedim')r.bad+=2;
+    else if(e.grade==='zor')r.bad++;
+    if(e.day===todayStr())r.today=true;
+    r.latest=e.at;
+    byCard.set(e.cardId,r);
+  }
+  return CARDS.filter(c=>ready28(c)&&PROGRESS[c.id]?.is_known&&!isDue(c.id)&&(!tema||tema==='all'||getTema(c)===tema))
+    .map(c=>({c,r:byCard.get(c.id)}))
+    .filter(x=>x.r&&x.r.bad>=2&&!x.r.today)
+    .sort((a,b)=>b.r.bad-a.r.bad || a.r.latest.localeCompare(b.r.latest))
+    .map(x=>x.c);
+}
+function smartPlan41(tema=studyTema){
+  const slots=Math.min(ST_MAX,Math.floor(smartRemaining41()/60));
+  if(!slots)return {due:[],hard:[],fresh:[],queue:[],slots:0};
+  const due=studyDueCards(tema).slice(0,slots);
+  const left=Math.max(0,slots-due.length);
+  // Ek pekiştirme en çok kalan slotların %40'ını kaplar; yeni öğrenmeye yer bırakır.
+  const hard=smartHard41(tema).slice(0,Math.min(left,Math.ceil(left*0.4)));
+  const fresh=studyNewCards(tema).filter(c=>!due.some(d=>d.id===c.id)&&!hard.some(h=>h.id===c.id))
+    .slice(0,Math.max(0,left-hard.length));
+  const queue=[...due.map(c=>({id:c.id,again:false})),
+               ...hard.map(c=>({id:c.id,again:true,smartPractice:true})),
+               ...fresh.map(c=>({id:c.id,again:false}))];
+  return {due,hard,fresh,queue,slots};
+}
+function smartClockSave41(){
+  if(!smartClock41)return;
+  const now=Date.now(), passed=Math.max(0,Math.min(60,Math.round((now-smartClock41)/1000)));
+  smartClock41=now;
+  if(!passed)return;
+  const today=todayStr();
+  smartOwn41[today]=(Number(smartOwn41[today])||0)+passed;
+  const days=Object.keys(smartOwn41).sort().slice(-90);
+  smartOwn41=Object.fromEntries(days.map(d=>[d,smartOwn41[d]]));
+  v28Store('kv_smart_time41',smartOwn41);
+}
+function smartClockStart41(){
+  smartClockStop41(); smartClock41=Date.now();
+  smartClockTimer41=setInterval(()=>{
+    if(!st||!st.smart41){smartClockStop41();return;}
+    smartClockSave41();
+    state28('smart_time41:'+DEVICE_ID,smartOwn41);
+  },30000);
+}
+function smartClockStop41(){
+  if(smartClock41){smartClockSave41();state28('smart_time41:'+DEVICE_ID,smartOwn41);}
+  smartClock41=0;
+  clearInterval(smartClockTimer41);smartClockTimer41=null;
+}
+function startSmart41(){
+  const plan=smartPlan41();
+  if(!plan.queue.length){toast28('Günlük hedef doldu veya uygun kart yok. Normal çalışmaya devam edebilirsin.');return;}
+  startStudy(plan.queue.map(q=>q.id));
+  if(!st)return;
+  st.queue=plan.queue;
+  st.smart41=true;
+  st.smartPlan41={due:plan.due.length,hard:plan.hard.length,fresh:plan.fresh.length};
+  smartClockStart41();
+  stRender();
+}
+const oldRenderStudyStart41=renderStudyStart;
+renderStudyStart=function(){
+  oldRenderStudyStart41();
+  const el=document.getElementById('study-start');if(!el)return;
+  const plan=smartPlan41(),remaining=smartRemaining41(),spent=Math.floor(smartSpent41()/60);
+  const pick=[10,15,20,30,45,60].map(m=>`<button type="button" class="smart-minute41${smartMinutes41===m?' active':''}" onclick="setSmartMinutes41(${m})">${m} dk</button>`).join('');
+  const panel=document.createElement('section');panel.className='smart-plan41';
+  panel.innerHTML=`<div class="smart-head41"><b>${ic('clock')}Akıllı günlük çalışma</b><span>${spent} / ${smartMinutes41} dk</span></div>
+    <div class="smart-minutes41" role="group" aria-label="Günlük dakika hedefi">${pick}</div>
+    <div class="smart-meter41"><div style="width:${Math.min(100,100*smartSpent41()/(smartMinutes41*60))}%"></div></div>
+    <div class="smart-breakdown41"><span>${plan.due.length} zamanı gelen</span><span>${plan.hard.length} zor kalıp</span><span>${plan.fresh.length} yeni</span></div>
+    <p>${remaining?`Yaklaşık ${Math.floor(remaining/60)} dakika kaldı. Önce zamanı gelenler, ardından zorlandıkların, sonra yeni kartlar.`:'Günlük süre hedefin tamamlandı. İstersen normal çalışmaya devam edebilirsin.'}</p>
+    <button type="button" class="btn-cta smart-main41" onclick="startSmart41()" ${!plan.queue.length?'disabled':''}>${ic('play')} Akıllı oturumu başlat · ${plan.queue.length} kart</button>
+    <div class="smart-secondary41">Alttaki normal Hatırla düğmesi eskisi gibi çalışır; eski tekrar planın değişmez.</div>`;
+  el.prepend(panel);
+};
+const oldStRender41=stRender;
+stRender=function(){
+  oldStRender41();
+  if(st?.smart41 && st.i<st.queue.length && st.queue[st.i]?.smartPractice){
+    document.getElementById('st-chips').insertAdjacentHTML('beforeend','<span class="st-chip acc">Zor kalıp · ek pekiştirme</span>');
+  }
+};
+const oldStFinish41=stFinish;
+stFinish=function(){
+  smartClockStop41();
+  oldStFinish41();
+  if(st?.smart41){
+    document.getElementById('st-fin-sub').insertAdjacentText('beforeend',
+      ` Akıllı plan: ${st.smartPlan41.due} zamanı gelen, ${st.smartPlan41.hard} ek pekiştirme, ${st.smartPlan41.fresh} yeni kart. Bugün ${Math.floor(smartSpent41()/60)} dakika.`);
+  }
+};
+const oldCloseStudy41=closeStudy;
+closeStudy=function(){smartClockStop41();oldCloseStudy41();};
+// Sunucu state'i için kendi cihaz sayacını ikinci kez toplama.
+const oldApplyRows41=applyRows28;
+applyRows28=function(){
+  oldApplyRows41();
+  const other={};
+  for(const r of lastServerRows28){
+    if(r.key==='smart_minutes41' && !outbox28['state:smart_minutes41'] && [10,15,20,30,45,60].includes(Number(r.value))){
+      smartMinutes41=Number(r.value);v28Store('kv_smart_minutes41',smartMinutes41);
+    }
+    if(!r.key.startsWith('smart_time41:')||r.key==='smart_time41:'+DEVICE_ID)continue;
+    for(const [d,s] of Object.entries(r.value||{}))other[d]=(other[d]||0)+(Number(s)||0);
+  }
+  smartOther41=other;
+  // Kendi cihazımızdaki daha yeni kayıtları başka cihazın önbelleğiyle ezmeyiz.
+  const remote=lastServerRows28.find(r=>r.key==='smart_time41:'+DEVICE_ID)?.value||{};
+  for(const[d,s]of Object.entries(remote))smartOwn41[d]=Math.max(Number(s)||0,Number(smartOwn41[d])||0);
+  v28Store('kv_smart_time41',smartOwn41);
+};
+
+// 2) Dinleme: çoklu tarih, tema ve tekil kartlar (birleşim); saklanan listeler.
+let listenSelection41=Object.assign({dates:[],themes:[],ids:[]},v28Read('kv_listen_selection41',{}));
+let listenLists41=v28Read('kv_listen_lists41',{});
+let listenSearchText41='';
+function listen41PersistSelection(){v28Store('kv_listen_selection41',listenSelection41);}
+function listen41Pick(kind,key){
+  const allowed=['dates','themes','ids'];if(!allowed.includes(kind))return;
+  const list=new Set((listenSelection41[kind]||[]).map(String)),str=String(key);
+  if(list.has(str))list.delete(str);else list.add(str);
+  listenSelection41[kind]=[...list];listen41PersistSelection();renderListenScreen();
+}
+function listen41SelectLater(){
+  listenScope='selection';
+  listenSelection41.ids=[...new Set([...(listenSelection41.ids||[]).map(String),...later39List().map(String)])];
+  listen41PersistSelection();renderListenScreen();
+}
+function listen41Clear(){listenSelection41={dates:[],themes:[],ids:[]};listen41PersistSelection();renderListenScreen();}
+function listen41Search(text){listenSearchText41=text;listen41RenderFound();}
+function listen41RenderFound(){
+  const el=document.getElementById('listen-found41');if(!el)return;
+  const t=norm28(listenSearchText41),chosen=new Set((listenSelection41.ids||[]).map(String));
+  const eligible=CARDS.filter(listenable37);
+  const found=t?eligible.filter(c=>norm28(c.dutch).includes(t)||norm28(c.turkish).includes(t)):[];
+  el.innerHTML=t?(found.length?found.slice(0,35).map(c=>`<label class="listen-one41"><input type="checkbox" ${chosen.has(String(c.id))?'checked':''} onchange="listen41Pick('ids',${Number(c.id)})"><span lang="nl">${esc28(c.dutch)}</span></label>`).join(''):'<div class="listen-hint41">Eşleşen cümle bulunamadı.</div>'):
+    `<div class="listen-hint41">Kart seçmek için Hollandaca veya Türkçe birkaç harf yaz. ${chosen.size} kart elle seçildi.</div>`;
+}
+const oldGetListenScopeCards41=getListenScopeCards;
+getListenScopeCards=function(){
+  if(listenScope!=='selection')return oldGetListenScopeCards41();
+  const dates=new Set(listenSelection41.dates||[]),themes=new Set(listenSelection41.themes||[]),ids=new Set((listenSelection41.ids||[]).map(String));
+  if(!dates.size&&!themes.size&&!ids.size)return [];
+  return dedupeByDutch(CARDS.filter(c=>listenable37(c)&&
+    (dates.has(c.date)||themes.has(getTema(c))||ids.has(String(c.id)))));
+};
+function listen41Saved(){return Object.entries(listenLists41).filter(([,v])=>v&&!v.deleted).sort((a,b)=>(b[1].updated||0)-(a[1].updated||0));}
+function listen41SaveList(){
+  const count=getListenScopeCards().length;if(!count){toast28('Önce en az bir cümle seç.');return;}
+  const name=prompt('Dinleme listesinin adı:', 'Benim dinleme listem');
+  if(!name?.trim())return;
+  const id='l'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+  listenLists41[id]={name:name.trim().slice(0,70),selection:copy28(listenSelection41),idioms:listenIdioms37,updated:Date.now()};
+  listen41Save();renderListenScreen();toast28('Dinleme listesi kaydedildi.');
+}
+function listen41Save(){v28Store('kv_listen_lists41',listenLists41);state28('listen_lists41',listenLists41);}
+function listen41Load(id){
+  const e=listenLists41[id];if(!e||e.deleted)return;
+  listenSelection41=Object.assign({dates:[],themes:[],ids:[]},copy28(e.selection||{}));
+  listenIdioms37=!!e.idioms;v28Store('kv_listen_idioms',listenIdioms37);
+  listenScope='selection';listen41PersistSelection();renderListenScreen();
+  toast28('“'+e.name+'” listesi açıldı.');
+}
+function listen41Delete(id){
+  const e=listenLists41[id];if(!e||!confirm('Bu kayıtlı dinleme listesi silinsin mi?'))return;
+  listenLists41[id]={...e,deleted:true,updated:Date.now()};
+  listen41Save();renderListenScreen();
+}
+function listen41Merge(){
+  const remote=rows28['listen_lists41']||{};let dirty=false;
+  for(const[id,e]of Object.entries(remote)){
+    if(!listenLists41[id]||(Number(e.updated)||0)>(Number(listenLists41[id].updated)||0))listenLists41[id]=e;
+  }
+  for(const[id,e]of Object.entries(listenLists41))if(!remote[id]||(Number(e.updated)||0)>(Number(remote[id].updated)||0))dirty=true;
+  v28Store('kv_listen_lists41',listenLists41);
+  if(dirty&&!outbox28['state:listen_lists41'])listen41Save();
+}
+const oldRenderListenSetup41=renderListenSetup;
+renderListenSetup=function(el){
+  oldRenderListenSetup41(el);
+  const grid=el.querySelector('.listen-scope-grid');if(!grid)return;
+  grid.insertAdjacentHTML('beforeend',`<div class="listen-scope-card ${listenScope==='selection'?'active':''}" onclick="setListenScope('selection')"><div class="lsc-title">Kendi listem</div><div class="lsc-sub">Birden fazla ders / tema</div></div>`);
+  if(listenScope!=='selection'){
+    const saved=listen41Saved();
+    if(saved.length)grid.insertAdjacentHTML('afterend',`<div class="listen-choose41"><b>Kayıtlı listeler</b>${saved.map(([id,e])=>`<button type="button" class="listen-saved41" onclick="listen41Load('${id}')">${esc28(e.name)}</button>`).join('')}</div>`);
+    return;
+  }
+  const dates=sortDates([...new Set(CARDS.filter(listenable37).map(c=>c.date))]),themes=TEMAS.filter(t=>CARDS.some(c=>listenable37(c)&&getTema(c)===t.id));
+  const chip=(kind,key,label)=>`<button type="button" class="listen-opt-btn ${(listenSelection41[kind]||[]).map(String).includes(String(key))?'active':''}" onclick="listen41Pick('${kind}',${JSON.stringify(String(key)).replace(/"/g,'&quot;')})">${esc28(label)}</button>`;
+  const saved=listen41Saved();
+  grid.insertAdjacentHTML('afterend',`<div class="listen-choose41">
+    <div class="listen-subhead41"><b>Birden fazla ders seç</b><button onclick="listen41Clear()">Seçimi temizle</button></div>
+    <div class="listen-chips41">${dates.map(d=>chip('dates',d,d)).join('')}</div>
+    <b>Temalar</b><div class="listen-chips41">${themes.map(t=>chip('themes',t.id,t.label)).join('')}</div>
+    <div class="listen-subhead41"><b>Tek tek kart seç</b><button onclick="listen41SelectLater()">“Sonra bak” kartlarını ekle</button></div>
+    <input type="search" class="listen-search41" placeholder="Cümle veya Türkçe anlam ara" value="${esc28(listenSearchText41)}" oninput="listen41Search(this.value)" aria-label="Dinleme listesi için kart ara">
+    <div class="listen-found41" id="listen-found41"></div>
+    <div class="listen-subhead41"><b>Kayıtlı dinleme listelerim</b><button onclick="listen41SaveList()">+ Bu seçimi kaydet</button></div>
+    ${saved.length?saved.map(([id,e])=>`<div class="listen-savedrow41"><button type="button" class="listen-saved41" onclick="listen41Load('${id}')">${esc28(e.name)}</button><button type="button" class="listen-del41" onclick="listen41Delete('${id}')" aria-label="Listeyi sil">${ic('trash')}</button></div>`).join(''):'<div class="listen-hint41">Henüz kayıtlı dinleme listesi yok.</div>'}
+    <div class="listen-hint41">Tarih, tema ve elle işaretlediğin kartlar birlikte dinlenir. Aynı cümle yalnızca bir kez eklenir.</div>
+  </div>`);
+  listen41RenderFound();
+};
+const oldApplyLists41=applyRows28;
+applyRows28=function(){oldApplyLists41();listen41Merge();};
+
+// 3) Aktif kullanım: cevap göründükten sonra kullanıcı kendi cümlesini kurar.
+//    Otomatik yanlış/doğru değerlendirmesi yok; örnekle karşılaştırmalı öz-kontrol.
+function exercisePrompt41(c){
+  const isFormal=(getTema(c)==='recht'||getTema(c)==='gemeente'||getTema(c)==='inkomen');
+  if(c.type==='zin')return isFormal?'Bu ifadeyi danışana daha resmî ve nazik biçimde nasıl söylersin?':
+    'Bu ifadeyi bir meslektaşla veya danışanla gerçek bir konuşmada nasıl kullanırsın?';
+  return isFormal?'Bu kalıbı bir danışanın durumunu açıklayan tam bir Hollandaca cümlede kullan.':
+    'Bu kelime veya kalıpla iş yerinden kendi Hollandaca cümleni oluştur.';
+}
+function practice41Open(btn){
+  const p=btn.closest('.practice41');if(!p)return;
+  const body=p.querySelector('.practice-body41');body.hidden=!body.hidden;
+  btn.textContent=body.hidden?'Cümleyi aktif kullan':'Alıştırmayı kapat';
+  if(!body.hidden)body.querySelector('textarea')?.focus();
+}
+function practice41Check(btn){
+  const p=btn.closest('.practice41'),textarea=p?.querySelector('textarea');
+  if(!textarea?.value.trim()){toast28('Önce kendi Hollandaca cümleni yaz.');return;}
+  const samples=p.querySelector('.practice-samples41');samples.hidden=false;
+  p.querySelector('.practice-rating41').hidden=false;
+}
+function practice41Save(btn,grade){
+  const p=btn.closest('.practice41'),textarea=p?.querySelector('textarea');
+  if(!p||!textarea?.value.trim())return;
+  const id=Number(p.dataset.card);
+  const key='practice41:'+DEVICE_ID;
+  const previous=Array.isArray(rows28[key])?rows28[key]:[];
+  const entry={id:DEVICE_ID+':'+Date.now()+':'+Math.random().toString(36).slice(2),cardId:id,
+    day:todayStr(),at:new Date().toISOString(),answer:textarea.value.trim().slice(0,1200),selfGrade:grade};
+  state28(key,[...previous,entry].slice(-300));
+  p.querySelector('.practice-rating41').innerHTML='<b>Kaydedildi.</b> Bu öz değerlendirme aralıklı tekrar tarihini değiştirmez.';
+  p.querySelector('textarea').disabled=true;
+}
+const oldStReveal41=stReveal;
+stReveal=function(){
+  oldStReveal41();if(!st?.revealed)return;
+  const c=CARDS.find(x=>x.id===st.queue[st.i]?.id),ans=document.getElementById('st-ans');
+  if(!c||!ans||ans.querySelector('.practice41'))return;
+  const samples=(c.examples||[]).filter(x=>x.nl?.trim()).slice(0,2);
+  const sampleText=samples.length?samples.map(e=>`<div lang="nl">${esc28(e.nl)}</div><small>${esc28(e.tr||'')}</small>`).join(''):
+    `<div lang="nl">${esc28(c.dutch)}</div><small>${esc28(c.turkish)}</small>`;
+  ans.insertAdjacentHTML('beforeend',`<div class="practice41" data-card="${Number(c.id)}">
+    <button class="practice-toggle41" type="button" onclick="practice41Open(this)">Cümleyi aktif kullan</button>
+    <div class="practice-body41" hidden><b>${esc28(exercisePrompt41(c))}</b>
+      <p>Hollandaca yaz veya söyleyip yazıya geçir. Sonra örneklerle karşılaştır.</p>
+      <textarea lang="nl" rows="3" maxlength="1200" placeholder="Mijn eigen zin…"></textarea>
+      <button type="button" class="btn-settings" onclick="practice41Check(this)">Örnekleri göster</button>
+      <div class="practice-samples41" hidden><b>Karşılaştırabileceğin örnekler</b>${sampleText}<p>Yazdığının aynı olması gerekmiyor. Dilbilgisi, bağlam ve resmiyetini kendin kontrol et.</p></div>
+      <div class="practice-rating41" hidden><b>Nasıl geçti?</b><div>
+        <button type="button" onclick="practice41Save(this,'zor')">Tekrar çalışacağım</button>
+        <button type="button" onclick="practice41Save(this,'bildim')">Kullanabildim</button>
+      </div></div>
+    </div></div>`);
+};
+
+// 4) Gerçekten taşınabilir yedek: sunucudan çekilmiş TÜM app_state kayıtları,
+//    Sonra bak, çöplükteki kart kopyaları, dinleme listeleri, akıllı süreler.
+const oldBackup41=backup28;
+backup28=function(){
+  const data=oldBackup41(), all={};
+  for(const r of lastServerRows28)all[r.key]=copy28(r.value);
+  for(const[k,v]of Object.entries(rows28))all[k]=copy28(v);
+  for(const[key,job]of Object.entries(outbox28))if(key.startsWith('state:')&&job.body)all[key.slice(6)]=copy28(job.body.value);
+  all.trash=copy28(TRASH29);
+  all.later=copy28(later39Get());
+  all.listen_lists41=copy28(listenLists41);
+  all['smart_time41:'+DEVICE_ID]=copy28(smartOwn41);
+  all.smart_minutes41=smartMinutes41;
+  data.version=41;
+  data.appState=all;
+  data.deletedCards=Object.values(TRASH29).filter(trashActive29).map(t=>copy28(t.card)).filter(Boolean);
+  data.preferences.smartMinutes41=smartMinutes41;
+  data.preferences.listenSelection41=copy28(listenSelection41);
+  data.preferences.listen={speed:listenSpeed,repeat:listenRepeatCount,gap:listenGap,idioms:listenIdioms37};
+  return data;
+};
+exportData=function(){
+  download28('kantoor-woordenschat-v41-TAM-yedek-'+todayStr()+'.json',backup28());
+  const el=document.getElementById('io-status');if(el){el.className='settings-status show ok';el.textContent='Tam yedek indirildi: Sonra bak, çöp kutusu, listeler, tüm sunucu durumları ve çalışma geçmişi dahil.';}
+};
+function mergeLaterBackup41(a,b){
+  const out={...a};for(const[k,v]of Object.entries(b||{}))if(!out[k]||(Number(v.u)||0)>(Number(out[k].u)||0))out[k]=v;
+  return out;
+}
+const oldRestoreBackup41=restoreBackup28;
+restoreBackup28=async function(data){
+  // Eski v28 yedekleri de eskisi gibi içe aktarılabilir.
+  if(!data||!Array.isArray(data.cards))throw new Error('Geçerli bir yedek dosyası seç.');
+  if(!isOnline)throw new Error('Geri yüklemek için internet bağlantısı gerekiyor.');
+  const mapping=await oldRestoreBackup41(data);
+  if(Number(data.version)<41)return mapping;
+  const states=data.appState||{};
+  // Silinmiş kartın ID'si bu cihazdakiyle farklıysa, önce DB'ye kaydet;
+  // hemen ardından çöp kutusunda gizle. Kalıcı silinenler yeniden eklenmez.
+  const savedTrash=states.trash||{};
+  const mergedTrash=copy28(TRASH29);
+  // Gizli (çöp kutusundaki) kart zaten Supabase'de varsa ikiz kayıt oluşturma.
+  const allDbCards=await exportPages41('cards','id');
+  for(const[oldId,t]of Object.entries(savedTrash)){
+    if(!t||t.purgedAt)continue;
+    let id=mapping[oldId];
+    if(!id&&t.card){
+      const current=allDbCards.find(c=>Number(c.id)===Number(oldId)&&c.date===t.card.date&&c.type===t.card.type&&norm28(c.dutch)===norm28(t.card.dutch))
+        ||allDbCards.find(c=>c.date===t.card.date&&c.type===t.card.type&&norm28(c.dutch)===norm28(t.card.dutch));
+      if(current)id=current.id;
+      else{
+        const inserted=await insertCardsRemote([cardPayload28(t.card)]);
+        if(!inserted?.[0]?.id)throw new Error('Çöp kutusundaki bir kart geri yüklenemedi.');
+        id=inserted[0].id;allDbCards.push(inserted[0]);
+      }
+      mapping[oldId]=id;
+    }
+    if(!id)continue;
+    const entry={...t,card:t.card?{...t.card,id:Number(id)}:null};
+    const existing=mergedTrash[id];
+    if(!existing||(Number(entry.deletedAt)||0)>(Number(existing.deletedAt)||0))mergedTrash[id]=entry;
+  }
+  // Destek kayıtlarında referans verdiği kart ID'leri de yeni ID'lere dönüşür.
+  const later={};
+  for(const[id,e]of Object.entries(states.later||{}))if(mapping[id])later[mapping[id]]=e;
+  const mergedLater=mergeLaterBackup41(later39Get(),later);
+  later39Local=mergedLater;v28Store('kv_later',mergedLater);state28('later',mergedLater);
+  Object.assign(TRASH29,mergedTrash);saveTrash29();
+  const copiedLists={...listenLists41};
+  for(const[id,e]of Object.entries(states.listen_lists41||{})){
+    const entry=copy28(e);
+    if(entry.selection?.ids)entry.selection.ids=entry.selection.ids.map(old=>mapping[old]).filter(Boolean).map(String);
+    if(!copiedLists[id]||(entry.updated||0)>(copiedLists[id].updated||0))copiedLists[id]=entry;
+  }
+  listenLists41=copiedLists;listen41Save();
+  for(const[key,value]of Object.entries(states)){
+    if(key.startsWith('smart_time41:')){
+      if(key==='smart_time41:'+DEVICE_ID){
+        for(const[d,n]of Object.entries(value||{}))smartOwn41[d]=Math.max(Number(smartOwn41[d])||0,Number(n)||0);
+        v28Store('kv_smart_time41',smartOwn41);state28(key,smartOwn41);
+      }else{
+        const server=lastServerRows28.find(r=>r.key===key)?.value||{};
+        state28(key,maxMap28(server,value));
+      }
+    }else if(key.startsWith('practice41:')){
+      const items=(Array.isArray(value)?value:[]).filter(e=>mapping[e.cardId]).map(e=>({...e,cardId:mapping[e.cardId]}));
+      const prev=Array.isArray(rows28[key])?rows28[key]:[];
+      state28(key,mergeEvents28(prev,items).slice(-300));
+    }
+  }
+  if([10,15,20,30,45,60].includes(Number(states.smart_minutes41)))setSmartMinutes41(Number(states.smart_minutes41));
+  if(data.preferences?.listenSelection41){
+    const sel=copy28(data.preferences.listenSelection41);
+    sel.ids=(sel.ids||[]).map(id=>mapping[id]).filter(Boolean).map(String);
+    listenSelection41=Object.assign({dates:[],themes:[],ids:[]},sel);listen41PersistSelection();
+  }
+  CARDS=CARDS.filter(c=>!DELETED[c.id]);cacheCards();
+  await flush28();renderAll();updateStats();updateLater39();return mapping;
+};
+// Ayarlar içindeki açıklamayı netleştir (yalnızca bir kez).
+(function(){
+ const row=document.querySelector('#screen-settings .settings-section .settings-row-desc');
+ const label=[...document.querySelectorAll('#screen-settings .settings-row-desc')].find(x=>x.textContent.includes('Kartlar, temalar, taslaklar'));
+ if(label)label.textContent='Tam JSON yedeği: kartlar, çöp kutusu, Sonra bak, dinleme listeleri, temalar, tekrar/üretim geçmişi ve tüm kayıtlar.';
+})();
+
+// Supabase'in varsayılan 1000-satır sınırına takılmamak için sayfalı dışa aktarma.
+async function exportPages41(table,order){
+  const size=400,out=[];
+  for(let offset=0;offset<200000;offset+=size){
+    const rows=await sbFetch(`${table}?select=*&order=${order}.asc&limit=${size}&offset=${offset}`);
+    if(!Array.isArray(rows))throw new Error(`${table} okunamadı.`);
+    out.push(...rows);
+    if(rows.length<size)return out;
+  }
+  throw new Error('Çok fazla kayıt var; tam yedek tamamlanamadı.');
+}
+exportData=async function(){
+  const el=document.getElementById('io-status');
+  if(el){el.className='settings-status show loading';el.textContent='Tam yedek hazırlanıyor…';}
+  try{
+    const data=backup28();
+    // Eşitlenmemiş iş varsa önce gönder. Başarısızsa "tam" etiketi koyma.
+    if(!navigator.onLine || !isOnline)throw new Error('İnternet bağlantısı gerekiyor. Tam sunucu yedeği alınamadı.');
+    await flush28();
+    if(Object.keys(outbox28).length)throw new Error('Önce bekleyen kayıtların eşitlenmesi gerekiyor.');
+    const [remoteCards,remoteProgress,remoteStates]=await Promise.all([
+      exportPages41('cards','id'),exportPages41('progress','card_id'),exportPages41('app_state','key')]);
+    // Çöp kutusundaki kartlar ayrı alandan geri yüklenir; aktif listeye katılmaz.
+    const byId=new Map(remoteCards.filter(r=>!trashActive29(TRASH29[r.id])).map(r=>[Number(r.id),enrich28({
+      id:r.id,date:r.date,type:r.type,dutch:r.dutch,turkish:r.turkish,
+      uitleg:r.uitleg,etymology:r.etymology,note:r.note,examples:r.examples||[],
+      legal:r.legal,isLegal:r.is_legal,is_legal:r.is_legal
+    })]));
+    // Henüz cihazda bulunan kartın son düzenlemesini sakla.
+    for(const c of CARDS)byId.set(Number(c.id),c);
+    data.cards=[...byId.values()].sort((a,b)=>a.id-b.id);
+    data.progress={};
+    for(const r of remoteProgress)data.progress[r.card_id]=r;
+    for(const[id,p]of Object.entries(PROGRESS))data.progress[id]=p;
+    const states={};for(const r of remoteStates)states[r.key]=r.value;
+    for(const[k,v]of Object.entries(data.appState))states[k]=v;
+    data.appState=states;
+    data.backupStatus='complete';
+    download28('kantoor-woordenschat-v41-TAM-yedek-'+todayStr()+'.json',data);
+    if(el){el.className='settings-status show ok';el.textContent=`Tam yedek hazır: ${data.cards.length} kart, ${remoteStates.length} sunucu kaydı; Sonra bak, çöp kutusu ve dinleme listeleri dahil.`;}
+  }catch(err){
+    if(el){el.className='settings-status show err';el.textContent='Tam yedek oluşturulamadı: '+err.message;}
+  }
+};
+
+// 5) Opsiyonel güvenli geçiş: SQL politikası etkinleşmeden açmayın.
+// SQL çalıştırıldığında bu sabiti true yapın ve uygulamayı yeniden yayınlayın.
+const SECURE_LOGIN_REQUIRED41 = false;
+let secureSession41=null, secureRefreshTimer41=null;
+function auth41Show(error=''){
+  let overlay=document.getElementById('auth41');
+  if(!overlay){overlay=document.createElement('div');overlay.id='auth41';overlay.className='auth41';overlay.innerHTML=`
+    <form class="auth-card41" onsubmit="event.preventDefault();auth41Login()">
+      <h2>Kantoor Woordenschat</h2><p>Özel kelime defterine giriş yap</p>
+      <label>E-posta<input id="auth-email41" type="email" autocomplete="username" required></label>
+      <label>Şifre<input id="auth-pass41" type="password" autocomplete="current-password" required></label>
+      <div id="auth-error41" role="status"></div><button class="btn-cta" type="submit">Giriş yap</button>
+    </form>`;document.body.appendChild(overlay);}
+  overlay.hidden=false;
+  document.getElementById('auth-error41').textContent=error;
+}
+function auth41Hide(){const el=document.getElementById('auth41');if(el)el.hidden=true;}
+function auth41AddLogout(){
+  if(!SECURE_LOGIN_REQUIRED41 || document.getElementById('auth-logout41'))return;
+  const settings=document.getElementById('screen-settings');
+  const button=document.createElement('button');button.id='auth-logout41';button.className='btn-settings full';
+  button.textContent='Güvenli oturumdan çık';button.onclick=()=>auth41Logout();
+  settings?.prepend(button);
+}
+function auth41Set(session){
+  secureSession41=session;
+  SB_HEADERS.Authorization='Bearer '+session.access_token;
+  try{localStorage.setItem('kv_secure_session41',JSON.stringify(session));}catch(e){}
+  clearTimeout(secureRefreshTimer41);
+  secureRefreshTimer41=setTimeout(()=>auth41Refresh(),Math.max(20000,(session.expires_in||3600)*1000-120000));
+}
+async function auth41Request(url,body){
+  const res=await fetch(SUPABASE_URL+'/auth/v1/'+url,{method:'POST',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok||!data.access_token)throw new Error(data.error_description||data.msg||data.message||'Giriş başarısız.');
+  return data;
+}
+async function auth41Refresh(){
+  if(!SECURE_LOGIN_REQUIRED41||!secureSession41?.refresh_token)return;
+  try{auth41Set(await auth41Request('token?grant_type=refresh_token',{refresh_token:secureSession41.refresh_token}));}
+  catch(e){auth41Logout('Oturum sona erdi. Yeniden giriş yap.');}
+}
+async function auth41Login(){
+  const status=document.getElementById('auth-error41');status.textContent='Giriş yapılıyor…';
+  try{
+    const email=document.getElementById('auth-email41').value.trim();
+    const password=document.getElementById('auth-pass41').value;
+    auth41Set(await auth41Request('token?grant_type=password',{email,password}));
+    document.getElementById('auth-pass41').value='';auth41Hide();auth41AddLogout();
+    if(!window.__auth41Started){window.__auth41Started=true;await initV29();}
+  }catch(e){status.textContent=e.message;}
+}
+function auth41Logout(message){
+  if(!SECURE_LOGIN_REQUIRED41)return;
+  clearTimeout(secureRefreshTimer41);secureSession41=null;localStorage.removeItem('kv_secure_session41');
+  SB_HEADERS.Authorization='Bearer '+SUPABASE_KEY;
+  // Eski kullanıcının yerel önbelleği giriş ekranında gösterilmesin.
+  CARDS=[];PROGRESS={};renderAll();
+  auth41Show(message||'Oturum kapatıldı.');
+  window.__auth41Started=false;
+}
+async function initSecure41(){
+  if(!SECURE_LOGIN_REQUIRED41){initV29();return;}
+  let session=v28Read('kv_secure_session41',null);
+  if(session?.refresh_token){
+    try{auth41Set(await auth41Request('token?grant_type=refresh_token',{refresh_token:session.refresh_token}));window.__auth41Started=true;auth41AddLogout();await initV29();return;}
+    catch(e){localStorage.removeItem('kv_secure_session41');}
+  }
+  auth41Show();
+}
+
+initSecure41();
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
