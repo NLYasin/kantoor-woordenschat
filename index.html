@@ -29,6 +29,8 @@
     'Authorization': 'Bearer ' + SUPABASE_KEY,
     'Content-Type': 'application/json'
   };
+
+
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1621,6 +1623,17 @@ body { zoom:1 !important; }
 .listen-scope-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.listen-choose41{margin:12px 0;padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--bg2);display:flex;flex-direction:column;gap:10px}.listen-choose41>b,.listen-subhead41 b{font-size:calc(13px * var(--ui-scale))}.listen-subhead41{display:flex;justify-content:space-between;align-items:center;gap:8px}.listen-subhead41 button{border:0;background:transparent;color:var(--accent);font:inherit;font-weight:800;font-size:calc(12px * var(--ui-scale));cursor:pointer;min-height:38px}.listen-chips41{max-height:150px;overflow:auto}.listen-chips41 .listen-opt-btn{font-size:calc(12px * var(--ui-scale));padding:8px 10px;min-height:38px}.listen-search41{min-height:44px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);padding:10px;font:inherit;font-size:calc(14px * var(--ui-scale));width:100%}.listen-found41{max-height:230px;overflow-y:auto}.listen-one41{display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--border);padding:9px 3px;font-size:calc(13px * var(--ui-scale));line-height:1.4;cursor:pointer}.listen-one41 input{accent-color:var(--accent);width:18px;height:18px}.listen-hint41{font-size:calc(12px * var(--ui-scale));color:var(--text3);line-height:1.5}.listen-savedrow41{display:flex;align-items:center;gap:6px}.listen-saved41{flex:1;text-align:left;min-height:40px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font:inherit;font-size:calc(13px * var(--ui-scale));padding:7px 10px;cursor:pointer}.listen-del41{width:42px;min-height:42px;border:1px solid var(--border);background:var(--bg3);color:var(--red);border-radius:10px;cursor:pointer}.listen-del41 .ic{width:16px;height:16px}
 .practice41{border:1px solid var(--border);border-radius:14px;background:var(--bg2);margin-top:12px;padding:10px}.practice-toggle41{min-height:40px;width:100%;font:inherit;font-size:calc(14px * var(--ui-scale));font-weight:800;color:var(--accent);background:transparent;border:0;cursor:pointer;text-align:left}.practice-body41{display:flex;flex-direction:column;gap:10px;font-size:calc(13px * var(--ui-scale));line-height:1.5}.practice-body41[hidden],.practice-samples41[hidden],.practice-rating41[hidden]{display:none}.practice-body41 p{margin:0;color:var(--text2)}.practice-body41 textarea{width:100%;min-height:95px;box-sizing:border-box;border-radius:10px;padding:10px;background:var(--bg);border:1px solid var(--border);color:var(--text);font:inherit;font-size:calc(14px * var(--ui-scale))}.practice-samples41{padding:10px;border-radius:10px;background:var(--bg3)}.practice-samples41 div{margin:6px 0 2px;font-weight:700}.practice-samples41 small{color:var(--text2);font-size:calc(12px * var(--ui-scale))}.practice-rating41>div{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}.practice-rating41 button{min-height:42px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font:inherit;font-size:calc(13px * var(--ui-scale));padding:8px;cursor:pointer}
 .auth41{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}.auth41[hidden]{display:none}.auth-card41{max-width:390px;width:100%;border:1px solid var(--border);background:var(--bg2);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px}.auth-card41 h2{font-family:var(--font-display);margin:0;font-size:calc(25px * var(--ui-scale))}.auth-card41 p{margin:0;color:var(--text2)}.auth-card41 label{font-size:calc(13px * var(--ui-scale));font-weight:700;display:flex;flex-direction:column;gap:6px}.auth-card41 input{font:inherit;padding:12px;border-radius:10px;background:var(--bg);border:1px solid var(--border);color:var(--text)}#auth-error41{font-size:calc(13px * var(--ui-scale));color:var(--red)}
+
+
+/* v42: kaynak > tarih adımlı seçim; küçük ekranlarda okunabilir liste */
+.source-tabs42{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}
+.source-tab42{padding:11px 12px;min-height:44px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font:inherit;font-size:calc(13px * var(--ui-scale));font-weight:800;cursor:pointer}
+.source-tab42.active{background:var(--accent);color:var(--on-accent,#fff);border-color:var(--accent)}
+.date-picker42{display:block;width:100%;max-width:100%;box-sizing:border-box;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:12px;font:inherit;font-size:calc(14px * var(--ui-scale));min-height:46px}
+.date-helper42{font-size:calc(12px * var(--ui-scale));color:var(--text2);line-height:1.5;margin:4px 0}
+.date-options42{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:8px;max-height:240px;overflow:auto;padding:2px}
+.date-options42 button{display:flex;justify-content:center;align-items:center;min-height:42px;margin:0}
+.date-selection-count42{color:var(--accent);font-weight:800}
 
 </style>
 </head>
@@ -6745,6 +6758,147 @@ listenPatchPlayback = function() {
     b.onclick = listenTrash40; row.appendChild(b);
   }
 };
+
+// ══════════════════════════════════════════════════════════════════
+// v42 — Yeni Kantoor ifadeleri öncelikli; önce kaynak sonra tarih seçimi.
+// Veri, progress veya SR tarihlerini değiştirmez.
+// ══════════════════════════════════════════════════════════════════
+function source42(date){return /^\s*GAZETE\b/i.test(String(date||''))?'gazete':'kantoor';}
+function dateNumber42(label){
+  const text=String(label||''), m=text.match(/(\d{1,2})[\/.-](\d{1,2})(?:[\/.-](\d{4}))?/);
+  if(!m)return -Infinity;
+  const day=Number(m[1]),month=Number(m[2]);
+  if(month<1||month>12||day<1||day>31)return -Infinity;
+  let year=m[3]?Number(m[3]):new Date().getFullYear();
+  // Yıl belirtilmediyse gelecek tarihleri geçen yıl kabul et; tarihsel etiketler korunur.
+  if(!m[3]){const today=new Date(),thisYear=new Date(year,month-1,day);if(thisYear.getTime()>today.getTime()+2*86400000)year--;}
+  return new Date(year,month-1,day).getTime();
+}
+function compareDates42(a,b){
+  const da=dateNumber42(a),db=dateNumber42(b);
+  if(da!==db)return db-da;
+  return String(b).localeCompare(String(a),'tr');
+}
+function compareCards42(a,b){
+  // Büro kayıtları > gazete; her kaynakta yeni tarih > eski tarih.
+  const sa=source42(a.date),sb=source42(b.date);
+  if(sa!==sb)return sa==='kantoor'?-1:1;
+  const dateDiff=compareDates42(a.date,b.date);
+  if(dateDiff)return dateDiff;
+  // Aynı ders/tarihte son eklenen ID ilk gelir.
+  return (Number(b.id)||0)-(Number(a.id)||0);
+}
+function orderedDates42(source,onlyListenable=false){
+  const list=CARDS.filter(c=>source42(c.date)===source&&(!onlyListenable||listenable37(c)));
+  return [...new Set(list.map(c=>c.date))].sort(compareDates42);
+}
+// Tüm tarih seçicilerde Kantoor tarihleri önce gelir (en yeni üstte).
+sortDates=function(dates){return [...dates].sort((a,b)=>source42(a)===source42(b)?compareDates42(a,b):source42(a)==='kantoor'?-1:1);};
+// Tekrarı geciken Kantoor kartları ilk, ardından diğer zamanı gelen kartlar.
+// Henüz zamanı gelmemiş bir kartı erkenden 'zamanı geldi' yapmaz.
+studyDueCards=function(tema){
+  return CARDS.filter(c=>isDue(c.id)&&(!tema||tema==='all'||getTema(c)===tema))
+    .sort((a,b)=>compareCards42(a,b)||new Date(dueAt28(a.id))-new Date(dueAt28(b.id)));
+};
+studyNewCards=function(tema){
+  const limit=Math.max(0,studyPrefs.newPerDay-newIntroducedToday());
+  return CARDS.filter(c=>ready28(c)&&!PROGRESS[c.id]?.is_known&&(!tema||tema==='all'||getTema(c)===tema))
+    .sort(compareCards42).slice(0,limit);
+};
+// Aynı kaynak/tarih önceliği ek zor kartlar için de geçerli.
+const oldSmartHard42=smartHard41;
+smartHard41=function(tema){return oldSmartHard42(tema).sort(compareCards42);};
+// Her çalışma oturumunda kaynak önceliği, 'due > new' aşama sırasının
+// önündedir. Böylece yeni Kantoor kalıpları gecikmiş Gazete kartlarının
+// arkasında kalmaz. Kartların tekrar tarihleri yine değiştirilmez.
+buildStudyQueue=function(tema){
+  const due=studyDueCards(tema),fresh=studyNewCards(tema);
+  return [...due.filter(c=>source42(c.date)==='kantoor'),
+    ...fresh.filter(c=>source42(c.date)==='kantoor'),
+    ...due.filter(c=>source42(c.date)==='gazete'),
+    ...fresh.filter(c=>source42(c.date)==='gazete')].slice(0,ST_MAX);
+};
+smartPlan41=function(tema=studyTema){
+  const slots=Math.min(ST_MAX,Math.floor(smartRemaining41()/60));
+  if(!slots)return {due:[],hard:[],fresh:[],queue:[],slots:0};
+  const dueAll=studyDueCards(tema), hardAll=smartHard41(tema).slice(0,Math.ceil(slots*0.4)), freshAll=studyNewCards(tema);
+  const seen=new Set(), queue=[],due=[],hard=[],fresh=[];
+  for(const source of ['kantoor','gazete']){
+    for(const [list,kind] of [[dueAll,'due'],[hardAll,'hard'],[freshAll,'fresh']]){
+      for(const c of list){
+        if(queue.length>=slots)break;
+        if(source42(c.date)!==source||seen.has(c.id))continue;
+        seen.add(c.id);
+        if(kind==='due'){due.push(c);queue.push({id:c.id,again:false});}
+        else if(kind==='hard'){hard.push(c);queue.push({id:c.id,again:true,smartPractice:true});}
+        else {fresh.push(c);queue.push({id:c.id,again:false});}
+      }
+    }
+  }
+  return {due,hard,fresh,queue,slots};
+};
+// Kart koleksiyonu: önce Kantoor/Gazete, ardından o kaynağın tarihleri.
+let collectionSource42=v28Read('kv_collection_source42','kantoor');
+function setCollectionSource42(source){
+  collectionSource42=source==='gazete'?'gazete':'kantoor';
+  v28Store('kv_collection_source42',collectionSource42);
+  currentDate='all';openGroups=new Set();buildDateFilters();renderAll();
+}
+const originalMatchesTypeDate42=matchesTypeDateSearch;
+matchesTypeDateSearch=function(c){
+  if(groupMode!=='tema'&&!searchQuery.trim()&&currentDate==='all'&&collectionSource42!=='all'&&source42(c.date)!==collectionSource42)return false;
+  return originalMatchesTypeDate42(c);
+};
+buildDateFilters=function(){
+  const el=document.getElementById('date-filters');if(!el)return;
+  if(groupMode==='tema'){
+    el.innerHTML=`<label class="gt-label" for="collection-scope">Tema</label><select class="date-picker42" id="collection-scope"><option value="all">Tüm temalar</option>${TEMAS.map(t=>`<option value="${esc28(t.id)}">${esc28(t.label)}</option>`).join('')}</select>`;
+    const select=el.querySelector('select');select.value=currentTema;select.onchange=()=>{currentTema=select.value;openGroups=new Set();renderAll();};return;
+  }
+  const count=(source)=>CARDS.filter(c=>source42(c.date)===source).length;
+  const dates=orderedDates42(collectionSource42);
+  const allOptions=dates.map(d=>`<option value="${esc28(d)}">${esc28(formatDateLabel(d))} · ${CARDS.filter(c=>c.date===d).length} kart</option>`).join('');
+  el.innerHTML=`<div class="date-helper42">1. Kaynağı seç</div>
+   <div class="source-tabs42"><button type="button" class="source-tab42 ${collectionSource42==='kantoor'?'active':''}" onclick="setCollectionSource42('kantoor')">🏢 Kantoor (${count('kantoor')})</button><button type="button" class="source-tab42 ${collectionSource42==='gazete'?'active':''}" onclick="setCollectionSource42('gazete')">📰 Gazete (${count('gazete')})</button></div>
+   <label class="gt-label" for="collection-scope">2. Tarihi seç · en yeni en üstte</label><select class="date-picker42" id="collection-scope"><option value="all">Bu kaynağın bütün tarihleri</option>${allOptions}</select>`;
+  if(currentDate!=='all'&&source42(currentDate)!==collectionSource42)currentDate='all';
+  const select=el.querySelector('select');select.value=dates.includes(currentDate)?currentDate:'all';
+  select.onchange=()=>{currentDate=select.value;openGroups=new Set(currentDate==='all'?[]:[currentDate]);renderAll();};
+};
+// Dinleme / tek ders seçiminde aynı kaynak > tarih arayüzü.
+let listenLessonSource42=v28Read('kv_listen_lesson_source42','kantoor');
+function setListenLessonSource42(s){
+  listenLessonSource42=s==='gazete'?'gazete':'kantoor';v28Store('kv_listen_lesson_source42',listenLessonSource42);
+  listenLessonDate=null;renderListenScreen();
+}
+const originalRenderListenSetup42=renderListenSetup;
+renderListenSetup=function(el){
+  originalRenderListenSetup42(el);
+  if(listenScope==='lesson'){
+    const root=el.querySelector('.listen-lesson-chips');
+    if(root){
+      const dates=orderedDates42(listenLessonSource42,true);
+      root.innerHTML=`<div class="date-helper42">1. Kaynak</div><div class="source-tabs42"><button type="button" class="source-tab42 ${listenLessonSource42==='kantoor'?'active':''}" onclick="setListenLessonSource42('kantoor')">🏢 Kantoor</button><button type="button" class="source-tab42 ${listenLessonSource42==='gazete'?'active':''}" onclick="setListenLessonSource42('gazete')">📰 Gazete</button></div><label class="gt-label" for="listen-lesson-date42">2. Tarih · en yeni en üstte</label><select id="listen-lesson-date42" class="date-picker42" onchange="selectListenLesson(this.value)"><option value="">Tarih seç</option>${dates.map(d=>`<option value="${esc28(d)}">${esc28(formatDateLabel(d))}</option>`).join('')}</select>`;
+      root.querySelector('select').value=dates.includes(listenLessonDate)?listenLessonDate:'';
+    }
+  }
+  if(listenScope==='selection'){
+    const pane=el.querySelector('.listen-choose41');if(!pane)return;
+    const dateButtons=pane.querySelector('.listen-chips41');
+    const dateHeading=pane.querySelector('.listen-subhead41');
+    if(dateButtons&&dateHeading){
+      dateHeading.querySelector('b').textContent='Kaynak ve tarih seç';
+      const selected=(listenSelection41.dates||[]).length;
+      dateButtons.insertAdjacentHTML('beforebegin',`<div class="source-tabs42"><button type="button" class="source-tab42 ${listenLessonSource42==='kantoor'?'active':''}" onclick="setListenLessonSource42('kantoor')">🏢 Kantoor</button><button type="button" class="source-tab42 ${listenLessonSource42==='gazete'?'active':''}" onclick="setListenLessonSource42('gazete')">📰 Gazete</button></div><div class="date-helper42">2. Birden fazla tarih seçebilirsin. <span class="date-selection-count42">${selected} tarih seçili</span></div>`);
+      dateButtons.classList.add('date-options42');
+      dateButtons.innerHTML=orderedDates42(listenLessonSource42,true).map(d=>`<button type="button" class="listen-opt-btn ${(listenSelection41.dates||[]).includes(d)?'active':''}" data-date="${esc28(d)}">${esc28(formatDateLabel(d))}</button>`).join('');
+      dateButtons.querySelectorAll('button').forEach(b=>b.onclick=()=>listen41Pick('dates',b.dataset.date));
+    }
+  }
+};
+// Dinleme de önce işte kullanılacak ifadeler, sonra gazete ve eski tarihler.
+const originalGetListenScopeCards42=getListenScopeCards;
+getListenScopeCards=function(){return originalGetListenScopeCards42().sort(compareCards42);};
 
 </script>
 </body>
