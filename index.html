@@ -1787,7 +1787,7 @@ body { zoom:1 !important; }
     <div class="settings-row">
       <div>
         <div class="settings-row-label">Önce Hollandaca</div>
-        <div class="settings-row-desc">Kartta önce Hollandaca açıklama görünür; Türkçe anlam, köken ve not tek düğmeyle açılır</div>
+        <div class="settings-row-desc">Hollandaca açıklama her zaman ifadenin altında görünür; Türkçe anlam ayrı gösterilip gizlenebilir</div>
       </div>
       <div class="theme-toggle" id="nlfirst-toggle">
         <button class="theme-btn nlfirst-btn" data-nlfirst="1" onclick="setNlFirst(true)">Açık</button>
@@ -7009,8 +7009,7 @@ cardBodyHtml=function(item,pfx){
   const notes=[['Kullanım notu',item.note],['Köken / türev',item.etymology],['Hukuki açıklama',item.legal]]
     .filter(([,v])=>String(v||'').trim());
   const uitleg=String(item.uitleg||'').trim();
-  const details=(uitleg?`<section class="card-detail44"><b>Hollandaca açıklama</b><p lang="nl">${esc28(uitleg)}</p></section>`:'')+
-    notes.map(([heading,value])=>`<section class="card-detail44"><b>${heading}</b><p>${esc28(value)}</p></section>`).join('')+
+  const details=notes.map(([heading,value])=>`<section class="card-detail44"><b>${heading}</b><p>${esc28(value)}</p></section>`).join('')+
     (item._raw&&compactText44(item._raw)!==compactText44(item.dutch)?`<section class="card-detail44"><b>İlk kaydedilen ifade</b><p lang="nl">${esc28(item._raw)}</p></section>`:'');
   const examples=useful.length?`<section class="card-examples44"><div class="card-title44">Örnekler <span>${useful.length}</span></div>${useful.map(ex=>{
     const found=findExampleCardId(ex);
@@ -7020,13 +7019,14 @@ cardBodyHtml=function(item,pfx){
 };
 renderCard=function(c){
   const known=PROGRESS[c.id]?.is_known,sr=known?srStatusLabel(c.id):null;
-  const expanded=openCardBodies.has(c.id),trVisible=nlFirst?shownTurkish44.has(c.id):!shownTurkish44.has(c.id);
+  const expanded=openCardBodies.has(c.id),trVisible=!shownTurkish44.has(c.id);
   const label=c.type==='zin'?'Cümle':c.type==='uitdrukking'?'Kalıp':c.isLegal?'Hukuki':'Kelime';
   const cls=c.type==='zin'?'zin':c.type==='uitdrukking'?'uitdrukking':c.isLegal?'juridisch':'woord';
   const hasTranslation=String(c.turkish||'').trim();
   return `<article class="card card44 ${expanded?'expanded':''}" id="card-${c.id}">
     <div class="card-main44"><div class="card-top44"><span class="badge badge-${cls}">${label}</span><span class="card-date44">${esc28(formatDateLabel(c.date||''))}</span></div>
     <div class="card-dutch card-dutch44" lang="nl">${esc28(c.dutch)}</div>
+    ${String(c.uitleg||'').trim()?`<div class="card-uitleg45" lang="nl"><span class="card-uitleg-label45">🇳🇱 Hollandaca açıklama</span><p>${esc28(c.uitleg)}</p></div>`:''}
     <div class="card-primary-actions44"><button type="button" class="card-trans-btn44" aria-expanded="${trVisible}" onclick="toggleTurkish44(event,${c.id})">${trVisible?'✓ Türkçeyi gizle':'🇹🇷 Türkçeyi göster'}</button><button type="button" class="card-audio-btn44" onclick="speakCard28(event,${c.id})" aria-label="Hollandaca dinle">${ic('volume')} Dinle</button></div>
     ${trVisible&&hasTranslation?`<div class="card-turkish44" lang="tr"><span>Türkçe anlamı</span><p>${esc28(c.turkish)}</p></div>`:''}
     <button type="button" class="card-expand-btn44" onclick="toggleCard(${c.id})" aria-expanded="${expanded}" aria-controls="body-${c.id}">${expanded?'− Ayrıntıları kapat':'+ Örnekler ve detaylar'}</button></div>
@@ -7080,6 +7080,16 @@ cardV44Style.textContent=`
 @media(max-width:440px){.card44 .card-main44{padding:13px 12px 8px}.card44 .card-body{padding:0 12px 12px}.card44 .card-footer44{padding:11px 12px}.card44 .card-trans-btn44{min-width:140px}}
 `;
 document.head.appendChild(cardV44Style);
+// v45: Hollandaca açıklama kartın hemen altında, gizlenmeden görünür.
+const cardV45Style=document.createElement('style');
+cardV45Style.textContent=`
+.card44 .card-uitleg45{margin:10px 0 2px;padding:11px 13px;border-radius:10px;background:rgba(44,116,165,.075);border-left:3px solid #3277a5}
+.card44 .card-uitleg-label45{display:block;font-weight:750;font-size:12px;color:var(--text,#253648);margin-bottom:5px}
+.card44 .card-uitleg45 p{margin:0;font-size:calc(15px * var(--read-scale,1));font-weight:500;line-height:1.58;overflow-wrap:anywhere}
+.card44 .card-primary-actions44{margin-top:12px}
+.card44 .card-turkish44{margin-top:9px}
+`;
+document.head.appendChild(cardV45Style);
 
 </script>
 </body>
