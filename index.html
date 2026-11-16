@@ -7034,6 +7034,7 @@ renderCard=function(c){
     ${sr?`<div class="sr-status ${sr.cls}">${sr.text}</div>`:''}
     <div class="card-body${expanded?' open':''}" id="body-${c.id}">${cardBodyHtml(c,'c')}
       <div class="card-tools">${temaSelectHtml(c)}${laterBtn39(c.id,'later-link')}<button class="btn-link" onclick="openEditor(${c.id})">Düzenle</button><button class="btn-link" onclick="copyPhrase28(${c.id})">Kopyala</button><button class="btn-link danger" onclick="confirmDelete(event,${c.id})">Çöp kutusuna taşı</button></div>
+      <button type="button" class="card-bottom-close47" onclick="closeCardAtBottom47(${c.id})" aria-label="Kart ayrıntılarını kapat">${ic('x')} Ayrıntıları kapat</button>
     </div><div class="card-footer44"><span class="tema-chip" id="tchip-${c.id}">${esc28(TEMA_BY_ID[getTema(c)]?.label||'Diğer')}</span><button class="btn-known ${known?'known':''}" onclick="toggleKnown(event,${c.id})" ${!known&&!ready28(c)?'disabled':''}>${known?'✓ Çalışmada':c._needsReview?'Önce kontrol et':'+ Çalışmaya ekle'}</button></div>
   </article>`;
 };
@@ -7044,6 +7045,18 @@ toggleCard=function(id){
   const btn=document.querySelector('#card-'+id+' .card-expand-btn44');
   if(btn){const expanded=openCardBodies.has(id);btn.textContent=expanded?'− Ayrıntıları kapat':'+ Örnekler ve detaylar';btn.setAttribute('aria-expanded',String(expanded));}
 };
+// v47: Uzun kartların sonunda da kolayca kapatma.
+// Kapanınca kartın başlığına getir; kullanıcı yukarı kaydırmak zorunda kalmasın.
+function closeCardAtBottom47(id){
+  if(!openCardBodies.has(id)) return;
+  toggleCard(id);
+  const card=document.getElementById('card-'+id);
+  if(card){
+    const header=card.querySelector('.card-expand-btn44');
+    if(header) header.setAttribute('aria-expanded','false');
+    card.scrollIntoView({block:'start',behavior:'smooth'});
+  }
+}
 // Kartın Türkçesini göstermek, örnekleri ve detayları otomatik açmaz.
 const cardV44Style=document.createElement('style');
 cardV44Style.textContent=`
@@ -7090,6 +7103,14 @@ cardV45Style.textContent=`
 .card44 .card-turkish44{margin-top:9px}
 `;
 document.head.appendChild(cardV45Style);
+// Alt kapatma butonu küçük ekranda da rahat tıklanır.
+const cardV47Style=document.createElement('style');
+cardV47Style.textContent=`
+.card44 .card-bottom-close47{display:flex;width:100%;min-height:48px;align-items:center;justify-content:center;gap:9px;margin-top:18px;padding:12px;border:1px solid var(--border,#d1d5db);border-radius:12px;background:var(--surface,#fff);color:var(--text,#253648);font:inherit;font-size:15px;font-weight:750;cursor:pointer;touch-action:manipulation}
+.card44 .card-bottom-close47:focus-visible{outline:3px solid #3284b6;outline-offset:2px}
+.card44 .card-bottom-close47 svg{width:17px;height:17px}
+`;
+document.head.appendChild(cardV47Style);
 
 </script>
 </body>
