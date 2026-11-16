@@ -6991,7 +6991,7 @@ loadCachedCards=function(){return oldCachedCards44().filter(c=>!hiddenCard44(c.i
 const oldRefresh44=refreshFromServer;
 refreshFromServer=async function(force){await oldRefresh44(force);enforceDeleted44();renderAll();};
 
-// Büyük ve açık bir Türkçe butonu. Tekrarlanan bilgileri 'Ek bilgiler' altına taşı.
+// Türkçe varsayılan olarak gizli; yalnızca kullanıcı açınca görünür. Tekrarlanan bilgileri 'Ek bilgiler' altına taşı.
 const shownTurkish44 = new Set();
 function toggleTurkish44(ev,id){
   ev?.stopPropagation();
@@ -7019,7 +7019,7 @@ cardBodyHtml=function(item,pfx){
 };
 renderCard=function(c){
   const known=PROGRESS[c.id]?.is_known,sr=known?srStatusLabel(c.id):null;
-  const expanded=openCardBodies.has(c.id),trVisible=!shownTurkish44.has(c.id);
+  const expanded=openCardBodies.has(c.id),trVisible=shownTurkish44.has(c.id);
   const label=c.type==='zin'?'Cümle':c.type==='uitdrukking'?'Kalıp':c.isLegal?'Hukuki':'Kelime';
   const cls=c.type==='zin'?'zin':c.type==='uitdrukking'?'uitdrukking':c.isLegal?'juridisch':'woord';
   const hasTranslation=String(c.turkish||'').trim();
