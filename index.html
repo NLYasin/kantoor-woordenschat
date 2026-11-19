@@ -2167,7 +2167,7 @@ async function sbFetch(path, options = {}) {
 }
 
 async function loadCardsFromDB() {
-  const data = await sbFetch('cards?select=*&order=id.asc');
+  const data = await exportPages41('cards','id'); // v48: paged, no 1000-row truncation
   return data.map(c => ({
     id: c.id, date: c.date, type: c.type, dutch: c.dutch, turkish: c.turkish,
     uitleg: c.uitleg, etymology: c.etymology,
@@ -2176,7 +2176,7 @@ async function loadCardsFromDB() {
 }
 
 async function loadProgressFromDB() {
-  const data = await sbFetch('progress?select=*');
+  const data = await exportPages41('progress','card_id'); // v48: paged progress
   const map = {};
   data.forEach(p => {
     map[p.card_id] = {
@@ -2463,7 +2463,7 @@ function calcStreak() {
   const today = new Date();
   for (let i = 0; i < 365; i++) {
     const d = new Date(today); d.setDate(d.getDate() - i);
-    const key = d.toISOString().slice(0,10);
+    const key = [d.getFullYear(), String(d.getMonth()+1).padStart(2,'0'), String(d.getDate()).padStart(2,'0')].join('-');
     if (activityLog[key] && activityLog[key] > 0) streak++;
     else if (i > 0) break; // bugün çalışılmamışsa streak kırılmaz henüz, dün yoksa kırılır
   }
@@ -6432,7 +6432,7 @@ exportData=async function(){
     const [remoteCards,remoteProgress,remoteStates]=await Promise.all([
       exportPages41('cards','id'),exportPages41('progress','card_id'),exportPages41('app_state','key')]);
     // Çöp kutusundaki kartlar ayrı alandan geri yüklenir; aktif listeye katılmaz.
-    const byId=new Map(remoteCards.filter(r=>!trashActive29(TRASH29[r.id])).map(r=>[Number(r.id),enrich28({
+    const byId=new Map(remoteCards.filter(r=>!hiddenCard44(r.id)).map(r=>[Number(r.id),enrich28({
       id:r.id,date:r.date,type:r.type,dutch:r.dutch,turkish:r.turkish,
       uitleg:r.uitleg,etymology:r.etymology,note:r.note,examples:r.examples||[],
       legal:r.legal,isLegal:r.is_legal,is_legal:r.is_legal
@@ -7111,6 +7111,111 @@ cardV47Style.textContent=`
 .card44 .card-bottom-close47 svg{width:17px;height:17px}
 `;
 document.head.appendChild(cardV47Style);
+
+
+/* ── v48: Kayıpsız sayfalama, kalite düzeltmeleri, yinelenen kartları güvenli gösterme ── */
+const CONTENT_FIXES48 = {"2":{"etymology":"Yapı: `Kunt u ...?` (nazik rica) + `dit` (bunu) + `naar mij mailen` (bana e-posta ile göndermek). `mailen` İngilizce `mail` sözcüğünden türetilmiş bir fiildir."},"40":{"uitleg":"Een proces verloopt traag en moeizaam; er is weinig voortgang.","etymology":"`Stroperig` = `stroop` (koyu şurup) ile ilişkili; mecazen ağır ve güçlükle ilerleyen."},"46":{"etymology":"`Te` (edat) + `goeder` (`goed` sıfatının eski çekimli biçimi) + `trouw` (dürüstlük/güven). `Te goeder trouw` kalıplaşmış eski bir dil bilgisi yapısıdır."},"889":{"note":"Bu cümledeki 'spoedcriteria hebben' doğal bir Hollandaca kullanımı değildir. 'Ze voldoet aan de spoedcriteria' (kriterleri karşılıyor) veya 'Ze voldoet niet aan de spoedcriteria' (karşılamıyor) seçenekleri vardır. Hangisinin kastedildiği orijinal bağlamdan doğrulanmalı.","_needsReview":true},"935":{"note":"Bu cümledeki 'spoedcriteria hebben' doğal bir Hollandaca kullanımı değildir. 'Ze voldoet aan de spoedcriteria' (kriterleri karşılıyor) veya 'Ze voldoet niet aan de spoedcriteria' (karşılamıyor) seçenekleri vardır. Hangisinin kastedildiği orijinal bağlamdan doğrulanmalı.","_needsReview":true},"1071":{"_needsReview":true},"1055":{"uitleg":"De gemeente vindt samenwerking heel belangrijk."},"1056":{"uitleg":"Hij vindt dit minder belangrijk dan ik."},"1057":{"uitleg":"Wij hebben een goede relatie met de woningcorporatie en houden die in stand."},"1058":{"uitleg":"Hij probeert het contact met zijn familie te versterken."},"1059":{"uitleg":"Wij houden nauwkeurig bij wat er gebeurt en verandert."},"1060":{"uitleg":"Zij houdt de ontwikkelingen in zijn dossier nauwlettend in de gaten."},"1061":{"uitleg":"De vrijwilligers zijn heel belangrijk voor het functioneren van de buurt."},"1062":{"uitleg":"Hij was degene op wie het gezin altijd kon rekenen."},"1063":{"uitleg":"Zijn positie en invloed zijn verzwakt doordat anderen hem tegenwerkten."},"1064":{"uitleg":"Door corruptie wordt het vertrouwen in de samenleving aangetast."},"1065":{"uitleg":"Het land moet de crisis aanpakken en ermee omgaan."},"1066":{"uitleg":"Er is geprobeerd de problemen het hoofd te bieden."}};
+const originalContents48 = {
+ '2': {etymology:'Yapı: `mag ik`'},
+ '40': {etymology:'`Stoppen`'},
+ '46': {etymology:'`Te` (çok/gerçekten)'}
+};
+function contentFix48(item){
+  if(!item) return item;
+  const change=CONTENT_FIXES48[String(item.id)];
+  if(!change) return item;
+  const c={...item};
+  for(const [field,value] of Object.entries(change)){
+    if(field==='uitleg') {
+      // 12 örnekten üretilen cümlede açıklama boştu; var olan kullanıcı değişikliği korunur.
+      if(!String(c.uitleg||'').trim() || (Number(c.id)===40 && c.uitleg==='Iets gaat niet vooruit; het proces zit vast.'))c.uitleg=value;
+    } else if(field==='etymology'){
+      const old=originalContents48[String(c.id)]?.etymology;
+      if(old && String(c.etymology||'').includes(old))c.etymology=value;
+    } else if(field==='note'){
+      if(String(c.dutch||'')==='Helaas heeft ze spoedcriteria.' && String(c.note||'').includes("'spoedcriteria hebben'"))c.note=value;
+    } else if(field==='_needsReview'){
+      // Kullanıcı editörde özgün cümleyi düzelttiyse zorla kontrol bekliyor yapma.
+      if((c.id===1071 && c.dutch==='Ben je op je neus gevallen?') || String(c.dutch||'')==='Helaas heeft ze spoedcriteria.')c._needsReview=true;
+    }
+  }
+  return c;
+}
+// Yalnızca gerçekten aynı alanları içeren *aynı tarihli* kopyaları gizle.
+// Farklı günlerde yeniden karşılaşılan kalıplar ve farklı örnekler korunur.
+let duplicateMap48={};
+function duplicateSignature48(c){
+  return JSON.stringify([
+    String(c.date||'').trim(),String(c.type||''),norm28(c.dutch||''),
+    String(c.turkish||'').trim(),String(c.uitleg||'').trim(),
+    String(c.note||'').trim(),String(c.etymology||'').trim(),
+    JSON.stringify(c.examples||[]),String(c.legal||'').trim(),!!c.isLegal
+  ]);
+}
+function withoutExactDuplicates48(cards){
+  const byKey=new Map(),kept=[],hidden={};
+  for(const item of [...(cards||[])].sort((a,b)=>Number(a.id)-Number(b.id))){
+    const c=contentFix48(item);
+    const key=duplicateSignature48(c);
+    if(byKey.has(key)){
+      hidden[String(c.id)]=byKey.get(key).id;
+      continue;
+    }
+    byKey.set(key,c); kept.push(c);
+  }
+  duplicateMap48=hidden;
+  return kept;
+}
+const rawLoadCards48=loadCardsFromDB;
+loadCardsFromDB=async function(){return withoutExactDuplicates48(await rawLoadCards48());};
+const rawCachedCards48=loadCachedCards;
+loadCachedCards=function(){return withoutExactDuplicates48(rawCachedCards48());};
+// v48: Supabase app_state tablosu ileride 1000 satırı geçerse hiçbir ayar düşmesin.
+const originalSbFetch48=sbFetch;
+sbFetch=async function(path,options={}){
+  if(path==='app_state?select=key,value' && (!options.method||options.method==='GET')){
+    const all=await exportPages41('app_state','key');
+    lastServerRows28=all.map(r=>({key:r.key,value:r.value}));
+    return lastServerRows28;
+  }
+  return originalSbFetch48(path,options);
+};
+// Açılıştan sonra başka sürümlerin tema/durum güncellemeleri CARDS'i yeniden oluşturabilir.
+// Onları da tekilleştir; sunucudaki kartları sessizce silme veya ID'lerini değiştirme.
+const previousRefresh48=refreshFromServer;
+refreshFromServer=async function(force){
+  await previousRefresh48(force);
+  const before=CARDS.length;
+  CARDS=withoutExactDuplicates48(CARDS).filter(c=>!hiddenCard44(c.id));
+  if(CARDS.length!==before){cacheCards();buildDateFilters();renderAll();updateStats();}
+};
+const previousPull48=pullState;
+pullState=async function(){
+  await previousPull48();
+  const before=CARDS.length;
+  CARDS=withoutExactDuplicates48(CARDS).filter(c=>!hiddenCard44(c.id));
+  if(CARDS.length!==before)cacheCards();
+};
+// Bilinmeyen eski STAJ/MOEST giriş tarihlerini gerçek tarihmiş gibi sunmayın.
+const oldDateLabel48=formatDateLabel;
+formatDateLabel=function(date){
+  if(date==='STAJ')return 'STAJ · Tarih bilinmiyor';
+  if(date==='MOEST')return 'MOEST · Tarih bilinmiyor';
+  return oldDateLabel48(date);
+};
+// İçe aktarılan yedekteki 10/11 kopyalarına yanlışlıkla yeni kimlik atama.
+// Eski restore hâliyle 'birleştir' işlemidir, sunucudaki kayıtları silmez.
+const previousRestore48=restoreBackup28;
+restoreBackup28=async function(data){
+  if(Array.isArray(data?.cards)){
+    const seen=new Set();let doubles=0;
+    for(const c of data.cards){const key=[String(c.date||''),String(c.type||''),norm28(c.dutch||'')].join('|');if(seen.has(key))doubles++;else seen.add(key);}
+    if(doubles){
+      if(!confirm('Bu yedekte aynı tarih ve ifadeyle kaydedilmiş '+doubles+' tekrar var. Geri yükleme bunları birleştirebilir; önce orijinal JSON dosyanı saklamalısın. Yine de devam edilsin mi?'))throw new Error('Geri yükleme iptal edildi; veriler değiştirilmedi.');
+    }
+  }
+  return previousRestore48(data);
+};
 
 </script>
 </body>
