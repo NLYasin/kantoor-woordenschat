@@ -1511,6 +1511,11 @@ body { zoom:1 !important; }
 .tk34-card.due .tk34-steps i.next { border-color: var(--cta); }
 .tk34-when { flex-shrink: 0; font-size: calc(12px * var(--ui-scale)); font-weight: 700; color: var(--text3); padding: 4px 9px; border-radius: 999px; background: var(--bg2); border: 1px solid var(--border); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .tk34-when.now { color: #FFFFFF; background: var(--cta); border-color: var(--cta); }
+/* v50: Tekrar listesindeki Şimdi hatırla gerçek, klavye ve dokunmaya uygun düğme. */
+.tk34-action50 { appearance: none; -webkit-appearance: none; font: inherit; font-size: calc(12px * var(--ui-scale)); font-weight: 700; cursor: pointer; min-height: 44px; padding: 9px 14px; touch-action: manipulation; }
+.tk34-action50:hover { filter: brightness(1.08); }
+.tk34-action50:active { transform: translateY(1px); }
+.tk34-action50:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .tk34-more { display: block; margin: 4px auto 16px; min-height: 44px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text2); font-weight: 700; cursor: pointer; }
 .tk34-empty { margin: 4px 16px 24px; padding: 22px; text-align: center; color: var(--text3); border: 1px dashed var(--border2); border-radius: 18px; }
 @media (max-width: 520px) { .tk34-card { flex-wrap: wrap; } .tk34-when { order: -1; margin-left: auto; } .tk34-main { flex-basis: 100%; } }
@@ -5328,7 +5333,7 @@ async function restoreBackup28(data){
  if(!Array.isArray(data.cards)||!data.progress||typeof data.progress!=='object')throw new Error('Geçerli bir uygulama yedeği seç.');
  if(!isOnline)throw new Error('Geri yüklemek için internet bağlantısı gerekiyor.');
  for(const c of data.cards)if(!c||!Number.isInteger(Number(c.id))||typeof c.dutch!=='string'||typeof c.turkish!=='string'||!['woord','zin','uitdrukking'].includes(c.type)||!c.date)throw new Error('Yedekte eksik kart bilgisi var.');
- state28('review_reset_at',data.appState?.review_reset_at||null);
+ if(data.appState?.review_reset_at && (!rows28.review_reset_at || data.appState.review_reset_at>rows28.review_reset_at)) state28('review_reset_at',data.appState.review_reset_at);
  const mapping={},key=c=>[c.date,c.type,norm28(c.dutch)].join('|');
  for(const c of data.cards){let target=CARDS.find(x=>key(x)===key(c));if(!target){const inserted=await insertCardsRemote([cardPayload28(c)]);if(!inserted?.[0]?.id)throw new Error('Kart eklenemedi.');target={...inserted[0],isLegal:inserted[0].is_legal};CARDS.push(target);}mapping[c.id]=target.id;}
  for(const[id,p]of Object.entries(data.progress)){if(!mapping[id]||!p||!Number.isInteger(p.sr_step)||p.sr_step<0)continue;const existing=PROGRESS[mapping[id]];if(existing?.sr_last_done&&p.sr_last_done&&existing.sr_last_done>p.sr_last_done)continue;await upsertProgress(mapping[id],{is_known:!!p.is_known,sr_step:Math.min(7,p.sr_step),sr_next_due:p.sr_next_due||null,sr_last_done:p.sr_last_done||null});}
@@ -5895,14 +5900,29 @@ function tekrarItem34(c) {
   const typeLbl = c.type === 'zin' ? 'Cümle' : c.type === 'uitdrukking' ? 'Deyim' : (c.isLegal ? 'Hukuki' : 'Kelime');
   const mins = due ? Math.ceil((new Date(due) - Date.now()) / 60000) : null;
   const when = isNow ? 'Şimdi hatırla' : (mins != null ? fmtMins(mins) + ' sonra' : '');
+  // v50: Vadesi gelen kartta yalnızca görsel bir etiket değil, gerçek bir eylem düğmesi kullan.
+  // Böylece doğrudan bu kartla tek kartlık Hatırla oturumu açılabilir.
+  const action = isNow
+    ? `<button type="button" class="tk34-when now tk34-action50" onclick="startTekrarCard50(${Number(c.id)})" title="Bu kartı şimdi çalış">Şimdi hatırla</button>`
+    : `<span class="tk34-when">${when}</span>`;
   return `<div class="tk34-card${isNow ? ' due' : ''}">
     <div class="tk34-main">
       <div class="tk34-nl" lang="nl">${esc28(c.dutch)}</div>
       <div class="tk34-tr">${esc28(c.turkish || '')}</div>
       <div class="tk34-meta"><span class="tk34-type">${typeLbl}</span><span class="tk34-steps" aria-label="${step} / 7 basamak">${dots}</span><span>${nth} · ${interval}</span></div>
     </div>
-    <div class="tk34-when${isNow ? ' now' : ''}">${when}</div>
+    ${action}
   </div>`;
+}
+// v50: Tekrar listesindeki düğme, işaretleme yapmaz; ilgili kartın sınamasını açar.
+function startTekrarCard50(id) {
+  const cardId = Number(id);
+  const card = CARDS.find(c => Number(c.id) === cardId);
+  if (!card || DELETED[cardId] || !ready28(card) || !dueAt28(cardId)) {
+    if (typeof toast28 === 'function') toast28('Kart bulunamadı veya artık tekrar listesinde değil.');
+    return;
+  }
+  startStudy([cardId]);
 }
 function setTekrarOpen34(open) { tekrarOpen34 = open; try { localStorage.setItem('kv_tekrar_open', open ? '1' : '0'); } catch (e) {} }
 const baseRenderTekrar34 = renderTekrar;
@@ -7215,6 +7235,336 @@ restoreBackup28=async function(data){
     }
   }
   return previousRestore48(data);
+};
+
+
+/* ──────────────────── v49 · Kayıp önleme ve güvenli kurtarma ────────────────────
+   19-11-2026 yedeğinin doğruladığı sorunlar:
+   - Eski v29, v28review:* olaylarını 45 günde bir sessizce siliyordu.
+   - 30 gün dolmadan kalıcı silme mümkündü; kart gövdesi kayboluyordu.
+   - v41/v48 yedekleme, güncel sunucu verisi ile yerel kayıtları körlemesine ezebiliyordu.
+   Bu bölüm mevcut kart tasarımını, Hollandaca açıklamayı, SR aralıklarını değiştirmez.
+*/
+const APP_VERSION49 = 49;
+const MS_DAY49 = 86400000;
+const CARD_FIELDS49 = ['date','type','dutch','turkish','uitleg','etymology','note','examples','legal','is_legal'];
+function clone49(v){return JSON.parse(JSON.stringify(v));}
+function alert49(s){if(typeof toast28==='function')toast28(s);else window.alert(s);}
+function logUnion49(a,b){
+  const out=new Map();
+  for(const e of [...(Array.isArray(a)?a:[]),...(Array.isArray(b)?b:[])]){
+    if(e && typeof e.id==='string')out.set(e.id,e);
+  }
+  return [...out.values()].sort((a,b)=>String(a.at||'').localeCompare(String(b.at||'')));
+}
+function trashMerge49(a,b){
+ const out=clone49(a||{});
+ for(const [id,item] of Object.entries(b||{})){
+   if(!item || typeof item!=='object')continue;
+   const old=out[id]||{}, rec={...old,...item};
+   for(const k of ['deletedAt','restoredAt','purgedAt']){
+     const n=Math.max(Number(old[k])||0,Number(item[k])||0);
+     if(n)rec[k]=n;else delete rec[k];
+   }
+   if(old.card&&!item.card)rec.card=old.card;
+   if(item.card&&!old.card)rec.card=item.card;
+   out[id]=rec;
+ }
+ return out;
+}
+function stateMerge49(server,local,key){
+ if(key==='trash')return trashMerge49(server,local);
+ if(key.startsWith('v28review:')||key.startsWith('practice41:'))return logUnion49(server,local);
+ if(/^(activity:|timelog:|rehearse:|smart_time41:)/.test(key))return maxMap28(server||{},local||{});
+ if(key==='later')return mergeLaterBackup41(server||{},local||{});
+ if(key==='listen_lists41'){
+   const out={...(server||{})};
+   for(const [id,item]of Object.entries(local||{}))if(!out[id]||(Number(item?.updated)||0)>(Number(out[id]?.updated)||0))out[id]=item;
+   return out;
+ }
+ if(key==='review_reset_at')return [server,local].filter(Boolean).sort().at(-1)||null;
+ return local===undefined?server:local;
+}
+function preferProgress49(a,b){
+ if(!a)return b;
+ if(!b)return a;
+ const ta=Date.parse(a.sr_last_done||'')||0,tb=Date.parse(b.sr_last_done||'')||0;
+ if(ta!==tb)return tb>ta?b:a;
+ if(a.is_known!==b.is_known)return a;
+ return (Number(b.sr_step)||0)>(Number(a.sr_step)||0)?b:a;
+}
+
+// 45 günlük otomatik geçmiş silmeyi tamamen kaldır. Tarih filtresi raporda uygulanabilir;
+// HAM çalışma kayıtları artık silinmez. v28review ve practice41 kayıtları yedekte kalır.
+pruneReviews29=function(arr){return (Array.isArray(arr)?arr:[]).filter(e=>e&&e.at&&e.id);};
+
+// Hem otomatik temizlik hem "Kalıcı sil" düğmesi 30 gün dolmadan işlem yapamaz.
+// Vadesi gelmiş kayıt silinse de kart gövdesi yedekte arşiv olarak saklanır.
+const _purge49=purgeNow29;
+purgeNow29=function(id){
+ const tr=TRASH29[String(id)];
+ if(!tr||!trashActive29(tr))return false;
+ const stamp=Number(tr.deletedAt),age=Date.now()-stamp;
+ if(!Number.isFinite(stamp)||stamp<=0||age<TRASH_DAYS*MS_DAY49){
+   alert49('30 gün dolmadığı için kart kalıcı silinmedi. Çöp kutusundan geri alabilirsin.');
+   return false;
+ }
+ const card=tr.card?clone49(tr.card):null;
+ _purge49(id);
+ if(card&&TRASH29[String(id)]&&!TRASH29[String(id)].card)TRASH29[String(id)].card=card;
+ if(TRASH29[String(id)])TRASH29[String(id)].archived49=true;
+ return true;
+};
+permanentlyPurge=function(id){
+ const t=TRASH29[String(id)];
+ if(!t||!trashActive29(t))return;
+ const left=TRASH_DAYS-Math.floor((Date.now()-Number(t.deletedAt))/MS_DAY49);
+ if(left>0){alert49('Kart henüz '+left+' gün daha çöp kutusunda korunacak.');return;}
+ if(!confirm('30 gün geçti. Kartı kalıcı olarak silmek istediğine emin misin? Bu işlem geri alınamaz.'))return;
+ if(purgeNow29(id)){saveTrash29();renderTrash();}
+};
+const _trashRender49=renderTrash;
+renderTrash=function(){
+ _trashRender49();
+ const root=document.getElementById('trash-content');if(!root)return;
+ for(const el of root.querySelectorAll('.trash-row')){
+  const b=[...el.querySelectorAll('button')].find(btn=>btn.textContent.includes('Kalıcı sil'));
+  const undo=el.querySelector('button[onclick^="restoreCard29"]');
+  if(!b||!undo)continue;
+  const id=/\((\d+)\)/.exec(undo.getAttribute('onclick')||'')?.[1];
+  const t=TRASH29[id];if(!t)continue;
+  const left=TRASH_DAYS-Math.floor((Date.now()-Number(t.deletedAt))/MS_DAY49);
+  if(left>0){b.disabled=true;b.textContent='Korunuyor · '+left+' gün';b.title='30 gün boyunca yalnızca geri alınabilir.';}
+ }
+};
+
+// Çöp kutusu sunucudan gelince kayıp kart içeriğini yerel kopyadan koru.
+const _mergeTrash49=mergeTrash29;
+mergeTrash29=function(server){
+ const before=JSON.stringify(TRASH29);
+ const bodies={};for(const [id,t] of Object.entries(TRASH29))if(t?.card)bodies[id]=t.card;
+ _mergeTrash49(server);
+ for(const [id,card]of Object.entries(bodies))if(TRASH29[id]&&!TRASH29[id].card)TRASH29[id].card=card;
+ // v44'teki wrapper yanlışlıkla eski fonksiyonun `changed` sonucunu döndürmüyordu.
+ // Bu yüzden diğer cihazdan gelen çöp kutusu değişiklikleri ekrana yansımıyordu.
+ return JSON.stringify(TRASH29)!==before;
+};
+
+async function fullSnapshot49(){
+ if(!navigator.onLine||!isOnline)throw new Error('Tam yedek için internet bağlantısı gerekiyor.');
+ await flush28();
+ if(Object.keys(outbox28).length)throw new Error('Bekleyen kayıtların eşitlenmesini bekle.');
+ const [remoteCards,remoteProgress,remoteStates]=await Promise.all([
+   exportPages41('cards','id'), exportPages41('progress','card_id'),exportPages41('app_state','key')
+ ]);
+ const states={};for(const r of remoteStates)states[r.key]=r.value;
+ const local={...rows28,trash:TRASH29};
+ // Asıl sunucu otoritedir; fakat olay listeleri id bazında, sayaçlar en yüksek
+ // değerle birleştirilir. Böylece farklı cihazların kaydı silinmez.
+ for(const key of new Set([...Object.keys(states),...Object.keys(local)])){
+   if(key in local){
+      const localValue=local[key];
+      const queued=Boolean(outbox28['state:'+key]);
+      if(key==='trash'||/^(v28review:|practice41:|activity:|timelog:|rehearse:|smart_time41:|later$|listen_lists41$|review_reset_at$)/.test(key)){
+        states[key]=stateMerge49(states[key],localValue,key);
+      }else if(!(key in states)||queued)states[key]=clone49(localValue);
+   }
+ }
+ states['activity:'+DEVICE_ID]=stateMerge49(states['activity:'+DEVICE_ID],myActivity,'activity:'+DEVICE_ID);
+ states['timelog:'+DEVICE_ID]=stateMerge49(states['timelog:'+DEVICE_ID],myTime,'timelog:'+DEVICE_ID);
+ states['rehearse:'+DEVICE_ID]=stateMerge49(states['rehearse:'+DEVICE_ID],myRehearse,'rehearse:'+DEVICE_ID);
+ states.trash=trashMerge49(states.trash,TRASH29);
+ states.later=stateMerge49(states.later,later39Get(),'later');
+ states.listen_lists41=stateMerge49(states.listen_lists41,listenLists41,'listen_lists41');
+ const p={};for(const r of remoteProgress)p[r.card_id]={is_known:r.is_known,sr_step:r.sr_step,sr_next_due:r.sr_next_due,sr_last_done:r.sr_last_done};
+ for(const [id,record]of Object.entries(PROGRESS))p[id]=preferProgress49(p[id],record);
+ const unique=new Map();
+ for(const r of remoteCards)if(!hiddenCard44(r.id))unique.set(Number(r.id),enrich28({
+  id:r.id,date:r.date,type:r.type,dutch:r.dutch,turkish:r.turkish,
+  uitleg:r.uitleg,etymology:r.etymology,note:r.note,examples:r.examples||[],
+  legal:r.legal,isLegal:r.is_legal,is_legal:r.is_legal
+ }));
+ for(const c of CARDS)if(!hiddenCard44(c.id))unique.set(Number(c.id),clone49(c));
+ const data=backup28();
+ data.version=APP_VERSION49;
+ data.exportedAt=new Date().toISOString();
+ data.cards=[...unique.values()].sort((a,b)=>Number(a.id)-Number(b.id));
+ data.progress=p;
+ data.appState=states;
+ data.deletedCards=Object.values(states.trash||{}).filter(trashActive29).map(t=>t.card).filter(Boolean);
+ data.pending={};
+ data.backupStatus='complete';
+ data.backupIntegrity49={serverCards:remoteCards.length,serverStateRows:remoteStates.length,deviceId:DEVICE_ID,reviewEvents:Object.entries(states).filter(([k])=>k.startsWith('v28review:')).reduce((n,[,v])=>n+(Array.isArray(v)?v.length:0),0)};
+ return data;
+}
+exportData=async function(){
+ const el=document.getElementById('io-status');if(el){el.className='settings-status show loading';el.textContent='v49 tam yedeği hazırlanıyor…';}
+ try{
+  const data=await fullSnapshot49();
+  download28('kantoor-woordenschat-v49-TAM-yedek-'+todayStr()+'.json',data);
+  if(el){el.className='settings-status show ok';el.textContent=`Tam yedek oluşturuldu: ${data.cards.length} kart, ${data.backupIntegrity49.reviewEvents} çalışma olayı, ${data.deletedCards.length} geri alınabilir kart.`;}
+ }catch(e){if(el){el.className='settings-status show err';el.textContent='Yedek tamamlanamadı: '+e.message;}}
+};
+
+// Geri yüklemede 45 günlük kaybı ve bir cihazın diğerinin geçmişini ezmesini önler.
+// Önce canlı tam yedeği otomatik indirir. Mevcut kartı düzenlemek ayrı onay ister.
+const _restore49=restoreBackup28;
+restoreBackup28=async function(original){
+ if(!original||!Array.isArray(original.cards)||!original.progress||typeof original.progress!=='object')throw new Error('Geçerli bir uygulama yedeği seç.');
+ if(!isOnline)throw new Error('İçe aktarım için internet bağlantısı gerekiyor.');
+ const before=await fullSnapshot49();
+ // Ham yedek: kazara eski yedeğin mevcut kayıtları değiştirmesi durumuna karşı.
+ download28('KURTARMA-ONCESI-v49-'+todayStr()+'.json',before);
+ const remoteRows=Object.entries(before.appState).map(([key,value])=>({key,value}));
+ lastServerRows28=remoteRows;
+ for(const[key,value]of Object.entries(before.appState)){
+  if(key.startsWith('v28review:')||key.startsWith('practice41:'))rows28[key]=logUnion49(value,rows28[key]);
+ }
+ persist28();
+ const src=clone49(original),seen=new Map(),aliases={},incoming=[];
+ src.appState=src.appState||{};
+ // Eski yedekteki ayarlar / kart-meta kayıtları daha yeni sunucu ayarlarının
+ // üzerine yazılmasın. Eski cihazdaki taslakları ise sadece yeni iseler birleştir.
+ for(const [k,v]of Object.entries(src.appState)){
+  const prev=before.appState[k];
+  if(k==='daily_goal'||k==='tema_map'||(k.startsWith('cardmeta:')&&prev!==undefined)||
+     (k.startsWith('newbaseline:')&&prev!==undefined)||
+     (k.startsWith('draft:')&&prev?.updatedAt&&String(prev.updatedAt)>=String(v?.updatedAt||''))){
+       delete src.appState[k];
+  }
+ }
+ // Yedek kartları eski silme kayıtlarını ezmemeli; aynı tarih+ifadenin kopyasını
+ // yeniden üretmemeli. Eski id -> ana id eşleştirmesi geçmişte korunur.
+ for(const card of src.cards){
+  if(!card||!Number.isInteger(Number(card.id))||!card.dutch||!card.date)continue;
+  const trash=before.appState?.trash?.[String(card.id)];
+  if(trash?.purgedAt||trashActive29(trash)||hiddenCard44(card.id))continue;
+  const key=[card.date,card.type,norm28(card.dutch)].join('|');
+  if(seen.has(key)){aliases[card.id]=seen.get(key);continue;}
+  seen.set(key,card.id);incoming.push(card);
+ }
+ src.cards=incoming;
+ // Gelen yedek eskiyse içeriklerin üzerine yazma ihtimali açıkça açıklanır.
+ const targetById=new Map(before.cards.map(c=>[Number(c.id),c]));
+ const key=c=>[c.date,c.type,norm28(c.dutch)].join('|');
+ const targetByKey=new Map(before.cards.map(c=>[key(c),c]));
+ const candidates=incoming.filter(c=>{
+   const t=targetById.get(Number(c.id))||targetByKey.get(key(c));
+   if(!t)return false;
+   const a=cardPayload28(c),b=cardPayload28(t);
+   return ['turkish','uitleg','etymology','note','examples','legal','is_legal'].some(f=>JSON.stringify(a[f])!==JSON.stringify(b[f]));
+ });
+ let applyChanges=false;
+ if(candidates.length){
+  const oldDate=Date.parse(src.exportedAt||'')||0,newDate=Date.parse(before.exportedAt)||0;
+  const ageNote=oldDate<newDate?' Bu yedek mevcut verilerden eski olabilir.':'';
+  applyChanges=confirm(`${candidates.length} mevcut kartın açıklama/örnek alanı yedekten farklı. Yalnızca seçersen bu alanlar güncellenir.${ageNote}\n\nTamam = yedekteki içerikle güncelle.\nİptal = yalnızca eksikleri ve geçmişi birleştir.`);
+ }
+ // Tarih ve kimlik eşleşmesi belirsiz bir kartı otomatik güncelleme.
+ const map=await _restore49(src);
+ for(const [old,keeper]of Object.entries(aliases))if(map[keeper])map[old]=map[keeper];
+ // v28/v41 orijinal yükleyici (aynı anahtar silinmedikçe) sunucudan kart ekler.
+ // Mevcut içeriğin üzerine yazma yalnızca yukarıdaki açık onayla yapılır.
+ let updated=0;
+ if(applyChanges){
+  for(const c of candidates){
+   const id=map[c.id];if(!id||hiddenCard44(id))continue;
+   const remoteMatch=targetById.get(Number(id))||targetByKey.get(key(c));
+   // Farklı ID'de farklı ifade varsa kaydı değiştirme.
+   if(remoteMatch && key(remoteMatch)!==key(c))continue;
+   const payload=cardPayload28({...c,id});
+   await sbFetch('cards?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(payload)});
+   const old=rows28['cardmeta:'+id]||{};
+   const check=typeof c._needsReview==='boolean'?c._needsReview:old.needsReview;
+   state28('cardmeta:'+id,{...old,...(typeof check==='boolean'?{needsReview:check}:{}),custom:true});
+   updated++;
+  }
+ }
+ // Sunucudaki geçmiş, yerel geçmiş ve yedekteki geçmiş benzersiz event-id ile birleşir.
+ for(const [k,v]of Object.entries(before.appState)){
+  if(k.startsWith('v28review:')||k.startsWith('practice41:')){
+    const incomingEvents=Array.isArray(src.appState?.[k])?src.appState[k].map(ev=>({...ev,cardId:map[ev.cardId]||ev.cardId})):[];
+    const union=logUnion49(logUnion49(v,rows28[k]),incomingEvents);
+    if(union.length)state28(k,union);
+  }
+ }
+ for(const [k,v]of Object.entries(src.appState||{})){
+  if(!k.startsWith('v28review:')&&!k.startsWith('practice41:'))continue;
+  if(k in before.appState)continue;
+  const mapped=Array.isArray(v)?v.map(ev=>({...ev,cardId:map[ev.cardId]||ev.cardId})):[];
+  if(mapped.length)state28(k,logUnion49(rows28[k],mapped));
+ }
+ // En güncel öğrenme ilerlemesi, önceki tam yedekten bile geriye gitmesin.
+ for(const [id,p]of Object.entries(before.progress)){
+   const current=PROGRESS[id],winner=preferProgress49(current,p);
+   if(winner===p && JSON.stringify(current)!==JSON.stringify(p))await upsertProgress(Number(id),p);
+ }
+ const reset=stateMerge49(before.appState.review_reset_at,src.appState?.review_reset_at,'review_reset_at');
+ if(reset!==undefined)state28('review_reset_at',reset);
+ await flush28();
+ if(Object.keys(outbox28).length)throw new Error('Bazı değişiklikler henüz sunucuya ulaşamadı. Yeniden içe aktarma; eşitlemeyi kontrol et.');
+ await refreshFromServer(true);
+ const verify=await fullSnapshot49();
+ for(const [key,value]of Object.entries(before.appState)){
+   if(!key.startsWith('v28review:'))continue;
+   const have=new Set((verify.appState[key]||[]).map(e=>e.id));
+   if((value||[]).some(e=>!have.has(e.id)))throw new Error('Çalışma geçmişi doğrulaması başarısız. İçe aktarma öncesi otomatik yedeği sakla.');
+ }
+ return {mapping:map,updated,historyEvents:verify.backupIntegrity49.reviewEvents};
+};
+
+// Kurtarma dosyası sadece istenirse içe aktarılır: kaybolan kartlar tekrar aktif
+// edilmez, YENİ ID ile çöp kutusuna konur. Olası mevcut aktif kopyalar atlanır.
+async function recoveryImport49(data){
+ if(data?.format!=='kantoor-recovery-v49'||!Array.isArray(data.cards)||!Array.isArray(data.reviews))throw new Error('Geçerli v49 kurtarma dosyası değil.');
+ if(!isOnline)throw new Error('Kurtarma için internet bağlantısı gerekiyor.');
+ const n=data.cards.length,m=data.reviews.reduce((s,e)=>s+(e.events?.length||0),0);
+ if(!confirm(`${n} eski çöp kartı ve ${m} çalışma kaydını kurtarma işlemi. Kartlar aktif listede görünmez; önce çöp kutusuna alınır. Mevcut veriler silinmez. Devam?`))throw new Error('Kurtarma iptal edildi.');
+ const before=await fullSnapshot49();
+ download28('KURTARMA-ONCESI-v49-'+todayStr()+'.json',before);
+ let added=0,reviewAdded=0;
+ const allRaw=await exportPages41('cards','id');
+ for(const item of data.cards){
+   const c=item.card;if(!c||!c.dutch||!c.date||!c.type)continue;
+   const already=allRaw.some(r=>r.date===c.date&&r.type===c.type&&norm28(r.dutch)===norm28(c.dutch));
+   const trExists=Object.values(TRASH29).some(t=>trashActive29(t)&&t.card?.date===c.date&&norm28(t.card?.dutch)===norm28(c.dutch));
+   if(already||trExists)continue;
+   const inserted=await insertCardsRemote([cardPayload28(c)]);
+   const id=inserted?.[0]?.id;if(!id)throw new Error('Eski kart geri yüklenemedi: '+c.dutch);
+   allRaw.push(inserted[0]);
+   const stored={...c,id:Number(id)};
+   TRASH29[id]={deletedAt:Date.now(),card:stored,recovered49:{sourceId:item.oldId,source:'2026-11-18'}};
+   tombstones44[id]={deletedAt:TRASH29[id].deletedAt};
+   if(item.progress)await upsertProgress(Number(id),item.progress);
+   added++;
+ }
+ if(added){saveTombstones44();saveTrash29();}
+ for(const entry of data.reviews){
+  const k=entry.key;if(!String(k).startsWith('v28review:'))continue;
+  const src=Array.isArray(entry.events)?entry.events:[];
+  const merged=logUnion49(stateMerge49(before.appState[k],rows28[k],k),src);
+  reviewAdded+=merged.length-logUnion49(before.appState[k],rows28[k]).length;
+  if(src.length)state28(k,merged);
+ }
+ await flush28();
+ if(Object.keys(outbox28).length)throw new Error('Kurtarma verileri bekleyen eşitlemede; yeniden içe aktarma.');
+ await refreshFromServer(true);renderTrash();
+ return {cards:added,reviews:reviewAdded};
+}
+importData=async function(event){
+ const file=event.target?.files?.[0];if(!file)return;
+ const el=document.getElementById('io-status');if(el){el.className='settings-status show loading';el.textContent='İçerik denetleniyor ve güvenli şekilde birleştiriliyor…';}
+ try{
+  const data=JSON.parse(await file.text());
+  if(data?.format==='kantoor-recovery-v49'){
+   const result=await recoveryImport49(data);
+   if(el){el.className='settings-status show ok';el.textContent=`Kurtarma tamamlandı: ${result.cards} kart çöp kutusuna eklendi, ${result.reviews} çalışma olayı geri kazanıldı.`;}
+  }else{
+   const result=await restoreBackup28(data);
+   if(el){el.className='settings-status show ok';el.textContent=`Eşitleme doğrulandı: ${result.updated} mevcut kartın içeriği güncellendi, ${result.historyEvents} geçmiş olayı korundu. İçe aktarma öncesi güvenlik yedeği de indirildi.`;}
+  }
+ }catch(err){if(el){el.className='settings-status show err';el.textContent='İçerik aktarma: '+err.message;}}
+ finally{event.target.value='';}
 };
 
 </script>
