@@ -7035,7 +7035,7 @@ cardBodyHtml=function(item,pfx){
     const found=findExampleCardId(ex);
     return `<div class="card-example44"><div lang="nl" class="card-example-nl44">${esc28(ex.nl)}</div><details class="card-example-translation44"><summary>Türkçe çeviriyi göster</summary><p>${esc28(ex.tr)}</p></details><button type="button" class="card-example-add44" onclick="addExampleAsCard(event,${item.id},${ex.i})">${found?'✓ Çalışmaya eklendi':'+ Bu cümleyi çalış'}</button></div>`;
   }).join('')}</section>`:'';
-  return `${examples}${details?`<details class="card-extra44"><summary>Ek bilgiler <span>Açıklama ve notlar</span></summary><div class="card-extra-content44">${details}</div></details>`:''}`;
+  return `${examples}${details?`<section class="card-extra44 card-extra-visible51" aria-label="Ek bilgiler"><div class="card-extra-heading51">Ek bilgiler <span>Kullanım, köken ve hukuk</span></div><div class="card-extra-content44">${details}</div></section>`:''}`;
 };
 renderCard=function(c){
   const known=PROGRESS[c.id]?.is_known,sr=known?srStatusLabel(c.id):null;
@@ -7049,7 +7049,7 @@ renderCard=function(c){
     ${String(c.uitleg||'').trim()?`<div class="card-uitleg45" lang="nl"><span class="card-uitleg-label45">🇳🇱 Hollandaca açıklama</span><p>${esc28(c.uitleg)}</p></div>`:''}
     <div class="card-primary-actions44"><button type="button" class="card-trans-btn44" aria-expanded="${trVisible}" onclick="toggleTurkish44(event,${c.id})">${trVisible?'✓ Türkçeyi gizle':'🇹🇷 Türkçeyi göster'}</button><button type="button" class="card-audio-btn44" onclick="speakCard28(event,${c.id})" aria-label="Hollandaca dinle">${ic('volume')} Dinle</button></div>
     ${trVisible&&hasTranslation?`<div class="card-turkish44" lang="tr"><span>Türkçe anlamı</span><p>${esc28(c.turkish)}</p></div>`:''}
-    <button type="button" class="card-expand-btn44" onclick="toggleCard(${c.id})" aria-expanded="${expanded}" aria-controls="body-${c.id}">${expanded?'− Ayrıntıları kapat':'+ Örnekler ve detaylar'}</button></div>
+    <button type="button" class="card-expand-btn44" onclick="toggleCard(${c.id})" aria-expanded="${expanded}" aria-controls="body-${c.id}">${expanded?'− Ayrıntıları kapat':'+ Örnekler ve tüm bilgiler'}</button></div>
     ${c._needsReview?'<div class="quality-label">İfade kontrol bekliyor</div>':''}
     ${sr?`<div class="sr-status ${sr.cls}">${sr.text}</div>`:''}
     <div class="card-body${expanded?' open':''}" id="body-${c.id}">${cardBodyHtml(c,'c')}
@@ -7063,7 +7063,7 @@ const oldToggleCard44=toggleCard;
 toggleCard=function(id){
   oldToggleCard44(id);
   const btn=document.querySelector('#card-'+id+' .card-expand-btn44');
-  if(btn){const expanded=openCardBodies.has(id);btn.textContent=expanded?'− Ayrıntıları kapat':'+ Örnekler ve detaylar';btn.setAttribute('aria-expanded',String(expanded));}
+  if(btn){const expanded=openCardBodies.has(id);btn.textContent=expanded?'− Ayrıntıları kapat':'+ Örnekler ve tüm bilgiler';btn.setAttribute('aria-expanded',String(expanded));}
 };
 // v47: Uzun kartların sonunda da kolayca kapatma.
 // Kapanınca kartın başlığına getir; kullanıcı yukarı kaydırmak zorunda kalmasın.
@@ -7567,6 +7567,206 @@ importData=async function(event){
  finally{event.target.value='';}
 };
 
+
+// ══════════════════════════════════════════════════════════════════
+// v51 — Hatırla: her örnek cümleyi tek dokunuşla tekrar programına ekle.
+// Mevcut kartların geçmişini/tarihlerini asla sıfırlama, yinelenen kart üretme.
+// ══════════════════════════════════════════════════════════════════
+function normExample51(value) {
+  return String(value || '').trim().toLocaleLowerCase('nl-NL')
+    .replace(/\s+/g, ' ').replace(/[.!?…]+$/g, '').trim();
+}
+function matchingExample51(ex) {
+  const key = normExample51(ex?.nl);
+  return key ? CARDS.find(c => c.type === 'zin' && normExample51(c.dutch) === key) : null;
+}
+function exampleButton51(source, ex, index) {
+  const match = matchingExample51(ex);
+  const already = match && PROGRESS[match.id]?.is_known;
+  const blocked = !String(ex.tr || '').trim() || !!match?._needsReview;
+  const label = already ? '✓ Hatırla’da' : blocked ? 'Türkçesi gerekli' : '+ Hatırlamaya ekle';
+  return `<button type="button" class="st-example-add51" data-example-index="${index}" 
+      onclick="addRecallExample51(this,${Number(source.id)},${index})"
+      aria-label="${esc28(ex.nl)} — ${label}" ${already || blocked ? 'disabled' : ''}>
+      ${label}</button>`;
+}
+function recallExamples51(source) {
+  const seen = new Set([normExample51(source.dutch)]);
+  const examples = (Array.isArray(source.examples) ? source.examples : [])
+    .map((ex, index) => ({ ...ex, index }))
+    .filter(ex => {
+      const key = normExample51(ex.nl);
+      if (!key || seen.has(key)) return false;
+      seen.add(key); return true;
+    });
+  if (!examples.length) return null;
+  const section = document.createElement('section');
+  section.className = 'st-examples51';
+  section.innerHTML = `<div class="st-examples-heading51">Örnek cümleler <span>${examples.length}</span></div>`+
+    examples.map(ex => `<div class="st-example-row51">
+      <div class="st-example-dutch51" lang="nl">${esc28(ex.nl)}</div>
+      <div class="st-example-controls51">
+        ${String(ex.tr || '').trim() ? `<details class="st-example-translation51"><summary>🇹🇷 Türkçeyi göster</summary><div lang="tr">${esc28(ex.tr)}</div></details>` : ''}
+        ${exampleButton51(source, ex, ex.index)}
+      </div>
+    </div>`).join('');
+  return section;
+}
+// stReveal sürüm 28/29/39/41 sarmalayıcıları çalıştıktan sonra örnek listesini
+// bir kez güncelle. Böylece alttaki 'Sonra bak' ve aktif cümle kurma korunur.
+const baseStReveal51 = stReveal;
+stReveal = function () {
+  if (!st || st.revealed) return;
+  baseStReveal51.apply(this, arguments);
+  const source = CARDS.find(c => c.id === st?.queue[st.i]?.id);
+  const ans = document.getElementById('st-ans');
+  if (!source || !ans || !st?.revealed || ans.querySelector('.st-examples51')) return;
+  const rows = recallExamples51(source);
+  // Önceki sürümün iki cümle sınırını kaldır; aynı cümle ekranda iki kez görünmesin.
+  if (rows) ans.querySelector('.st-exs')?.remove();
+  const oldExtras = ans.querySelector('details.st-more');
+  // Örnekler artık yukarıda ayrı gösterildiği için eski örnek çevirilerini
+  // ikinci kez tekrarlama. Cevap gösterildikten sonra ek notlar da açık kalsın.
+  if (rows) oldExtras?.querySelectorAll('.ex-tr').forEach(el => el.remove());
+  if (oldExtras) {
+    const panel = document.createElement('section');
+    panel.className = 'st-info-visible51';
+    panel.innerHTML = '<div class="st-info-heading51">Anlam ve ek bilgiler</div>' +
+      [...oldExtras.children].filter(child => child.tagName !== 'SUMMARY')
+        .map(child => child.outerHTML).join('');
+    oldExtras.replaceWith(panel);
+  }
+  const anchor = ans.querySelector('.st-info-visible51') || ans.querySelector('.practice41') || ans.querySelector('.later-row');
+  if (rows) { if (anchor) ans.insertBefore(rows, anchor); else ans.appendChild(rows); }
+};
+
+const exampleBusy51 = new Set();
+async function addRecallExample51(btn, sourceId, index) {
+  const source = CARDS.find(c => c.id === sourceId), ex = source?.examples?.[index];
+  if (!source || !ex || !String(ex.nl || '').trim()) return;
+  const sentence = normExample51(ex.nl);
+  if (exampleBusy51.has(sentence)) return;
+  if (!String(ex.tr || '').trim()) { toast28('Önce örneğin Türkçesini tamamla.'); return; }
+  if (!isOnline) { toast28('Eklemek için internet bağlantısı gerekli.'); return; }
+  exampleBusy51.add(sentence);
+  btn.disabled = true;
+  btn.textContent = 'Ekleniyor…';
+  try {
+    let existing = matchingExample51(ex);
+    if (existing?._needsReview) throw new Error('Bu cümle önce dil kontrolünden geçmeli.');
+    if (!existing) {
+      // Ekleme sadece bir cümleyi yeni kart yapar; orijinal 3 örnek korunur.
+      const inserted = await insertCardsRemote([{
+        date: source.date, type: 'zin', dutch: ex.nl.trim(), turkish: ex.tr.trim(),
+        uitleg: null, etymology: null, examples: [], legal: null, is_legal: false,
+        note: `“${source.dutch}” kartının örneğinden Hatırla'ya eklendi.`
+      }]);
+      const id = Number(inserted?.[0]?.id);
+      if (!id) throw new Error('Sunucudan kart numarası alınamadı.');
+      existing = { ...inserted[0], id, isLegal: false };
+      TEMA_MAP[id] = getTema(source);
+      await pushTemaMap();
+      // Sunucudan yeni kartları sayfalayarak al; yerel liste eksik kalmasın.
+      CARDS = await loadCardsFromDB();
+      cacheCards();
+      buildDateFilters();
+    }
+    // Daha önce öğrenmeye alınmış bir cümlenin SR planını değiştirme.
+    if (!PROGRESS[existing.id]?.is_known) {
+      await upsertProgress(existing.id, {
+        is_known: true, sr_step: 0,
+        sr_next_due: new Date().toISOString(), sr_last_done: null
+      });
+    }
+    updateStats();
+    btn.textContent = '✓ Hatırla’da';
+    btn.disabled = true;
+    btn.classList.add('is-added');
+    toast28('Cümle Hatırla listesine eklendi. Yeni tekrar hazır.');
+  } catch (error) {
+    // Eklenmiş ama ilerleme yazılamamış olabilir: bir sonraki tıklamada
+    // aynı NL cümlesi yeniden oluşturulmaz, var olan kart kullanılır.
+    btn.textContent = '+ Tekrar dene';
+    btn.disabled = false;
+    toast28('Ekleme tamamlanamadı: ' + (error?.message || 'Bağlantıyı kontrol et.'));
+  } finally {
+    exampleBusy51.delete(sentence);
+  }
+}
+// Aktif kullanım panelinin gerçekten bir kontrol olduğu görünsün.
+const basePracticeOpen51 = practice41Open;
+practice41Open = function(btn) {
+  basePracticeOpen51.apply(this, arguments);
+  const open = !btn.closest('.practice41')?.querySelector('.practice-body41')?.hidden;
+  btn.setAttribute('aria-expanded', String(open));
+  btn.textContent = open ? '− Alıştırmayı kapat' : '+ Cümleyi aktif kullan';
+};
+
 </script>
+
+<style id="v51-controls">
+/* v51: Gerçek düğme görünümü — belirgin çerçeve, basılınca fiziksel geri bildirim. */
+#st-overlay button, .card44 button, .card44 summary, #st-overlay summary {
+  -webkit-tap-highlight-color: rgba(19,91,92,.14);
+  touch-action: manipulation;
+}
+#st-overlay button:active, .card44 button:active,
+#st-overlay summary:active, .card44 summary:active {
+  transform: translateY(1px) scale(.975);
+  filter: brightness(.94);
+}
+#st-overlay button:focus-visible, .card44 button:focus-visible,
+#st-overlay summary:focus-visible, .card44 summary:focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 3px;
+}
+#st-overlay button:disabled, .card44 button:disabled { cursor: default; }
+.st-examples51 { display:flex; flex-direction:column; gap:10px; }
+.st-examples-heading51 { display:flex; gap:8px; align-items:center; font-weight:800; font-size:calc(13px * var(--ui-scale)); color:var(--text2); }
+.st-examples-heading51 span { border:1px solid var(--border); padding:2px 7px; border-radius:9px; font-size:calc(11px * var(--ui-scale)); }
+.st-example-row51 { border:1px solid var(--border); border-radius:13px; background:var(--bg3); padding:12px 12px 10px; }
+.st-example-dutch51 { font-weight:700; line-height:1.5; font-size:calc(15px * var(--read-scale)); overflow-wrap:anywhere; }
+.st-example-controls51 { display:flex; gap:8px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; margin-top:10px; }
+.st-example-translation51 { flex: 1 1 130px; min-width:0; }
+.st-example-translation51 summary, .st-more summary, .card44 .card-example-translation44 summary,
+.card44 .card-extra44 summary { list-style:none; display:inline-flex; align-items:center; gap:5px; min-height:38px; padding:8px 11px; background:var(--bg2); border:1px solid var(--border2,var(--border)); border-radius:10px; font-weight:750; font-size:calc(12px * var(--ui-scale)); cursor:pointer; color:var(--text); transition:background .15s, transform .09s, box-shadow .09s; }
+.st-example-translation51 summary::-webkit-details-marker, .st-more summary::-webkit-details-marker,
+.card44 .card-example-translation44 summary::-webkit-details-marker,.card44 .card-extra44 summary::-webkit-details-marker { display:none; }
+.st-example-translation51[open] summary { color:var(--accent); border-color:var(--accent); }
+.st-example-translation51 div { margin-top:8px; color:var(--text2); font-size:calc(14px * var(--read-scale)); line-height:1.5; }
+.st-example-add51 { flex: 0 0 auto; min-height:38px; padding:8px 10px; border-radius:10px; border:1px solid var(--accent); background:var(--accent); color:var(--on-accent,#fff); font:inherit; font-size:calc(12px * var(--ui-scale)); font-weight:850; box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 55%,black); cursor:pointer; transition:transform .09s, filter .15s; }
+.st-example-add51:disabled { background:var(--bg2); color:var(--text2); border-color:var(--border); box-shadow:none; }
+.st-example-add51.is-added { color:var(--accent); border-color:var(--accent); }
+#st-overlay .st-more summary { width:100%; justify-content:space-between; }
+#st-overlay .practice-toggle41 { border:1px solid var(--accent); background:color-mix(in srgb,var(--accent) 11%,var(--bg2)); border-radius:11px; color:var(--accent); padding:10px 13px; display:flex; align-items:center; justify-content:space-between; min-height:44px; box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 22%,transparent); }
+#st-overlay .practice41 { padding:10px; }
+#st-overlay .practice-body41 textarea { border:2px solid var(--border2,var(--border)); background:var(--bg); min-height:100px; }
+#st-overlay .practice-body41 textarea:focus { outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent); }
+#st-overlay .practice-body41 .btn-settings, #st-overlay .practice-rating41 button { border:1px solid var(--accent); background:var(--bg2); border-radius:10px; color:var(--text); box-shadow:0 2px 0 var(--border); font-weight:750; }
+.card44 .card-example-add44 { background:color-mix(in srgb,var(--accent) 12%,var(--bg2)); color:var(--accent); border:1px solid var(--accent); border-radius:10px; padding:9px 12px; min-height:40px; font-weight:800; text-decoration:none; box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 20%,transparent); }
+.card44 .card-expand-btn44 { border:1px solid var(--border2,var(--border)); background:var(--bg3); border-radius:11px; padding:11px 13px; text-align:center; margin-top:13px; font-weight:800; box-shadow:0 2px 0 var(--border); }
+.card44 .card-extra44 summary { width:100%; }
+.card44 .card-example-translation44 summary { width:auto; }
+.card44 .card-primary-actions44 button { box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 22%,transparent); }
+@media (max-width:370px) { .st-example-translation51 { flex-basis:100%; } .st-example-add51 { width:100%; } }
+@media (prefers-reduced-motion:reduce) { #st-overlay button, .card44 button { transition:none; } }
+</style>
+
+<style id="v51-info-visible">
+/* v51: Tek açılış; ek bilgiler kendiliğinden görünür, ikinci tıklama yok. */
+.card44 .card-extra-visible51 { display:block; margin-top:16px; border:1px solid var(--border); border-radius:12px; background:var(--bg2); padding:14px; }
+.card44 .card-extra-heading51, #st-overlay .st-info-heading51 { display:flex; align-items:center; flex-wrap:wrap; gap:8px; font-weight:800; font-size:calc(14px * var(--ui-scale)); color:var(--text); margin-bottom:8px; }
+.card44 .card-extra-heading51 span { font-size:calc(11px * var(--ui-scale)); font-weight:500; color:var(--text2); }
+.card44 .card-extra-visible51 .card-detail44 { border-top:1px solid var(--border); padding-top:12px; margin:10px 0 0; }
+.card44 .card-extra-visible51 .card-detail44 b { color:var(--accent); font-size:calc(12px * var(--ui-scale)); }
+.card44 .card-extra-visible51 .card-detail44 p { white-space:pre-wrap; overflow-wrap:anywhere; margin-top:6px; }
+#st-overlay .st-info-visible51 { border:1px solid var(--border); background:var(--bg2); border-radius:12px; padding:12px; margin-top:12px; }
+#st-overlay .st-info-visible51 .st-tr { margin:6px 0 10px; }
+#st-overlay .st-info-visible51 .note-box { margin-top:9px; }
+/* Metin şeklindeki kart araçları da gerçek düğmeler gibi algılansın. */
+.card44 .card-tools .btn-link { display:inline-flex; align-items:center; border:1px solid var(--border); background:var(--bg3); border-radius:10px; min-height:42px; padding:9px 12px; box-shadow:0 2px 0 var(--border); color:var(--text); font-weight:750; }
+.card44 .card-tools .btn-link.danger { color:var(--red); border-color:var(--red); }
+.card44 .card-tools .btn-link:active { transform:translateY(2px); box-shadow:none; }
+.card44 .card-tools .btn-link:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+</style>
 </body>
 </html>
