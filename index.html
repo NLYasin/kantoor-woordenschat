@@ -7043,13 +7043,13 @@ renderCard=function(c){
   const label=c.type==='zin'?'Cümle':c.type==='uitdrukking'?'Kalıp':c.isLegal?'Hukuki':'Kelime';
   const cls=c.type==='zin'?'zin':c.type==='uitdrukking'?'uitdrukking':c.isLegal?'juridisch':'woord';
   const hasTranslation=String(c.turkish||'').trim();
-  return `<article class="card card44 ${expanded?'expanded':''}" id="card-${c.id}">
-    <div class="card-main44"><div class="card-top44"><span class="badge badge-${cls}">${label}</span><span class="card-date44">${esc28(formatDateLabel(c.date||''))}</span></div>
+  return `<article class="card card44 card-tappable52 ${expanded?'expanded':''}" id="card-${c.id}" tabindex="0" aria-label="${esc28(c.dutch)} — kart ayrıntıları" onclick="cardTap52(event,${c.id})" onpointerdown="cardPointerDown52(event)" onpointermove="cardPointerMove52(event)" onkeydown="cardKey52(event,${c.id})">
+    <div class="card-main44"><div class="card-top44"><span class="badge badge-${cls}">${label}</span><div class="card-top-right52"><span class="card-date44">${esc28(formatDateLabel(c.date||''))}</span><button type="button" class="card-chevron52" aria-label="${expanded?'Kart ayrıntılarını kapat':'Kart ayrıntılarını aç'}" aria-expanded="${expanded}" aria-controls="body-${c.id}" onclick="cardToggleButton52(event,${c.id})"><span aria-hidden="true">${expanded?'⌃':'⌄'}</span></button></div></div>
     <div class="card-dutch card-dutch44" lang="nl">${esc28(c.dutch)}</div>
     ${String(c.uitleg||'').trim()?`<div class="card-uitleg45" lang="nl"><span class="card-uitleg-label45">🇳🇱 Hollandaca açıklama</span><p>${esc28(c.uitleg)}</p></div>`:''}
     <div class="card-primary-actions44"><button type="button" class="card-trans-btn44" aria-expanded="${trVisible}" onclick="toggleTurkish44(event,${c.id})">${trVisible?'✓ Türkçeyi gizle':'🇹🇷 Türkçeyi göster'}</button><button type="button" class="card-audio-btn44" onclick="speakCard28(event,${c.id})" aria-label="Hollandaca dinle">${ic('volume')} Dinle</button></div>
     ${trVisible&&hasTranslation?`<div class="card-turkish44" lang="tr"><span>Türkçe anlamı</span><p>${esc28(c.turkish)}</p></div>`:''}
-    <button type="button" class="card-expand-btn44" onclick="toggleCard(${c.id})" aria-expanded="${expanded}" aria-controls="body-${c.id}">${expanded?'− Ayrıntıları kapat':'+ Örnekler ve tüm bilgiler'}</button></div>
+    <div class="card-cue52" aria-hidden="true">${expanded?'Ayrıntıları kapatmak için karta dokun':'Örnekler ve bilgiler için karta dokun'}</div></div>
     ${c._needsReview?'<div class="quality-label">İfade kontrol bekliyor</div>':''}
     ${sr?`<div class="sr-status ${sr.cls}">${sr.text}</div>`:''}
     <div class="card-body${expanded?' open':''}" id="body-${c.id}">${cardBodyHtml(c,'c')}
@@ -7702,6 +7702,55 @@ practice41Open = function(btn) {
   btn.textContent = open ? '− Alıştırmayı kapat' : '+ Cümleyi aktif kullan';
 };
 
+
+// ══════════════════════════════════════════════════════════════════
+// v52 — Kart gövdesine dokunarak ayrıntıları aç / kapat.
+// Düğmeler, bağlantılar, metin seçimi ve sayfa kaydırma buna neden olmaz.
+// ══════════════════════════════════════════════════════════════════
+const cardNoTap52 = 'button,a,input,select,textarea,summary,details,label,[role="button"],[contenteditable="true"]';
+function cardPointerDown52(ev) {
+  if (!ev.isPrimary) return;
+  ev.currentTarget._gesture52 = {x:ev.clientX,y:ev.clientY,moved:false};
+}
+function cardPointerMove52(ev) {
+  const state=ev.currentTarget._gesture52;
+  if(state && Math.hypot(ev.clientX-state.x,ev.clientY-state.y)>12) state.moved=true;
+}
+function cardTap52(ev,id) {
+  const card=ev.currentTarget;
+  // Tüm gerçek kontroller önce kendi işlemlerini yapar, ayrıntı durumuna dokunmaz.
+  if(ev.target.closest(cardNoTap52)) return;
+  const gesture=card._gesture52;
+  card._gesture52=null;
+  if(ev.detail!==0 && gesture?.moved) return;
+  // Metin seçimi sırasında yanlışlıkla kartı kapatma.
+  const selection=window.getSelection?.();
+  if(selection && !selection.isCollapsed && String(selection).trim()) return;
+  toggleCard(id);
+}
+function cardToggleButton52(ev,id) {
+  ev.preventDefault(); ev.stopPropagation(); toggleCard(id);
+}
+function cardKey52(ev,id) {
+  if(ev.target!==ev.currentTarget || (ev.key!=='Enter'&&ev.key!==' ')) return;
+  ev.preventDefault();toggleCard(id);
+}
+const priorToggleCard52=toggleCard;
+toggleCard=function(id) {
+  priorToggleCard52(id);
+  const card=document.getElementById('card-'+id);
+  if(!card) return;
+  const opened=openCardBodies.has(id);
+  const arrow=card.querySelector('.card-chevron52');
+  if(arrow) {
+    arrow.setAttribute('aria-expanded',String(opened));
+    arrow.setAttribute('aria-label',opened?'Kart ayrıntılarını kapat':'Kart ayrıntılarını aç');
+    const icon=arrow.querySelector('span');if(icon)icon.textContent=opened?'⌃':'⌄';
+  }
+  const cue=card.querySelector('.card-cue52');
+  if(cue)cue.textContent=opened?'Ayrıntıları kapatmak için karta dokun':'Örnekler ve bilgiler için karta dokun';
+};
+
 </script>
 
 <style id="v51-controls">
@@ -7767,6 +7816,23 @@ practice41Open = function(btn) {
 .card44 .card-tools .btn-link.danger { color:var(--red); border-color:var(--red); }
 .card44 .card-tools .btn-link:active { transform:translateY(2px); box-shadow:none; }
 .card44 .card-tools .btn-link:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+</style>
+
+<style id="v52-tap-card">
+/* Kartın boş alanları tamamıyla dokunulabilir, kontroller bağımsız. */
+.card44.card-tappable52 { cursor:pointer; }
+.card44.card-tappable52:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
+.card44 .card-top-right52 {display:flex;gap:8px;align-items:center;margin-left:auto;}
+.card44 .card-chevron52 {display:flex;align-items:center;justify-content:center;min-width:36px;min-height:36px;border:1px solid var(--border2,var(--border));border-radius:11px;background:var(--bg3);color:var(--text);font:inherit;font-size:24px;line-height:1;cursor:pointer;transition:transform .15s,background .15s;}
+.card44.expanded .card-chevron52 {background:color-mix(in srgb,var(--accent) 10%,var(--bg2));color:var(--accent);}
+.card44 .card-cue52 {padding:13px 0 3px;margin-top:12px;border-top:1px solid var(--border);font-size:calc(12px * var(--ui-scale));font-weight:650;text-align:center;color:var(--text2);}
+.card44 .card-chevron52:focus-visible {outline:3px solid var(--accent);outline-offset:2px;}
+.card44 button,.card44 select,.card44 textarea,.card44 summary,.card44 a,.card44 input {cursor:pointer;}
+@media (hover:hover) and (pointer:fine) {
+  .card44.card-tappable52:hover .card-cue52 {color:var(--accent);}
+  .card44.card-tappable52:hover .card-chevron52 {border-color:var(--accent);}
+}
+@media (prefers-reduced-motion:reduce) {.card44 .card-chevron52{transition:none}}
 </style>
 </body>
 </html>
