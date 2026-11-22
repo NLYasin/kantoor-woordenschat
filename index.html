@@ -2081,6 +2081,11 @@ body { zoom:1 !important; }
         <div class="st-say" id="st-say"><svg class="ic"><use href="#i-microphone"/></svg>Anlamını içinden söyle, sonra kontrol et</div>
         <div class="st-ans" id="st-ans" style="display:none"></div>
       </div>
+      <nav class="st-navigation53" id="st-navigation53" aria-label="Hatırla kartları arasında gezinme">
+        <button type="button" class="st-navbtn53" id="st-prev53" onclick="stNavigate53(-1)" aria-label="Önceki karta git">← Geri</button>
+        <span class="st-nav-status53" id="st-nav-status53" aria-live="polite"></span>
+        <button type="button" class="st-navbtn53 st-navnext53" id="st-next53" onclick="stNavigate53(1)" aria-label="Sonraki karta geç">İleri →</button>
+      </nav>
       <div class="st-actions" id="st-q-actions">
         <button class="st-btn" id="st-hint-btn" onclick="stShowHint()"><svg class="ic"><use href="#i-bulb"/></svg>İpucu</button>
         <button class="st-btn primary" onclick="stReveal()"><svg class="ic"><use href="#i-eye"/></svg>Cevabı göster</button>
@@ -7751,6 +7756,150 @@ toggleCard=function(id) {
   if(cue)cue.textContent=opened?'Ayrıntıları kapatmak için karta dokun':'Örnekler ve bilgiler için karta dokun';
 };
 
+
+
+// ══════════════════════════════════════════════════════════════════════
+// v53 — Hatırla içinde Geri / İleri, geçmiş kartı gözden geçirme,
+// kaydetmeden atlama, önceden verilen notu tekrarlamama.
+// Doğrudan Supabase tablolarına müdahale etmez.
+// ══════════════════════════════════════════════════════════════════════
+function stNavRefresh53(){
+  const bar=document.getElementById('st-navigation53');
+  if(!bar)return;
+  const valid=!!(st&&st.i>=0&&st.i<st.queue.length);
+  bar.hidden=!valid;
+  if(!valid)return;
+  const q=st.queue[st.i];
+  const previous=document.getElementById('st-prev53');
+  const next=document.getElementById('st-next53');
+  previous.disabled=st.i===0||!!st.busy;
+  next.disabled=!!st.busy;
+  const status=document.getElementById('st-nav-status53');
+  if(q?._grade53){
+    status.textContent='✓ Değerlendirildi';
+    next.textContent=st.i===st.queue.length-1?'Bitir →':'İleri →';
+  }else{
+    status.textContent=q?._skipped53?'↷ Önce atlandı':'Kartı atlayabilirsin';
+    next.textContent=st.i===st.queue.length-1?'Bitir →':'İleri →';
+  }
+}
+function stNavigate53(direction){
+  if(!st||st.busy||document.getElementById('st-finish').style.display!=='none')return;
+  const next=st.i+(direction<0?-1:1);
+  if(next<0||next>st.queue.length)return;
+  if(direction>0&&st.i<st.queue.length){
+    const q=st.queue[st.i];
+    if(q&&!q._grade53)q._skipped53=true; // SR tarihi / ilerleme değişmez.
+  }
+  stopAllAudio();
+  st.i=next;
+  if(st.i===st.queue.length)stFinish();
+  else stRender();
+}
+const stRenderBefore53=stRender;
+stRender=function(){
+  stRenderBefore53.apply(this,arguments);
+  if(!st){return;}
+  if(st.i>=st.queue.length){stNavRefresh53();return;}
+  const q=st.queue[st.i];
+  if(q?._grade53){
+    // Daha önce değerlendirilen kartta Türkçe yine ilk anda gizlidir.
+    // "Cevabı göster" ile inceleyebilirsin ama bir daha not veremezsin.
+    document.getElementById('st-grades').style.display='none';
+    document.getElementById('st-feedback').textContent='Bu kartı daha önce değerlendirdin. Cevabı tekrar görebilir veya kartı silebilirsin; aynı cevap yeniden kaydedilmez.';
+  }else if(q?._skipped53){
+    document.getElementById('st-feedback').textContent='Bu kartı önce atlamıştın. İstersen şimdi cevaplayabilirsin.';
+  }
+  stNavRefresh53();
+};
+const stRevealBefore53=stReveal;
+stReveal=function(){
+  stRevealBefore53.apply(this,arguments);
+  if(st?.queue[st.i]?._grade53 && st.revealed){
+    document.getElementById('st-grades').style.display='none';
+    document.getElementById('st-feedback').textContent='Bu kart zaten değerlendirildi; tekrar kaydedilmez.';
+  }
+};
+const stGradeBefore53=stGrade;
+stGrade=async function(g){
+  if(!st||!st.revealed||st.busy)return;
+  const session=st,q=st.queue[st.i];
+  if(!q||q._grade53){stNavRefresh53();return;}
+  q._grade53=g;
+  q._skipped53=false;
+  stNavRefresh53();
+  try{
+    await stGradeBefore53.apply(this,arguments);
+  }catch(err){
+    if(st===session){q._grade53=null;st.busy=false;stNavRefresh53();}
+    if(typeof toast28==='function')toast28('Kaydetme başarısız: '+(err?.message||String(err)));
+  }
+};
+function stBackFromFinish53(skipped){
+  if(!st||!st.queue.length)return;
+  let index=st.queue.length-1;
+  if(skipped){index=st.queue.findIndex(q=>!q._grade53);if(index<0)index=st.queue.length-1;}
+  document.getElementById('st-finish').style.display='none';
+  document.getElementById('st-session').style.display='';
+  st.i=index;
+  stRender();
+}
+function stFinishControls53(){
+  if(!st)return;
+  let row=document.getElementById('st-finish-nav53');
+  if(!row){
+    row=document.createElement('div');
+    row.id='st-finish-nav53';row.className='st-finish-nav53';
+    const actions=document.querySelector('#st-finish .st-actions');
+    actions?.parentNode.insertBefore(row,actions);
+  }
+  const skipped=st.queue.filter(q=>!q._grade53).length;
+  row.innerHTML=`${skipped?`<p>Atladığın ${skipped} kart henüz değerlendirilmedi; tekrar tarihleri değişmedi.</p><button type="button" class="st-navbtn53 st-navnext53" onclick="stBackFromFinish53(true)">↶ Atlanan ${skipped} karta dön</button>`:''}<button type="button" class="st-navbtn53" onclick="stBackFromFinish53(false)">← Son karta dön</button>`;
+}
+const stFinishBefore53=stFinish;
+stFinish=function(){
+  stFinishBefore53.apply(this,arguments);
+  stFinishControls53();
+};
+const startStudyBefore53=startStudy;
+startStudy=function(){
+  startStudyBefore53.apply(this,arguments);
+  stNavRefresh53();
+};
+// Eski oturuma geri dönülmesi ihtimaline karşı akıllı planda da aynı navigasyon.
+const startSmartBefore53=startSmart41;
+startSmart41=function(){
+  startSmartBefore53.apply(this,arguments);
+  stNavRefresh53();
+};
+// Silme sonrasında eski konumu yanlış kaydırmamak için kuyruk indeksini tut.
+// Çöp kutusunun mevcut senkronizasyon ve 'Geri al' mantığı korunur.
+const stTrashBefore53=stTrash40;
+stTrash40=async function(){
+  if(!st||st.busy)return;
+  const session=st,id=st.queue[st.i]?.id;
+  if(id==null)return;
+  await stTrashBefore53.apply(this,arguments);
+  if(st===session){
+    // İleride kalan tekrarlar da silinen kartı içeremez.
+    if(st?.queue?.length&&st.i<st.queue.length&&st.queue[st.i]?.id===id){
+      st.queue.splice(st.i,1);
+      stRender();
+    }
+    stNavRefresh53();
+  }
+};
+// Geri / ileri klavye kısayolları. Metin kutusunda gezinmeyi etkilemez.
+document.addEventListener('keydown',function(e){
+  if(!st||!document.getElementById('st-overlay')?.classList.contains('show')||
+    document.getElementById('st-finish').style.display!=='none'||
+    /INPUT|TEXTAREA|SELECT|SUMMARY/.test(e.target?.tagName||'')||
+    e.target?.isContentEditable||e.altKey||e.ctrlKey||e.metaKey)return;
+  if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
+    e.preventDefault();stNavigate53(e.key==='ArrowLeft'?-1:1);
+  }
+});
+
 </script>
 
 <style id="v51-controls">
@@ -7833,6 +7982,24 @@ toggleCard=function(id) {
   .card44.card-tappable52:hover .card-chevron52 {border-color:var(--accent);}
 }
 @media (prefers-reduced-motion:reduce) {.card44 .card-chevron52{transition:none}}
+</style>
+
+<style id="v53-study-navigation">
+/* v53: kaydırma alanından ayrı, her zaman erişilebilir gezinme düğmeleri. */
+.st-navigation53 { display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;min-height:44px; }
+.st-navigation53[hidden] { display:none !important; }
+.st-navbtn53 { min-height:44px;min-width:91px;padding:9px 14px;border:1.5px solid var(--border2,var(--border));border-radius:12px;background:var(--bg2);color:var(--text);font:inherit;font-weight:800;font-size:calc(13px * var(--ui-scale));cursor:pointer;box-shadow:0 2px 0 var(--border);touch-action:manipulation; }
+.st-navbtn53:active {transform:translateY(2px);box-shadow:none;filter:brightness(.95);}
+.st-navbtn53:focus-visible {outline:3px solid var(--accent);outline-offset:2px;}
+.st-navbtn53:disabled {opacity:.35;cursor:default;box-shadow:none;}
+.st-navnext53 {background:color-mix(in srgb,var(--accent) 10%,var(--bg2));border-color:var(--accent);color:var(--accent);}
+.st-nav-status53 {flex:1;min-width:0;text-align:center;color:var(--text2);font-size:calc(11px * var(--ui-scale));line-height:1.25;}
+.st-finish-nav53 {display:flex;flex-wrap:wrap;gap:8px;margin:16px 0;}
+.st-finish-nav53 p {flex-basis:100%;font-size:calc(13px * var(--ui-scale));color:var(--text2);}
+.st-finish-nav53 .st-navbtn53 {flex:1;}
+@media(max-width:375px){.st-navbtn53{min-width:75px;padding:7px 8px;font-size:calc(12px * var(--ui-scale));}.st-nav-status53{font-size:calc(10px * var(--ui-scale));}}
+@media(max-height:500px){.st-navigation53{min-height:34px}.st-navbtn53{min-height:34px;padding:5px 10px}}
+@media(prefers-reduced-motion:reduce){.st-navbtn53{transition:none}}
 </style>
 </body>
 </html>
