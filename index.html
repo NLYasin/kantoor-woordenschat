@@ -7900,6 +7900,146 @@ document.addEventListener('keydown',function(e){
   }
 });
 
+
+
+// ══════════════════════════════════════════════════════════════════════
+// v54 — Çöp Kutusu: tek kart / seçimle toplu / tamamını kalıcı silme.
+// Otomatik 30 gün koruması DEĞİŞMEDİ. Yalnızca kullanıcı açıkça onaylarsa
+// süresi dolmadan silinebilir. Sunucu yazımları kuyrukta tutulur.
+// ══════════════════════════════════════════════════════════════════════
+const trashSelection54 = new Set();
+let trashBusy54 = false;
+function trashActiveRows54(){
+  return Object.entries(TRASH29).filter(([id,t])=>/^\d+$/.test(id)&&trashActive29(t))
+    .sort((a,b)=>(Number(b[1].deletedAt)||0)-(Number(a[1].deletedAt)||0));
+}
+function trashSelectionUI54(){
+  const valid = new Set(trashActiveRows54().map(([id])=>id));
+  for(const id of trashSelection54)if(!valid.has(id))trashSelection54.delete(id);
+  const all=document.getElementById('trash-all54');
+  if(all){all.checked=valid.size>0&&trashSelection54.size===valid.size;all.indeterminate=trashSelection54.size>0&&trashSelection54.size<valid.size;all.disabled=trashBusy54;}
+  const n=document.getElementById('trash-selected54');
+  if(n)n.textContent=trashSelection54.size+' kart seçildi';
+  const btn=document.getElementById('trash-delete-selected54');
+  if(btn){btn.disabled=trashBusy54||trashSelection54.size===0;btn.textContent='Seçilenleri kalıcı sil ('+trashSelection54.size+')';}
+  for(const row of document.querySelectorAll('[data-trash-row54]')){
+    const selected=trashSelection54.has(row.dataset.trashRow54);
+    row.classList.toggle('is-selected54',selected);
+    const checkbox=row.querySelector('[data-trash-box54]');
+    if(checkbox){checkbox.checked=selected;checkbox.disabled=trashBusy54;}
+  }
+  document.querySelectorAll('[data-trash-action54]').forEach(button=>button.disabled=trashBusy54);
+}
+function trashToggle54(id, checked){
+  id=String(id);
+  if(trashBusy54)return;
+  if(!TRASH29[id]||!trashActive29(TRASH29[id]))return;
+  if(checked)trashSelection54.add(id);else trashSelection54.delete(id);
+  trashSelectionUI54();
+}
+function trashAll54(checked){
+  if(trashBusy54)return;
+  trashSelection54.clear();
+  if(checked)for(const[id]of trashActiveRows54())trashSelection54.add(id);
+  trashSelectionUI54();
+}
+// v54 kalıcı silme yalnızca kullanıcının açık onayı sonrası çalışır.
+// _purge49 önceki sürümün v44 tombstone ve Supabase DELETE kuyruğunu korur.
+async function trashPurge54(ids, all=false){
+  if(trashBusy54)return false;
+  const allowed=new Set(trashActiveRows54().map(([id])=>id));
+  const targets=[...new Set(ids.map(String))].filter(id=>allowed.has(id));
+  if(!targets.length){alert49('Silmek için çöp kutusunda bulunan kartları seç.');return false;}
+  if(!navigator.onLine||!isOnline){alert49('Kalıcı silme için önce internet bağlantısı kur. Kartlar çöp kutusunda korunuyor.');return false;}
+  const count=targets.length;
+  const sample=count===1?String(TRASH29[targets[0]]?.card?.dutch||'Kart #'+targets[0]):count+' kart';
+  const promptText=count===1?
+    '“'+sample+'” kartı kalıcı olarak silinsin mi? 30 günlük geri alma hakkı sona erer. Bu işlem geri alınamaz.':
+    (all?'Çöp kutusundaki '+count+' kartın TAMAMI':'Seçtiğin '+count+' kart')+
+    ' kalıcı olarak silinecek. 30 gün koruması bu işlem için geçerli olmayacak. Geri alınamaz. Devam edilsin mi?';
+  if(!window.confirm(promptText))return false;
+  if(count>1){
+    const typed=window.prompt(count+' kartı kalıcı silmeyi onaylamak için '+count+' yaz:','');
+    if(typed!==String(count)){alert49('İşlem iptal edildi; hiçbir kart silinmedi.');return false;}
+  }
+  trashBusy54=true;trashSelectionUI54();
+  try{
+    let removed=0;
+    for(const id of targets){
+      if(!trashActive29(TRASH29[id]))continue;
+      _purge49(Number(id)); // v49 tarih engeli atlanır, tombstone + silme kuyruğu korunur.
+      trashSelection54.delete(id);
+      removed++;
+    }
+    saveTrash29();
+    renderAll();updateStats();
+    // Otomatik kuyruğu bitirmeyi dene; sorun varsa işler localStorage'da kalır.
+    await flush28();
+    const waiting=targets.some(id=>outbox28['del-card:'+id]||outbox28['del-progress:'+id])||!!outbox28['state:trash'];
+    if(waiting){
+      alert49(removed+' kart bu cihazda silindi. Sunucu eşitlemesi bekliyor; bağlantı geri gelince tamamlanacak.');
+    }else{
+      for(const id of targets)delete PROGRESS[id];
+      cacheProgress();
+      alert49(removed+' kart kalıcı silindi ve sunucuyla eşitlendi.');
+    }
+    return true;
+  }catch(e){
+    alert49('Silme işlemi beklemede: '+(e?.message||e));
+    return false;
+  }finally{trashBusy54=false;renderTrash();}
+}
+function trashOne54(id){return trashPurge54([id]);}
+function trashSelectedDelete54(){return trashPurge54([...trashSelection54]);}
+function trashEmpty54(){return trashPurge54(trashActiveRows54().map(([id])=>id),true);}
+// Eski cihazdan gelen durumlar, kalıcı silinmiş kartın gövdesini geri eklemesin.
+const _trashMergeBefore54=trashMerge49;
+trashMerge49=function(a,b){
+  const merged=_trashMergeBefore54(a,b);
+  for(const t of Object.values(merged))if(t?.purgedAt)delete t.card;
+  return merged;
+};
+const _mergeTrashBefore54=mergeTrash29;
+mergeTrash29=function(server){
+  const changed=_mergeTrashBefore54(server);
+  let stripped=false;
+  for(const t of Object.values(TRASH29))if(t?.purgedAt&&t.card){delete t.card;stripped=true;}
+  if(stripped){v28Store('kv_trash29',TRASH29);state28('trash',TRASH29);}
+  return changed||stripped;
+};
+// Eski adla gelebilecek çağrılar da onaylı yeni işlemden geçer.
+permanentlyPurge=function(id){return trashOne54(id);};
+renderTrash=function(){
+  const root=document.getElementById('trash-content');if(!root)return;
+  const items=trashActiveRows54();
+  updateTrashBtn29();
+  const valid=new Set(items.map(([id])=>id));
+  for(const id of trashSelection54)if(!valid.has(id))trashSelection54.delete(id);
+  if(!items.length){
+    root.innerHTML='<div class="empty">'+ic('trash')+' Çöp kutusu boş. Sildiğin kartlar normalde '+TRASH_DAYS+' gün burada bekler.</div>';
+    return;
+  }
+  root.innerHTML=`<div class="trash-intro54">Kartlar normalde ${TRASH_DAYS} gün saklanır. Kalıcı silme geri alınamaz; yalnızca açıkça onayladığın kartlar silinir.</div>
+    <div class="trash-toolbar54" aria-label="Çöp kutusu toplu işlemleri">
+      <label class="trash-select-all54"><input type="checkbox" id="trash-all54" onchange="trashAll54(this.checked)"> Tümünü seç</label>
+      <span class="trash-count54" id="trash-selected54" aria-live="polite">0 kart seçildi</span>
+      <button type="button" class="trash-delete-selected54" id="trash-delete-selected54" onclick="trashSelectedDelete54()" disabled>Seçilenleri kalıcı sil (0)</button>
+      <button type="button" class="trash-empty54" data-trash-action54 onclick="trashEmpty54()">Çöp kutusunu boşalt</button>
+    </div>`+
+    items.map(([id,t])=>{
+      const c=t.card||{},days=Math.max(0,Math.floor((Date.now()-Number(t.deletedAt))/86400000)),left=Math.max(0,TRASH_DAYS-days);
+      return `<div class="trash-row trash-row54" data-trash-row54="${id}">
+        <label class="trash-check54" aria-label="${esc28(c.dutch||'Kart #'+id)} kartını seç"><input type="checkbox" data-trash-box54 onchange="trashToggle54('${id}',this.checked)"></label>
+        <div class="trash-txt"><div class="trash-nl" lang="nl">${esc28(c.dutch||'Kart #'+id)}</div>
+        <div class="trash-tr">${esc28(c.turkish||'')}</div>
+        <div class="trash-meta">${days===0?'Bugün silindi':days+' gün önce silindi'} · ${left} gün koruma süresi</div></div>
+        <div class="trash-actions"><button type="button" class="btn-settings" data-trash-action54 onclick="restoreCard29(${id})">${ic('repeat')}Geri al</button>
+        <button type="button" class="trash-remove54" data-trash-action54 onclick="trashOne54('${id}')">${ic('trash')}Kalıcı sil</button></div>
+      </div>`;
+    }).join('');
+  trashSelectionUI54();
+};
+
 </script>
 
 <style id="v51-controls">
@@ -8000,6 +8140,29 @@ document.addEventListener('keydown',function(e){
 @media(max-width:375px){.st-navbtn53{min-width:75px;padding:7px 8px;font-size:calc(12px * var(--ui-scale));}.st-nav-status53{font-size:calc(10px * var(--ui-scale));}}
 @media(max-height:500px){.st-navigation53{min-height:34px}.st-navbtn53{min-height:34px;padding:5px 10px}}
 @media(prefers-reduced-motion:reduce){.st-navbtn53{transition:none}}
+</style>
+
+<style id="v54-trash-controls">
+/* v54: seçmeli + tekil kalıcı silme; küçük telefonlarda da görünür. */
+.trash-intro54 {margin:14px 16px 10px;color:var(--text2);font-size:calc(13px * var(--ui-scale));line-height:1.55;}
+.trash-toolbar54 {margin:0 16px 14px;padding:12px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;background:var(--bg2);border:1px solid var(--border);border-radius:14px;}
+.trash-select-all54{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-size:calc(13px * var(--ui-scale));font-weight:750;color:var(--text);cursor:pointer;}
+.trash-count54{margin-right:auto;font-size:calc(12px * var(--ui-scale));color:var(--text2);font-variant-numeric:tabular-nums;}
+.trash-toolbar54 input[type="checkbox"],.trash-check54 input[type="checkbox"]{width:20px;height:20px;accent-color:var(--accent);cursor:pointer;}
+.trash-delete-selected54,.trash-empty54,.trash-remove54{font:inherit;font-size:calc(12px * var(--ui-scale));font-weight:800;min-height:44px;border-radius:11px;padding:9px 12px;cursor:pointer;border:1px solid var(--red-border,var(--red));background:var(--red-bg);color:var(--red);touch-action:manipulation;}
+.trash-empty54{background:var(--bg);}
+.trash-remove54{display:inline-flex;align-items:center;justify-content:center;gap:5px;}
+.trash-remove54 .ic{width:16px;height:16px;}
+.trash-delete-selected54:disabled,.trash-empty54:disabled,.trash-remove54:disabled{opacity:.42;cursor:default;}
+.trash-row54 {align-items:center;}
+.trash-row54.is-selected54{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--bg2));}
+.trash-check54{min-width:30px;min-height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.trash-row54 .trash-txt{min-width:175px;}
+.trash-row54 .trash-actions{flex-wrap:wrap;}
+.trash-remove54:active,.trash-empty54:active,.trash-delete-selected54:active{transform:translateY(2px);filter:brightness(.92);}
+.trash-remove54:focus-visible,.trash-empty54:focus-visible,.trash-delete-selected54:focus-visible,.trash-select-all54:focus-within,.trash-check54:focus-within{outline:3px solid var(--accent);outline-offset:2px;}
+@media(max-width:450px){.trash-toolbar54{align-items:stretch}.trash-count54{margin-left:auto;align-self:center}.trash-delete-selected54{flex:1 1 100%}.trash-empty54{flex:1 1 100%}.trash-row54 .trash-txt{min-width:calc(100% - 52px)}.trash-row54 .trash-actions{width:100%;justify-content:flex-end}}
+@media(prefers-reduced-motion:reduce){.trash-remove54,.trash-empty54,.trash-delete-selected54{transition:none;}}
 </style>
 </body>
 </html>
