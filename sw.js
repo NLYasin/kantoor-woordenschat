@@ -4,11 +4,16 @@
 // güncellemeleri PWA'da her zaman en güncel haliyle gelir, eski cache
 // asılı kalmaz.
 
-const CACHE_NAME = 'woordenschat-v54'; // her güncellemede bu numarayı artır
+const CACHE_NAME = 'woordenschat-v56'; // her güncellemede bu numarayı artır
 const REMINDER_CACHE = 'kv-reminder'; // hatırlatma ayarları — silinmez
 const ASSETS = [
   './index.html',
   './manifest.json',
+  './werktaal-v56.css',
+  './werktaal-inhoud-v56.js',
+  './werktaal-redactie-v56.js',
+  './werktaal-v56.js',
+  './werktaal-kantoor-v56.js',
   './icon-192.png',
   './icon-512.png',
   './icon-maskable-192.png',
@@ -31,7 +36,7 @@ self.addEventListener('activate', function(event) {
   event.waitUntil(
     caches.keys().then(function(keys) {
       return Promise.all(
-        keys.filter(function(key) { return key !== CACHE_NAME && key !== REMINDER_CACHE; })
+        keys.filter(function(key) { return key.startsWith('woordenschat-v') && key !== CACHE_NAME; })
             .map(function(key) { return caches.delete(key); })
       );
     })
@@ -61,7 +66,7 @@ self.addEventListener('fetch', function(event) {
         return response;
       }).catch(function() {
         return caches.match(event.request).then(function(cached) {
-          return cached || caches.match('./index.html');
+          return cached || (event.request.mode === 'navigate' ? caches.match('./index.html') : Response.error());
         });
       })
     );
