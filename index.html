@@ -1766,8 +1766,10 @@ body { zoom:1 !important; }
     </header>
     <div class="work-heading"><h1>Bugün</h1><time id="work-date"></time></div>
     <div id="work-home"></div>
+    <button type="button" id="due-review57" class="work-due57" onclick="startDueReview57()" hidden><strong id="due-count57">0</strong><span>kartın tekrar zamanı geldi</span><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg></button>
     <details id="work-extras" class="work-extras">
       <summary>Tekrar takvimi ve diğer çalışmalar</summary>
+      <button type="button" id="chosen-review57" class="work-personal-link" onclick="showProductionList55()" hidden>Seçili ifadelerimi çalış</button>
       <span class="tc" id="tekrar-count"></span>
       <div id="study-start"></div>
       <div id="tekrar-calendar"></div>
@@ -4411,7 +4413,7 @@ function showScreen(name) {
 // İSTATİSTİKLER
 // ════════════════════════════════════════
 function updateStats() {
-  const dueCount = CARDS.filter(i => isDue(i.id)).length;
+  const dueCount = CARDS.filter(c => !DELETED[c.id] && isDue(c.id)).length;
   const knownCount = CARDS.filter(i => PROGRESS[i.id] && PROGRESS[i.id].is_known).length;
   document.getElementById('s-total').textContent = CARDS.length;
   document.getElementById('s-known').textContent = knownCount;
@@ -4421,7 +4423,12 @@ function updateStats() {
   const bar = document.getElementById('s-bar');
   if (bar) bar.style.width = CARDS.length ? Math.round((knownCount / CARDS.length) * 100) + '%' : '0%';
   const badge = document.getElementById('nav-badge');
-  if (badge) { if (dueCount > 0) { badge.style.display = ''; badge.textContent = dueCount; } else badge.style.display = 'none'; }
+  badge.textContent=String(dueCount);
+  badge.style.display=dueCount ? '' : 'none';
+  document.getElementById('nav-tekrar').setAttribute('aria-label',dueCount ? 'Bugün, '+dueCount+' kartın tekrar zamanı geldi' : 'Bugün');
+  document.getElementById('due-count57').textContent=String(dueCount);
+  document.getElementById('due-review57').hidden=dueCount===0;
+  document.getElementById('chosen-review57').hidden=!activePool55().length;
   const trashCountEl = document.getElementById('trash-count');
   if (trashCountEl) trashCountEl.textContent = Object.keys(DELETED).length;
 }
@@ -7260,7 +7267,7 @@ restoreBackup28=async function(data){
    - v41/v48 yedekleme, güncel sunucu verisi ile yerel kayıtları körlemesine ezebiliyordu.
    Bu bölüm mevcut kart tasarımını, Hollandaca açıklamayı, SR aralıklarını değiştirmez.
 */
-const APP_VERSION49 = 56;
+const APP_VERSION49 = 57;
 const MS_DAY49 = 86400000;
 const CARD_FIELDS49 = ['date','type','dutch','turkish','uitleg','etymology','note','examples','legal','is_legal'];
 function clone49(v){return JSON.parse(JSON.stringify(v));}
@@ -8089,13 +8096,13 @@ applyRows28=function(){applyBefore55();for(const r of lastServerRows28){if(r.key
 const mergeBefore55=stateMerge49;
 stateMerge49=function(a,b,k){if(k.startsWith('goal55:'))return newerGoal55(a,b);if(k.startsWith('produce55:'))return logUnion49(a,b);return mergeBefore55(a,b,k);};
 const snapshotBefore55=fullSnapshot49;
-fullSnapshot49=async function(){const data=await snapshotBefore55();data.version=56;for(const [k,v] of Object.entries(rows28))if(k.startsWith('goal55:')||k.startsWith('produce55:'))data.appState[k]=stateMerge49(data.appState[k],v,k);data.backupIntegrity55={activeGoals: data.cards.filter(c=>data.appState[goalKey55(c.id)]?.target==='active').length,productionEvents:Object.entries(data.appState).filter(([k])=>k.startsWith('produce55:')).reduce((n,[,v])=>n+(Array.isArray(v)?v.length:0),0)};return data;};
+fullSnapshot49=async function(){const data=await snapshotBefore55();data.version=57;for(const [k,v] of Object.entries(rows28))if(k.startsWith('goal55:')||k.startsWith('produce55:'))data.appState[k]=stateMerge49(data.appState[k],v,k);data.backupIntegrity55={activeGoals: data.cards.filter(c=>data.appState[goalKey55(c.id)]?.target==='active').length,productionEvents:Object.entries(data.appState).filter(([k])=>k.startsWith('produce55:')).reduce((n,[,v])=>n+(Array.isArray(v)?v.length:0),0)};return data;};
 const restoreBefore55=restoreBackup28;
 restoreBackup28=async function(data){const result=await restoreBefore55(data),map=result.mapping||{};for(const [k,v] of Object.entries(data.appState||{})){
  if(k.startsWith('goal55:')){const id=map[k.slice(7)];if(!id||!['active','understand'].includes(v?.target))continue;const dest=goalKey55(id),merged=newerGoal55(rows28[dest],v);if(merged!==rows28[dest])state28(dest,merged);}
  if(k.startsWith('produce55:')&&Array.isArray(v)){const mapped=v.filter(e=>e?.id&&map[e.cardId]).map(e=>({...e,cardId:Number(map[e.cardId])}));if(mapped.length)state28(k,logUnion49(rows28[k],mapped));}
  }await flush28();if(Object.keys(outbox28).length)throw new Error('Aktif kullanım kayıtları eşitleme bekliyor. Yeniden içe aktarma.');renderAll();if(currentScreen==='tekrar')renderStudyStart();return result;};
-exportData=async function(){const el=document.getElementById('io-status');if(el){el.className='settings-status show loading';el.textContent='Tam yedek hazırlanıyor…';}try{const data=await fullSnapshot49();download28('kantoor-woordenschat-v56-TAM-yedek-'+todayStr()+'.json',data);if(el){el.className='settings-status show ok';el.textContent=`Tam yedek: ${data.cards.length} kart, ${data.backupIntegrity55.activeGoals} aktif hedef, ${data.backupIntegrity55.productionEvents} üretim kaydı; eski geçmiş dahil.`;}}catch(e){if(el){el.className='settings-status show err';el.textContent='Yedek tamamlanamadı: '+e.message;}}};
+exportData=async function(){const el=document.getElementById('io-status');if(el){el.className='settings-status show loading';el.textContent='Tam yedek hazırlanıyor…';}try{const data=await fullSnapshot49();download28('kantoor-woordenschat-v57-TAM-yedek-'+todayStr()+'.json',data);if(el){el.className='settings-status show ok';el.textContent=`Tam yedek: ${data.cards.length} kart, ${data.backupIntegrity55.activeGoals} aktif hedef, ${data.backupIntegrity55.productionEvents} üretim kaydı; eski geçmiş dahil.`;}}catch(e){if(el){el.className='settings-status show err';el.textContent='Yedek tamamlanamadı: '+e.message;}}};
 // Ana kütüphane: tek hedef filtresi, kartta küçük ve bağımsız hedef düğmesi.
 let goalFilter55='all';
 const getFilteredBefore55=getFiltered;
@@ -8346,11 +8353,11 @@ dayStr35=function(offset){const d=new Date();d.setDate(d.getDate()-offset);retur
 @media(min-width:650px){.card44 .card-footer44 .tema-chip{flex:1 1 auto}.card44 .card-footer44 .goal55,.card44 .card-footer44 .btn-known{flex:0 0 auto}}@media(max-width:480px){.prod-grades55{grid-template-columns:repeat(3,minmax(0,1fr))}.prod-grades55 button{font-size:calc(11px * var(--ui-scale));padding:9px 3px;min-height:64px}.prod-grades55 small{font-size:calc(9px * var(--ui-scale))}.daily55 .suggest-row55 button{flex-shrink:0}}
 
 </style>
-<link rel="stylesheet" href="werktaal-v56.css">
+<link rel="stylesheet" href="werktaal-v57.css">
 <script src="werktaal-inhoud-v56.js"></script>
 <script src="werktaal-redactie-v56.js"></script>
-<script src="werktaal-v56.js"></script>
-<script src="werktaal-kantoor-v56.js"></script>
+<script src="werktaal-v57.js"></script>
+<script src="werktaal-kantoor-v57.js"></script>
 <script>initSecure41();</script>
 </body>
 </html>

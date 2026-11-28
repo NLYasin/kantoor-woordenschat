@@ -4,16 +4,16 @@
 // güncellemeleri PWA'da her zaman en güncel haliyle gelir, eski cache
 // asılı kalmaz.
 
-const CACHE_NAME = 'woordenschat-v56'; // her güncellemede bu numarayı artır
+const CACHE_NAME = 'woordenschat-v57'; // her güncellemede bu numarayı artır
 const REMINDER_CACHE = 'kv-reminder'; // hatırlatma ayarları — silinmez
 const ASSETS = [
   './index.html',
   './manifest.json',
-  './werktaal-v56.css',
+  './werktaal-v57.css',
   './werktaal-inhoud-v56.js',
   './werktaal-redactie-v56.js',
-  './werktaal-v56.js',
-  './werktaal-kantoor-v56.js',
+  './werktaal-v57.js',
+  './werktaal-kantoor-v57.js',
   './icon-192.png',
   './icon-512.png',
   './icon-maskable-192.png',
